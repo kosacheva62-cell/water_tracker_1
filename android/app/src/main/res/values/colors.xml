@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Фон иконки на рабочем столе (ваша исходная строка) -->
+    <color name="ic_launcher_background">#fbfcfb</color>
+    
+    <!-- Фон заставки при запуске приложения (новая строка) -->
+    <color name="launch_background">#fbfcfb</color>
+</resources>

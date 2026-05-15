@@ -1,0 +1,53 @@
+name: water_tracker_1
+description: "💧 Трекер воды — следите за водным балансом легко и удобно"
+publish_to: 'none'
+
+version: 1.0.0+2
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  shared_preferences: ^2.3.2
+  google_fonts: ^6.1.0
+  intl: ^0.19.0
+  url_launcher: ^6.3.0
+  vibration: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0  # 🔹 Добавлено для корректной заставки на всех Android (включая Samsung)
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+
+# 🔑 НАСТРОЙКА ГЕНЕРАЦИИ ИКОНОК
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"          # Для iOS и старых Android
+  adaptive_icon_background: "#fbfcfb"              # 🔹 Фон для Android 8.0+ (светло-серый)
+  adaptive_icon_foreground: "assets/icons/app_icon.png" # 🔹 Ваша прозрачная капля поверх фона
+
+# 🌊 НАСТРОЙКА ЗАСТАВКИ (SPLASH SCREEN)
+flutter_native_splash:
+  color: "#fbfcfb"                     # Фон для светлой темы системы
+  image: "assets/icons/app_icon.png"   # Иконка для светлой темы
+  color_dark: "#0D152A"                # Фон для тёмной темы системы
+  image_dark: "assets/icons/app_icon.png" # Иконка для тёмной темы
+  android: true
+  ios: true
+  # Специальные настройки для Android 12+ (Samsung, Pixel, Xiaomi и др.)
+  android_12:
+    color: "#fbfcfb"
+    image: "assets/icons/app_icon.png"
+    color_dark: "#0D152A"
+    image_dark: "assets/icons/app_icon.png"
