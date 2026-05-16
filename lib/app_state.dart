@@ -1,4 +1,3 @@
-// lib/app_state.dart
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -16,8 +15,6 @@ class FFAppState {
   bool isDarkMode = true;
   bool isOnboardingCompleted = false;
   DateTime? lastUpdateDate;
-  
-  // История целей: ключ = 'YYYY-MM-DD', значение = кол-во стаканов
   Map<String, int> dailyGoalsHistory = {};
   String? lastCheckedDay;
 
@@ -37,7 +34,6 @@ class FFAppState {
         ? saved.map((e) => int.tryParse(e) ?? 0).toList()
         : List.filled(7, 0);
 
-    // Загрузка истории целей
     final historyJson = prefs.getString('dailyGoalsHistory');
     if (historyJson != null && historyJson.isNotEmpty) {
       try {
@@ -53,9 +49,6 @@ class FFAppState {
 
     lastCheckedDay = prefs.getString('lastCheckedDay');
 
-    // 🔑 ИСПРАВЛЕНИЕ: Если история пуста (первый запуск новой версии), 
-    // фиксируем текущую цель для всех дней текущей недели.
-    // Это "замораживает" цели прошедших дней.
     if (dailyGoalsHistory.isEmpty) {
       final today = DateTime.now();
       for (int i = 0; i < 7; i++) {
@@ -66,19 +59,17 @@ class FFAppState {
       await save();
     }
 
-    // Первый запуск приложения вообще
     if (lastCheckedDay == null) {
       dailyGoalGlasses = 8;
       lastCheckedDay = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      final todayStr = lastCheckedDay!;
-      dailyGoalsHistory[todayStr] = 8;
+      dailyGoalsHistory[lastCheckedDay!] = 8;
       await save();
     }
 
-    await _migrateOldData();
-    
-    // 🔑 НОВОЕ: Восстанавливаем пропущенные дни недели
-    await _restoreMissedDays();
+    final todayIndex = (DateTime.now().weekday - 1) % 7;
+    if (waterGlassesToday > weeklyWaterGlasses[todayIndex]) {
+      weeklyWaterGlasses[todayIndex] = waterGlassesToday;
+    }
   }
 
   Future<void> save() async {
@@ -105,20 +96,16 @@ class FFAppState {
       return;
     }
 
-    // Наступил новый день
     if (lastCheckedDay != todayString) {
       final yesterday = now.subtract(Duration(days: 1));
       final yesterdayString = DateFormat('yyyy-MM-dd').format(yesterday);
       
-      // Фиксируем цели в истории
+      final yesterdayIndex = (yesterday.weekday - 1) % 7;
+      weeklyWaterGlasses[yesterdayIndex] = waterGlassesToday;
+      
       dailyGoalsHistory[yesterdayString] = dailyGoalGlasses;
       dailyGoalsHistory[todayString] = dailyGoalGlasses;
       
-      // Переносим воду вчера в статистику
-      final lastIndex = (yesterday.weekday - 1) % 7;
-      weeklyWaterGlasses[lastIndex] = waterGlassesToday;
-      
-      // Сбрасываем воду сегодня
       waterGlassesToday = 0;
       isDoneToday = false;
       lastCheckedDay = todayString;
@@ -130,7 +117,7 @@ class FFAppState {
   Future<void> setDailyGoal(int glasses) async {
     dailyGoalGlasses = glasses.clamp(1, 50);
     final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    dailyGoalsHistory[todayString] = dailyGoalGlasses; // Записываем ТОЛЬКО на СЕГОДНЯ
+    dailyGoalsHistory[todayString] = dailyGoalGlasses;
     await save();
   }
 
@@ -145,6 +132,8 @@ class FFAppState {
 
   Future<void> addGlass() async {
     waterGlassesToday++;
+    final todayIndex = (DateTime.now().weekday - 1) % 7;
+    weeklyWaterGlasses[todayIndex] = waterGlassesToday;
     if (waterGlassesToday >= dailyGoalGlasses) isDoneToday = true;
     await save();
   }
@@ -155,57 +144,10 @@ class FFAppState {
     final now = DateTime.now();
     lastUpdateDate = DateTime(now.year, now.month, now.day);
     lastCheckedDay = DateFormat('yyyy-MM-dd').format(now);
-    await save();
-  }
-
-  Future<void> _migrateOldData() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    if (lastUpdateDate == null) return;
-    final last = DateTime(lastUpdateDate!.year, lastUpdateDate!.month, lastUpdateDate!.day);
-    final daysPassed = today.difference(last).inDays;
-    if (daysPassed > 7) {
-      weeklyWaterGlasses = List.filled(7, 0);
-      await save();
-      return;
-    }
-    if (daysPassed >= 1) {
-      final lastIndex = (last.weekday - 1) % 7;
-      weeklyWaterGlasses[lastIndex] = waterGlassesToday;
-      for (int i = 1; i < daysPassed; i++) {
-        final missedDate = last.add(Duration(days: i));
-        final missedIndex = (missedDate.weekday - 1) % 7;
-        weeklyWaterGlasses[missedIndex] = 0;
-      }
-      await save();
-    }
-  }
-
-  // 🔑 НОВЫЙ МЕТОД: Восстановление пропущенных дней недели
-  // Гарантирует, что все 7 дней текущей недели имеют записи в weeklyWaterGlasses
-  // даже если приложение не открывалось несколько дней подряд.
-  Future<void> _restoreMissedDays() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final todayIndex = (today.weekday - 1) % 7; // 0 = Пн, 6 = Вс
-    
-    // Проверяем каждый день текущей недели (от сегодня назад)
-    for (int i = 0; i < 7; i++) {
-      final dayIndex = (todayIndex - i + 7) % 7; // Индекс в массиве weeklyWaterGlasses
-      final dayDate = today.subtract(Duration(days: i));
-      final dayKey = DateFormat('yyyy-MM-dd').format(dayDate);
-      
-      // Если это не сегодня и данных в массиве нет (0) — убеждаемся, что день есть в истории
-      if (i > 0 && weeklyWaterGlasses[dayIndex] == 0) {
-        // Если дня нет в истории целей — добавляем его с текущей целью
-        if (!dailyGoalsHistory.containsKey(dayKey)) {
-          dailyGoalsHistory[dayKey] = dailyGoalGlasses;
-        }
-        // weeklyWaterGlasses[dayIndex] остаётся 0 — это корректно, если пользователь не пил воду
-      }
-    }
-    
-    // Сохраняем изменения, если они были
+    final todayIndex = (now.weekday - 1) % 7;
+    weeklyWaterGlasses[todayIndex] = 0;
+    waterGlassesToday = 0;
+    isDoneToday = false;
     await save();
   }
 }
