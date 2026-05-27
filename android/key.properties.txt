@@ -1,4 +1,0 @@
-storePassword=J1R8L5
-keyPassword=J1R8L5
-keyAlias=water_tracker_key
-storeFile=app/water_tracker_key.jks
