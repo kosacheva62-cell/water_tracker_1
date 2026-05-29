@@ -7,19 +7,27 @@ class FFAppState {
   factory FFAppState() => _instance;
   FFAppState._internal();
 
+  // 🎯 Основные настройки и счетчики
   int dailyGoalGlasses = 8;
-  int get dailyGoalMl => dailyGoalGlasses * 250;
+  int get dailyGoalMl => dailyGoalGlasses * 250; // 1 стакан = 250 мл
+  
   int waterGlassesToday = 0;
   bool isDoneToday = false;
+  
+  // 📊 Недельная статистика (Пн=0, Вт=1, ..., Вс=6)
   List<int> weeklyWaterGlasses = List.filled(7, 0);
+  
+  // ⚙️ Состояние приложения
   bool isDarkMode = true;
   bool isOnboardingCompleted = false;
   DateTime? lastUpdateDate;
   Map<String, int> dailyGoalsHistory = {};
   String? lastCheckedDay;
 
+  // 🔹 Загрузка данных из SharedPreferences
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
+    
     dailyGoalGlasses = prefs.getInt('dailyGoalGlasses') ?? 8;
     waterGlassesToday = prefs.getInt('waterGlassesToday') ?? 0;
     isDoneToday = prefs.getBool('isDoneToday') ?? false;
@@ -49,6 +57,7 @@ class FFAppState {
 
     lastCheckedDay = prefs.getString('lastCheckedDay');
 
+    // Инициализация истории целей при первом запуске
     if (dailyGoalsHistory.isEmpty) {
       final today = DateTime.now();
       for (int i = 0; i < 7; i++) {
@@ -59,6 +68,7 @@ class FFAppState {
       await save();
     }
 
+    // Инициализация lastCheckedDay
     if (lastCheckedDay == null) {
       dailyGoalGlasses = 8;
       lastCheckedDay = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -66,12 +76,14 @@ class FFAppState {
       await save();
     }
 
+    // Синхронизация текущего дня с недельным массивом
     final todayIndex = (DateTime.now().weekday - 1) % 7;
     if (waterGlassesToday > weeklyWaterGlasses[todayIndex]) {
       weeklyWaterGlasses[todayIndex] = waterGlassesToday;
     }
   }
 
+  // 💾 Сохранение данных в SharedPreferences
   Future<void> save() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('dailyGoalGlasses', dailyGoalGlasses);
@@ -85,6 +97,7 @@ class FFAppState {
     await prefs.setString('lastCheckedDay', lastCheckedDay ?? '');
   }
 
+  // 🔄 ПРОВЕРКА СМЕНЫ ДНЯ (ИСПРАВЛЕННАЯ ЛОГИКА)
   Future<void> checkDayChange() async {
     final now = DateTime.now();
     final todayString = DateFormat('yyyy-MM-dd').format(now);
@@ -97,15 +110,30 @@ class FFAppState {
     }
 
     if (lastCheckedDay != todayString) {
+      // 1. Сохраняем итог за вчерашний день
       final yesterday = now.subtract(Duration(days: 1));
       final yesterdayString = DateFormat('yyyy-MM-dd').format(yesterday);
-      
       final yesterdayIndex = (yesterday.weekday - 1) % 7;
       weeklyWaterGlasses[yesterdayIndex] = waterGlassesToday;
       
+      // 2. 🆕 ОБНУЛЯЕМ ВСЕ ПРОПУЩЕННЫЕ ДНИ
+      final lastCheckedDate = DateTime.parse(lastCheckedDay!);
+      final daysDiff = now.difference(lastCheckedDate).inDays;
+      
+      for (int i = 1; i < daysDiff; i++) {
+        final missedDate = lastCheckedDate.add(Duration(days: i));
+        final missedIndex = (missedDate.weekday - 1) % 7;
+        weeklyWaterGlasses[missedIndex] = 0; // ← Правило: пропущенный день = 0
+        
+        final missedKey = DateFormat('yyyy-MM-dd').format(missedDate);
+        dailyGoalsHistory[missedKey] = dailyGoalGlasses;
+      }
+      
+      // 3. Фиксируем цели для вчерашнего и сегодняшнего дня
       dailyGoalsHistory[yesterdayString] = dailyGoalGlasses;
       dailyGoalsHistory[todayString] = dailyGoalGlasses;
       
+      // 4. Сброс счетчиков текущего дня
       waterGlassesToday = 0;
       isDoneToday = false;
       lastCheckedDay = todayString;
@@ -114,6 +142,7 @@ class FFAppState {
     }
   }
 
+  //  Изменение дневной цели
   Future<void> setDailyGoal(int glasses) async {
     dailyGoalGlasses = glasses.clamp(1, 50);
     final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -121,15 +150,18 @@ class FFAppState {
     await save();
   }
 
+  //  Получение цели для конкретного дня недели (0=Пн, 6=Вс)
   int getGoalForWeekDay(int index) {
     final today = DateTime.now();
     final todayIndex = (today.weekday - 1) % 7;
     final daysDiff = index - todayIndex;
     final targetDate = today.add(Duration(days: daysDiff));
     final dateKey = DateFormat('yyyy-MM-dd').format(targetDate);
+    // Если есть сохраненная цель для этого дня → берем её. Иначе → текущую.
     return dailyGoalsHistory[dateKey] ?? dailyGoalGlasses;
   }
 
+  // 💧 Добавление стакана воды
   Future<void> addGlass() async {
     waterGlassesToday++;
     final todayIndex = (DateTime.now().weekday - 1) % 7;
@@ -138,6 +170,7 @@ class FFAppState {
     await save();
   }
 
+  // 🚀 Завершение онбординга
   Future<void> completeOnboarding(int glasses) async {
     await setDailyGoal(glasses);
     isOnboardingCompleted = true;

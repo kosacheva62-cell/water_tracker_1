@@ -25,6 +25,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     
+    // 🔹 Инициализация анимации конфетти
     _rainController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -33,6 +34,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         setState(() => _showRain = false);
         _rainController.reset();
       }
+    });
+
+    // 🔹 НОВОЕ: Загружаем данные и проверяем смену дня
+    // После загрузки проверяем, не было ли пропущенных дней, и обнуляем их статистику
+    widget.appState.load().then((_) {
+      widget.appState.checkDayChange();
+      widget.onDataChanged(); // Обновляем UI после проверки
     });
   }
 
