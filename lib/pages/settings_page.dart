@@ -112,9 +112,20 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     }
   }
 
+  // ✅ ОБНОВЛЕНО: Добавлена обработка ошибок
   Future<void> _saveSettings() async {
-    await widget.appState.setDailyGoal(_dailyGoalGlasses);
-    widget.onDataChanged();
+    try {
+      await widget.appState.setDailyGoal(_dailyGoalGlasses);
+      widget.onDataChanged();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Не удалось сохранить настройки'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   @override
@@ -172,7 +183,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
         ? 20.0 
         : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
 
-    // 🔑 Адаптивная ширина кнопки (как в onboarding_page.dart и home_page.dart)
     final buttonWidth = isTablet 
         ? 320.0 
         : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
@@ -232,8 +242,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     child: _buildSettingRow(
                       title: '$glassesForm по 250 мл',
                       value: _dailyGoalGlasses,
-                      min: 1,
-                      max: 20,
+                      // ✅ ИСПРАВЛЕНО: Используем константы из FFAppState вместо хардкода
+                      min: FFAppState.minDailyGoalGlasses,
+                      max: FFAppState.maxDailyGoalGlasses,
                       onChanged: (value) => setState(() {
                         _dailyGoalGlasses = value;
                       }),
@@ -261,25 +272,18 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   ),
                   SizedBox(height: spaceAfterGoal),
                   
-                  // 🔑 КНОПКА «СОХРАНИТЬ» С ВИБРАЦИЕЙ И АДАПТИВНОЙ ШИРИНОЙ
-                  // ✅ Center предотвращает растягивание кнопки
                   Center(
                     child: AnimatedButton(
-                      width: buttonWidth,  // ✅ Передаём адаптивную ширину
+                      width: buttonWidth,
                       onPressed: () {
-                        // 🔹 Вибрация для Samsung (50 мс)
                         Vibration.vibrate(duration: 50);
-                        // 🔹 Дополнительный тактильный отклик для Honor/Pixel
                         HapticFeedback.lightImpact();
-                        
-                        // 🔹 Сохранение настроек
                         _saveSettings();
                       },
                       text: 'Сохранить',
                     ),
                   ),
                   
-                  // 🔑 БЛОК ОБРАТНОЙ СВЯЗИ
                   const SizedBox(height: 24),
                   Divider(color: const Color(0xFF1A283F)),
                   const SizedBox(height: 16),
@@ -398,11 +402,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 🔹 КНОПКА "–" С ВИБРАЦИЕЙ (ОБНОВЛЕНО)
               GestureDetector(
                 onTap: () {
                   if (value > min) {
-                    // 🔹 Короткая вибрация для всех устройств (30 мс — лёгкий щелчок)
                     Vibration.vibrate(duration: 30);
                     HapticFeedback.lightImpact();
                     onChanged(value - 1);
@@ -454,11 +456,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                 ),
               ),
               SizedBox(width: spaceBetweenControls),
-              // 🔹 КНОПКА "+" С ВИБРАЦИЕЙ (ОБНОВЛЕНО)
               GestureDetector(
                 onTap: () {
                   if (value < max) {
-                    // 🔹 Короткая вибрация для всех устройств (30 мс — лёгкий щелчок)
                     Vibration.vibrate(duration: 30);
                     HapticFeedback.lightImpact();
                     onChanged(value + 1);

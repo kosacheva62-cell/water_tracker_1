@@ -26,7 +26,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
-    _inputValue = widget.appState.dailyGoalGlasses.clamp(1, 50);
+    // ✅ ИСПРАВЛЕНО: Используем константы вместо хардкода
+    _inputValue = widget.appState.dailyGoalGlasses.clamp(
+      FFAppState.minDailyGoalGlasses,
+      FFAppState.maxDailyGoalGlasses,
+    );
     _controller = TextEditingController(text: _inputValue.toString());
     _controller.addListener(_onTextChanged);
   }
@@ -46,30 +50,45 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
     try {
       final value = int.parse(text);
-      _inputValue = value.clamp(1, 50);
+      // ✅ ИСПРАВЛЕНО: Используем константы вместо хардкода
+      _inputValue = value.clamp(
+        FFAppState.minDailyGoalGlasses,
+        FFAppState.maxDailyGoalGlasses,
+      );
     } catch (e) {
       _inputValue = 8;
     }
     setState(() {});
   }
 
-  // 🔑 СТАБИЛЬНЫЙ ОБРАБОТЧИК С ВИБРАЦИЕЙ
-  void _onSave() {
+  // ✅ ОБНОВЛЕНО: Добавлены async/await и обработка ошибок
+  Future<void> _onSave() async {
     // 🔹 Вибрация для Samsung (50 мс)
     Vibration.vibrate(duration: 50);
     
     // 🔹 Дополнительный тактильный отклик для Honor/Pixel
     HapticFeedback.lightImpact();
     
-    // 2. Обновляем состояние
-    widget.appState.completeOnboarding(_inputValue);
-    
-    // 3. ДАЁМ СИСТЕМЕ 100мс НА ЗАВЕРШЕНИЕ ОБРАБОТКИ ЖЕСТА
-    Future.delayed(const Duration(milliseconds: 100), () {
+    try {
+      // ✅ Ждём завершения сохранения
+      await widget.appState.completeOnboarding(_inputValue);
+      
+      // ДАЁМ СИСТЕМЕ 100мс НА ЗАВЕРШЕНИЕ ОБРАБОТКИ ЖЕСТА
+      await Future.delayed(const Duration(milliseconds: 100));
+      
       if (mounted) {
         widget.onDataChanged();
       }
-    });
+    } catch (e) {
+      // ✅ Обработка ошибок
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Не удалось сохранить настройки'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   // 🔑 ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ ИЗВЛЕЧЕНИЯ ФОРМЫ СЛОВА "СТАКАН"
@@ -191,8 +210,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         child: _buildSettingRow(
                           title: '$glassesForm по 250 мл',
                           value: _inputValue,
-                          min: 1,
-                          max: 50,
+                          // ✅ ИСПРАВЛЕНО: Используем константы вместо хардкода
+                          min: FFAppState.minDailyGoalGlasses,
+                          max: FFAppState.maxDailyGoalGlasses,
                           onChanged: (value) => setState(() => _inputValue = value),
                           controlWidth: controlWidth,
                           controlHeight: controlHeight,

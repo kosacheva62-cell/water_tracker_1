@@ -7,6 +7,10 @@ class FFAppState {
   factory FFAppState() => _instance;
   FFAppState._internal();
 
+  // 🎯 КОНСТАНТЫ ЛИМИТОВ (Задача 1.3)
+  static const int minDailyGoalGlasses = 1;
+  static const int maxDailyGoalGlasses = 50;
+
   // 🎯 Основные настройки и счетчики
   int dailyGoalGlasses = 8;
   int get dailyGoalMl => dailyGoalGlasses * 250; // 1 стакан = 250 мл
@@ -83,18 +87,24 @@ class FFAppState {
     }
   }
 
-  // 💾 Сохранение данных в SharedPreferences
+  // 💾 Сохранение данных в SharedPreferences (С ЗАЩИТОЙ ОТ ОШИБОК)
   Future<void> save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('dailyGoalGlasses', dailyGoalGlasses);
-    await prefs.setInt('waterGlassesToday', waterGlassesToday);
-    await prefs.setBool('isDoneToday', isDoneToday);
-    await prefs.setBool('isOnboardingCompleted', isOnboardingCompleted);
-    await prefs.setBool('isDarkMode', isDarkMode);
-    await prefs.setStringList('weeklyWaterGlasses', weeklyWaterGlasses.map((e) => e.toString()).toList());
-    await prefs.setString('lastUpdateDate', lastUpdateDate?.toIso8601String() ?? '');
-    await prefs.setString('dailyGoalsHistory', jsonEncode(dailyGoalsHistory));
-    await prefs.setString('lastCheckedDay', lastCheckedDay ?? '');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('dailyGoalGlasses', dailyGoalGlasses);
+      await prefs.setInt('waterGlassesToday', waterGlassesToday);
+      await prefs.setBool('isDoneToday', isDoneToday);
+      await prefs.setBool('isOnboardingCompleted', isOnboardingCompleted);
+      await prefs.setBool('isDarkMode', isDarkMode);
+      await prefs.setStringList('weeklyWaterGlasses', weeklyWaterGlasses.map((e) => e.toString()).toList());
+      await prefs.setString('lastUpdateDate', lastUpdateDate?.toIso8601String() ?? '');
+      await prefs.setString('dailyGoalsHistory', jsonEncode(dailyGoalsHistory));
+      await prefs.setString('lastCheckedDay', lastCheckedDay ?? '');
+    } catch (e) {
+      // 🔹 Если сохранение упало — пробрасываем исключение выше,
+      // чтобы UI мог показать SnackBar с ошибкой
+      throw Exception('Не удалось сохранить данные: $e');
+    }
   }
 
   // 🔄 ПРОВЕРКА СМЕНЫ ДНЯ (ИСПРАВЛЕННАЯ ЛОГИКА)
@@ -142,15 +152,15 @@ class FFAppState {
     }
   }
 
-  //  Изменение дневной цели
+  // 🎯 Изменение дневной цели (С ИСПОЛЬЗОВАНИЕМ КОНСТАНТ)
   Future<void> setDailyGoal(int glasses) async {
-    dailyGoalGlasses = glasses.clamp(1, 50);
+    dailyGoalGlasses = glasses.clamp(minDailyGoalGlasses, maxDailyGoalGlasses);
     final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
     dailyGoalsHistory[todayString] = dailyGoalGlasses;
     await save();
   }
 
-  //  Получение цели для конкретного дня недели (0=Пн, 6=Вс)
+  // 📊 Получение цели для конкретного дня недели (0=Пн, 6=Вс)
   int getGoalForWeekDay(int index) {
     final today = DateTime.now();
     final todayIndex = (today.weekday - 1) % 7;
