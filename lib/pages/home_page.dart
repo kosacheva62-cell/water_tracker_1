@@ -36,12 +36,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       }
     });
 
-    // 🔹 НОВОЕ: Загружаем данные и проверяем смену дня
-    // После загрузки проверяем, не было ли пропущенных дней, и обнуляем их статистику
-    widget.appState.load().then((_) {
-      widget.appState.checkDayChange();
-      widget.onDataChanged(); // Обновляем UI после проверки
-    });
+    // ✅ УДАЛЕНО: Двойной вызов load() + checkDayChange()
+    // Данные уже загружаются в main.dart, повторная загрузка создавала гонку состояний
   }
 
   @override
@@ -228,21 +224,31 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           Center(
                             child: AnimatedButton(
                               width: buttonWidth,  // ✅ Адаптивная ширина
-                              onPressed: () {
-                                final willCompleteGoal = widget.appState.dailyGoalGlasses > 0 
-                                    && widget.appState.waterGlassesToday + 1 >= widget.appState.dailyGoalGlasses;
-                                
-                                if (willCompleteGoal) {
-                                  _startConfettiRain();
-                                  Vibration.vibrate(duration: 3000);
-                                  HapticFeedback.mediumImpact();
-                                } else {
-                                  Vibration.vibrate(duration: 50);
-                                  HapticFeedback.mediumImpact();
+                              onPressed: () async {  // ✅ Добавили async
+                                try {  // ✅ Обернули в try/catch
+                                  final willCompleteGoal = widget.appState.dailyGoalGlasses > 0 
+                                      && widget.appState.waterGlassesToday + 1 >= widget.appState.dailyGoalGlasses;
+                                  
+                                  if (willCompleteGoal) {
+                                    _startConfettiRain();
+                                    await Vibration.vibrate(duration: 3000);  // ✅ await
+                                    HapticFeedback.mediumImpact();
+                                  } else {
+                                    await Vibration.vibrate(duration: 50);  // ✅ await
+                                    HapticFeedback.mediumImpact();
+                                  }
+                                  
+                                  await widget.appState.addGlass();  // ✅ Ждём сохранения!
+                                  widget.onDataChanged();
+                                } catch (e) {  // ✅ Обработка ошибок
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Не удалось сохранить данные'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
                                 }
-                                
-                                widget.appState.addGlass();
-                                widget.onDataChanged();
                               },
                               text: '+1 стакан',
                             ),
