@@ -28,9 +28,19 @@ class FFAppState {
   Map<String, int> dailyGoalsHistory = {};
   String? lastCheckedDay;
 
+  // ✅ НОВОЕ: Кэш экземпляра SharedPreferences
+  SharedPreferences? _prefs;
+
+  // ✅ НОВОЕ: Геттер для получения кэшированного экземпляра
+  Future<SharedPreferences> get _preferences async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!;
+  }
+
   // 🔹 Загрузка данных из SharedPreferences
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
+    // ✅ ИСПОЛЬЗУЕМ КЭШ вместо SharedPreferences.getInstance()
+    final prefs = await _preferences;
     
     dailyGoalGlasses = prefs.getInt('dailyGoalGlasses') ?? 8;
     waterGlassesToday = prefs.getInt('waterGlassesToday') ?? 0;
@@ -87,19 +97,24 @@ class FFAppState {
     }
   }
 
-  // 💾 Сохранение данных в SharedPreferences (С ЗАЩИТОЙ ОТ ОШИБОК)
+  // 💾 Сохранение данных в SharedPreferences (С КЭШЕМ И ПАРАЛЛЕЛЬНЫМИ ОПЕРАЦИЯМИ)
   Future<void> save() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('dailyGoalGlasses', dailyGoalGlasses);
-      await prefs.setInt('waterGlassesToday', waterGlassesToday);
-      await prefs.setBool('isDoneToday', isDoneToday);
-      await prefs.setBool('isOnboardingCompleted', isOnboardingCompleted);
-      await prefs.setBool('isDarkMode', isDarkMode);
-      await prefs.setStringList('weeklyWaterGlasses', weeklyWaterGlasses.map((e) => e.toString()).toList());
-      await prefs.setString('lastUpdateDate', lastUpdateDate?.toIso8601String() ?? '');
-      await prefs.setString('dailyGoalsHistory', jsonEncode(dailyGoalsHistory));
-      await prefs.setString('lastCheckedDay', lastCheckedDay ?? '');
+      // ✅ ИСПОЛЬЗУЕМ КЭШ вместо SharedPreferences.getInstance()
+      final prefs = await _preferences;
+      
+      // ✅ ИСПОЛЬЗУЕМ Future.wait для параллельного выполнения всех операций
+      await Future.wait([
+        prefs.setInt('dailyGoalGlasses', dailyGoalGlasses),
+        prefs.setInt('waterGlassesToday', waterGlassesToday),
+        prefs.setBool('isDoneToday', isDoneToday),
+        prefs.setBool('isOnboardingCompleted', isOnboardingCompleted),
+        prefs.setBool('isDarkMode', isDarkMode),
+        prefs.setStringList('weeklyWaterGlasses', weeklyWaterGlasses.map((e) => e.toString()).toList()),
+        prefs.setString('lastUpdateDate', lastUpdateDate?.toIso8601String() ?? ''),
+        prefs.setString('dailyGoalsHistory', jsonEncode(dailyGoalsHistory)),
+        prefs.setString('lastCheckedDay', lastCheckedDay ?? ''),
+      ]);
     } catch (e) {
       // 🔹 Если сохранение упало — пробрасываем исключение выше,
       // чтобы UI мог показать SnackBar с ошибкой
