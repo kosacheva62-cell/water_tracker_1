@@ -28,10 +28,10 @@ class FFAppState {
   Map<String, int> dailyGoalsHistory = {};
   String? lastCheckedDay;
 
-  // ✅ НОВОЕ: Кэш экземпляра SharedPreferences
+  // ✅ ЗАДАЧА 2.1: Кэш экземпляра SharedPreferences
   SharedPreferences? _prefs;
 
-  // ✅ НОВОЕ: Геттер для получения кэшированного экземпляра
+  // ✅ ЗАДАЧА 2.1: Геттер для получения кэшированного экземпляра
   Future<SharedPreferences> get _preferences async {
     _prefs ??= await SharedPreferences.getInstance();
     return _prefs!;
@@ -39,7 +39,7 @@ class FFAppState {
 
   // 🔹 Загрузка данных из SharedPreferences
   Future<void> load() async {
-    // ✅ ИСПОЛЬЗУЕМ КЭШ вместо SharedPreferences.getInstance()
+    // ✅ ЗАДАЧА 2.1: Используем кэш вместо SharedPreferences.getInstance()
     final prefs = await _preferences;
     
     dailyGoalGlasses = prefs.getInt('dailyGoalGlasses') ?? 8;
@@ -97,13 +97,12 @@ class FFAppState {
     }
   }
 
-  // 💾 Сохранение данных в SharedPreferences (С КЭШЕМ И ПАРАЛЛЕЛЬНЫМИ ОПЕРАЦИЯМИ)
+  // 💾 Сохранение данных в SharedPreferences
+  // ✅ ЗАДАЧА 2.1: Кэш + Future.wait (параллельные операции)
   Future<void> save() async {
     try {
-      // ✅ ИСПОЛЬЗУЕМ КЭШ вместо SharedPreferences.getInstance()
       final prefs = await _preferences;
       
-      // ✅ ИСПОЛЬЗУЕМ Future.wait для параллельного выполнения всех операций
       await Future.wait([
         prefs.setInt('dailyGoalGlasses', dailyGoalGlasses),
         prefs.setInt('waterGlassesToday', waterGlassesToday),
@@ -116,13 +115,12 @@ class FFAppState {
         prefs.setString('lastCheckedDay', lastCheckedDay ?? ''),
       ]);
     } catch (e) {
-      // 🔹 Если сохранение упало — пробрасываем исключение выше,
-      // чтобы UI мог показать SnackBar с ошибкой
       throw Exception('Не удалось сохранить данные: $e');
     }
   }
 
-  // 🔄 ПРОВЕРКА СМЕНЫ ДНЯ (ИСПРАВЛЕННАЯ ЛОГИКА)
+  // 🔄 ПРОВЕРКА СМЕНЫ ДНЯ
+  // ✅ ЗАДАЧА 2.2: Добавлена очистка старых записей (старше 90 дней)
   Future<void> checkDayChange() async {
     final now = DateTime.now();
     final todayString = DateFormat('yyyy-MM-dd').format(now);
@@ -141,14 +139,14 @@ class FFAppState {
       final yesterdayIndex = (yesterday.weekday - 1) % 7;
       weeklyWaterGlasses[yesterdayIndex] = waterGlassesToday;
       
-      // 2. 🆕 ОБНУЛЯЕМ ВСЕ ПРОПУЩЕННЫЕ ДНИ
+      // 2. ОБНУЛЯЕМ ВСЕ ПРОПУЩЕННЫЕ ДНИ
       final lastCheckedDate = DateTime.parse(lastCheckedDay!);
       final daysDiff = now.difference(lastCheckedDate).inDays;
       
       for (int i = 1; i < daysDiff; i++) {
         final missedDate = lastCheckedDate.add(Duration(days: i));
         final missedIndex = (missedDate.weekday - 1) % 7;
-        weeklyWaterGlasses[missedIndex] = 0; // ← Правило: пропущенный день = 0
+        weeklyWaterGlasses[missedIndex] = 0;
         
         final missedKey = DateFormat('yyyy-MM-dd').format(missedDate);
         dailyGoalsHistory[missedKey] = dailyGoalGlasses;
@@ -157,6 +155,12 @@ class FFAppState {
       // 3. Фиксируем цели для вчерашнего и сегодняшнего дня
       dailyGoalsHistory[yesterdayString] = dailyGoalGlasses;
       dailyGoalsHistory[todayString] = dailyGoalGlasses;
+      
+      // ✅ ЗАДАЧА 2.2: ОЧИЩАЕМ СТАРЫЕ ЗАПИСИ (старше 90 дней)
+      final cutoffDate = now.subtract(const Duration(days: 90));
+      final cutoffString = DateFormat('yyyy-MM-dd').format(cutoffDate);
+      
+      dailyGoalsHistory.removeWhere((key, value) => key.compareTo(cutoffString) < 0);
       
       // 4. Сброс счетчиков текущего дня
       waterGlassesToday = 0;
@@ -182,7 +186,6 @@ class FFAppState {
     final daysDiff = index - todayIndex;
     final targetDate = today.add(Duration(days: daysDiff));
     final dateKey = DateFormat('yyyy-MM-dd').format(targetDate);
-    // Если есть сохраненная цель для этого дня → берем её. Иначе → текущую.
     return dailyGoalsHistory[dateKey] ?? dailyGoalGlasses;
   }
 
