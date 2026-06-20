@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_state.dart';
 import 'pages/onboarding_page.dart';
 import 'pages/home_page.dart';
@@ -33,7 +32,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           brightness: Brightness.dark,
-          fontFamily: GoogleFonts.inter().fontFamily,
+          fontFamily: 'Inter', // ✅ ЗАМЕНЕНО: было GoogleFonts.inter().fontFamily
           scaffoldBackgroundColor: const Color(0xFF0D152A),
           appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xFF0D152A),
@@ -47,7 +46,7 @@ class MyApp extends StatelessWidget {
               letterSpacing: -0.1,
             ),
           ),
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
             displayLarge: TextStyle(
               fontFamily: 'Inter',
               color: Colors.white,
@@ -127,7 +126,7 @@ class MyApp extends StatelessWidget {
             ),
             bodySmall: TextStyle(
               fontFamily: 'Inter',
-              color: const Color(0xFFB0B8D0),
+              color: Color(0xFFB0B8D0),
               fontSize: 12,
               fontWeight: FontWeight.w500,
               letterSpacing: -0.05,
@@ -156,7 +155,7 @@ class MyApp extends StatelessWidget {
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ButtonStyle(
-              textStyle: WidgetStateProperty.resolveWith((_) => TextStyle(
+              textStyle: WidgetStateProperty.resolveWith((_) => const TextStyle(
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w500,
                 letterSpacing: -0.05,
@@ -164,7 +163,7 @@ class MyApp extends StatelessWidget {
               )),
             ),
           ),
-          tabBarTheme: TabBarThemeData(
+          tabBarTheme: const TabBarThemeData(
             labelStyle: TextStyle(
               fontFamily: 'Inter',
               fontWeight: FontWeight.w500,
@@ -275,10 +274,10 @@ class _MainAppState extends State<MainApp> {
       ),
       // 🔑 ГРАНИЦА МЕЖДУ РЕКЛАМНЫМ БЛОКОМ И ПАНЕЛЬЮ НАВИГАЦИИ
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: const Color(0xFF1A283F),
+              color: Color(0xFF1A283F),
               width: 1.5,
             ),
           ),
@@ -297,13 +296,13 @@ class _MainAppState extends State<MainApp> {
           showSelectedLabels: true,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: TextStyle(
+          selectedLabelStyle: const TextStyle(
             fontFamily: 'Inter',
             fontSize: 16,
             fontWeight: FontWeight.w500,
             letterSpacing: -0.05,
           ),
-          unselectedLabelStyle: TextStyle(
+          unselectedLabelStyle: const TextStyle(
             fontFamily: 'Inter',
             fontSize: 16,
             fontWeight: FontWeight.w500,

@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.3.2
-  google_fonts: ^6.2.1
+  # ✅ УДАЛЕНО: google_fonts: ^6.2.1 (переходим на локальный шрифт)
   intl: ^0.19.0
   url_launcher: ^6.3.0
   vibration: ^3.0.0
@@ -26,8 +26,23 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # ✅ ОБНОВЛЕНО: Добавлена папка fonts
   assets:
     - assets/icons/
+    - assets/fonts/
+
+  # ✅ НОВОЕ: Подключение локальных шрифтов
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter_18pt-Regular.ttf
+        - asset: assets/fonts/Inter_18pt-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter_18pt-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter_18pt-Bold.ttf
+          weight: 700
 
 # 🔑 НАСТРОЙКА ГЕНЕРАЦИИ ИКОНОК
 flutter_launcher_icons:
@@ -37,7 +52,7 @@ flutter_launcher_icons:
   adaptive_icon_background: "#fbfcfb"
   adaptive_icon_foreground: "assets/icons/app_icon.png"
 
-# 🌊 НАСТРОЙКА ЗАСТАВКИ (SPLASH SCREEN)
+#  НАСТРОЙКА ЗАСТАВКИ (SPLASH SCREEN)
 flutter_native_splash:
   color: "#fbfcfb"
   image: "assets/icons/app_icon.png"
