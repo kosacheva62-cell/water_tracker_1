@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'package:water_tracker_1/app_state.dart';
+import '../app_state.dart';
 import '../widgets/custom_app_bar.dart';
 import '../utils/pluralize.dart';
 
 class OnboardingPage extends StatefulWidget {
-  final FFAppState appState;
-  final VoidCallback onDataChanged;
-
-  const OnboardingPage({
-    super.key,
-    required this.appState,
-    required this.onDataChanged,
-  });
+  const OnboardingPage({super.key});
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -22,17 +16,20 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   late int _inputValue;
   late TextEditingController _controller;
+  bool _initialized = false;
 
   @override
-  void initState() {
-    super.initState();
-    // ✅ ИСПРАВЛЕНО: Используем константы вместо хардкода
-    _inputValue = widget.appState.dailyGoalGlasses.clamp(
-      FFAppState.minDailyGoalGlasses,
-      FFAppState.maxDailyGoalGlasses,
-    );
-    _controller = TextEditingController(text: _inputValue.toString());
-    _controller.addListener(_onTextChanged);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _inputValue = context.read<FFAppState>().dailyGoalGlasses.clamp(
+        FFAppState.minDailyGoalGlasses,
+        FFAppState.maxDailyGoalGlasses,
+      );
+      _controller = TextEditingController(text: _inputValue.toString());
+      _controller.addListener(_onTextChanged);
+      _initialized = true;
+    }
   }
 
   @override
@@ -70,15 +67,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     HapticFeedback.lightImpact();
     
     try {
-      // ✅ Ждём завершения сохранения
-      await widget.appState.completeOnboarding(_inputValue);
-      
-      // ДАЁМ СИСТЕМЕ 100мс НА ЗАВЕРШЕНИЕ ОБРАБОТКИ ЖЕСТА
+      await context.read<FFAppState>().completeOnboarding(_inputValue);
+
       await Future.delayed(const Duration(milliseconds: 100));
-      
-      if (mounted) {
-        widget.onDataChanged();
-      }
     } catch (e) {
       // ✅ Обработка ошибок
       if (!mounted) return;
@@ -98,6 +89,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
     // 🔑 ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;

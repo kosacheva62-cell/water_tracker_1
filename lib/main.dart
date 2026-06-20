@@ -16,15 +16,13 @@ void main() async {
   runApp(
     ChangeNotifierProvider.value(
       value: appState,
-      child: MyApp(appState: appState),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final FFAppState appState;
-
-  const MyApp({super.key, required this.appState});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -184,66 +182,38 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: _HomeWrapper(appState: appState),
+        home: const _HomeWrapper(),
       ),
     );
   }
 }
 
-class _HomeWrapper extends StatefulWidget {
-  final FFAppState appState;
-
-  const _HomeWrapper({required this.appState});
-
-  @override
-  State<_HomeWrapper> createState() => _HomeWrapperState();
-}
-
-class _HomeWrapperState extends State<_HomeWrapper> {
-  late FFAppState _appState;
-
-  @override
-  void initState() {
-    super.initState();
-    _appState = widget.appState;
-  }
-
-  void _onDataChanged() {
-    setState(() {});
-  }
+class _HomeWrapper extends StatelessWidget {
+  const _HomeWrapper();
 
   @override
   Widget build(BuildContext context) {
-    // 🔑 ИСПОЛЬЗУЕМ Offstage ВМЕСТО УСЛОВНОГО РЕНДЕРИНГА
-    // Обе страницы всегда в дереве, но одна скрыта через Offstage
-    return Stack(
-      children: [
-        // Основное приложение (скрыто во время онбординга)
-        Offstage(
-          offstage: !_appState.isOnboardingCompleted,
-          child: MainApp(
-            appState: _appState,
-            onDataChanged: _onDataChanged,
-          ),
-        ),
-        // Онбординг (скрыт после завершения)
-        Offstage(
-          offstage: _appState.isOnboardingCompleted,
-          child: OnboardingPage(
-            appState: _appState,
-            onDataChanged: _onDataChanged,
-          ),
-        ),
-      ],
+    return Consumer<FFAppState>(
+      builder: (context, appState, _) {
+        return Stack(
+          children: [
+            Offstage(
+              offstage: !appState.isOnboardingCompleted,
+              child: const MainApp(),
+            ),
+            Offstage(
+              offstage: appState.isOnboardingCompleted,
+              child: const OnboardingPage(),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
 class MainApp extends StatefulWidget {
-  final FFAppState appState;
-  final VoidCallback onDataChanged;
-
-  const MainApp({super.key, required this.appState, required this.onDataChanged});
+  const MainApp({super.key});
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -252,14 +222,16 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   int _currentIndex = 0;
 
-  final List<Widget Function(FFAppState, VoidCallback)> _pageBuilders = [
-    (appState, onDataChanged) => HomePage(appState: appState, onDataChanged: onDataChanged),
-    (appState, onDataChanged) => StatsPage(appState: appState),
-    (appState, onDataChanged) => SettingsPage(appState: appState, onDataChanged: onDataChanged),
+  static const List<Widget> _pages = [
+    HomePage(),
+    StatsPage(),
+    SettingsPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF0D152A),
       appBar: const CustomAppBar(),
@@ -268,7 +240,7 @@ class _MainAppState extends State<MainApp> {
         children: [
           // Контент страницы занимает всё доступное пространство НАД рекламным блоком
           Flexible(
-            child: _pageBuilders[_currentIndex](widget.appState, widget.onDataChanged),
+            child: _pages[_currentIndex],
           ),
           // 🔑 МЕСТО ПОД РЕКЛАМУ (нейтральное, сливается с фоном)
           Container(

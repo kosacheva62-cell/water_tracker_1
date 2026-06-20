@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../app_state.dart';
 import '../utils/pluralize.dart';
 
 class StatsPage extends StatelessWidget {
-  final FFAppState appState;
-
-  const StatsPage({super.key, required this.appState});
+  const StatsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<FFAppState>();
     // 🔑 ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ: ОПРЕДЕЛЯЕМ КАТЕГОРИЮ ЭКРАНА
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;

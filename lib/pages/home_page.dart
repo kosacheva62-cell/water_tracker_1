@@ -1,16 +1,14 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import '../app_state.dart'; 
 import '../utils/pluralize.dart';
 import '../widgets/animated_button.dart';
 
 class HomePage extends StatefulWidget {
-  final FFAppState appState;
-  final VoidCallback onDataChanged;
-
-  const HomePage({super.key, required this.appState, required this.onDataChanged});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -75,6 +73,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<FFAppState>();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
@@ -107,15 +106,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         ? 320.0 
         : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
-    final progress = widget.appState.dailyGoalGlasses > 0
-        ? (widget.appState.waterGlassesToday / widget.appState.dailyGoalGlasses).clamp(0.0, 1.0)
+    final progress = appState.dailyGoalGlasses > 0
+        ? (appState.waterGlassesToday / appState.dailyGoalGlasses).clamp(0.0, 1.0)
         : 0.0;
     
-    final isDone = widget.appState.waterGlassesToday >= widget.appState.dailyGoalGlasses;
+    final isDone = appState.waterGlassesToday >= appState.dailyGoalGlasses;
     final percent = (progress * 100).floor();
-    final glassesGenitive = pluralizeGlassesGenitive(widget.appState.dailyGoalGlasses);
-    final currentMl = widget.appState.waterGlassesToday * 250;
-    final goalMlValue = widget.appState.dailyGoalGlasses * 250;
+    final glassesGenitive = pluralizeGlassesGenitive(appState.dailyGoalGlasses);
+    final currentMl = appState.waterGlassesToday * 250;
+    final goalMlValue = appState.dailyGoalGlasses * 250;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -195,7 +194,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           SizedBox(height: spaceAfterCircle),
                           
                           Text(
-                            'Выпито: ${widget.appState.waterGlassesToday} из ${widget.appState.dailyGoalGlasses} $glassesGenitive',
+                            'Выпито: ${appState.waterGlassesToday} из ${appState.dailyGoalGlasses} $glassesGenitive',
                             style: TextStyle(
                               fontFamily: 'Inter',
                               color: Colors.white,
@@ -224,23 +223,23 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           Center(
                             child: AnimatedButton(
                               width: buttonWidth,  // ✅ Адаптивная ширина
-                              onPressed: () async {  // ✅ Добавили async
-                                try {  // ✅ Обернули в try/catch
-                                  final willCompleteGoal = widget.appState.dailyGoalGlasses > 0 
-                                      && widget.appState.waterGlassesToday + 1 >= widget.appState.dailyGoalGlasses;
+                              onPressed: () async {
+                                try {
+                                  final state = context.read<FFAppState>();
+                                  final willCompleteGoal = state.dailyGoalGlasses > 0 
+                                      && state.waterGlassesToday + 1 >= state.dailyGoalGlasses;
                                   
                                   if (willCompleteGoal) {
                                     _startConfettiRain();
-                                    await Vibration.vibrate(duration: 3000);  // ✅ await
+                                    await Vibration.vibrate(duration: 3000);
                                     HapticFeedback.mediumImpact();
                                   } else {
-                                    await Vibration.vibrate(duration: 50);  // ✅ await
+                                    await Vibration.vibrate(duration: 50);
                                     HapticFeedback.mediumImpact();
                                   }
                                   
-                                  await widget.appState.addGlass();  // ✅ Ждём сохранения!
-                                  widget.onDataChanged();
-                                } catch (e) {  // ✅ Обработка ошибок
+                                  await state.addGlass();
+                                } catch (e) {
                                   if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

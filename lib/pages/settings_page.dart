@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
@@ -8,14 +9,7 @@ import '../utils/pluralize.dart';
 import '../widgets/animated_button.dart';
 
 class SettingsPage extends StatefulWidget {
-  final FFAppState appState;
-  final VoidCallback onDataChanged;
-
-  const SettingsPage({
-    super.key,
-    required this.appState,
-    required this.onDataChanged,
-  });
+  const SettingsPage({super.key});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -24,12 +18,21 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver {
   late int _dailyGoalGlasses;
   bool _shouldShowThanksMessage = false;
+  bool _goalInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _dailyGoalGlasses = widget.appState.dailyGoalGlasses;
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_goalInitialized) {
+      _dailyGoalGlasses = context.read<FFAppState>().dailyGoalGlasses;
+      _goalInitialized = true;
+    }
   }
 
   @override
@@ -115,8 +118,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
   // ✅ ОБНОВЛЕНО: Добавлена обработка ошибок
   Future<void> _saveSettings() async {
     try {
-      await widget.appState.setDailyGoal(_dailyGoalGlasses);
-      widget.onDataChanged();
+      await context.read<FFAppState>().setDailyGoal(_dailyGoalGlasses);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -130,6 +132,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
+    context.watch<FFAppState>();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
