@@ -188,27 +188,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// ✅ ЗАДАЧА 3.1: УСЛОВНЫЙ РЕНДЕРИНГ вместо Offstage
 class _HomeWrapper extends StatelessWidget {
   const _HomeWrapper();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FFAppState>(
-      builder: (context, appState, _) {
-        return Stack(
-          children: [
-            Offstage(
-              offstage: !appState.isOnboardingCompleted,
-              child: const MainApp(),
-            ),
-            Offstage(
-              offstage: appState.isOnboardingCompleted,
-              child: const OnboardingPage(),
-            ),
-          ],
-        );
-      },
-    );
+    final appState = context.watch<FFAppState>();
+    
+    // ✅ Создаётся только нужная страница (экономия памяти)
+    if (appState.isOnboardingCompleted) {
+      return const MainApp();
+    } else {
+      return const OnboardingPage();
+    }
   }
 }
 
