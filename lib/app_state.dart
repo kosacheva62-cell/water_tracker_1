@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
-class FFAppState {
+class FFAppState extends ChangeNotifier {
   static final FFAppState _instance = FFAppState._internal();
   factory FFAppState() => _instance;
   FFAppState._internal();
@@ -129,6 +130,7 @@ class FFAppState {
       lastCheckedDay = todayString;
       dailyGoalsHistory[todayString] = dailyGoalGlasses;
       await save();
+      notifyListeners();
       return;
     }
 
@@ -168,6 +170,7 @@ class FFAppState {
       lastCheckedDay = todayString;
       
       await save();
+      notifyListeners();
     }
   }
 
@@ -177,6 +180,7 @@ class FFAppState {
     final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
     dailyGoalsHistory[todayString] = dailyGoalGlasses;
     await save();
+    notifyListeners();
   }
 
   // 📊 Получение цели для конкретного дня недели (0=Пн, 6=Вс)
@@ -196,6 +200,7 @@ class FFAppState {
     weeklyWaterGlasses[todayIndex] = waterGlassesToday;
     if (waterGlassesToday >= dailyGoalGlasses) isDoneToday = true;
     await save();
+    notifyListeners();
   }
 
   // 🚀 Завершение онбординга
@@ -210,5 +215,6 @@ class FFAppState {
     waterGlassesToday = 0;
     isDoneToday = false;
     await save();
+    notifyListeners();
   }
 }

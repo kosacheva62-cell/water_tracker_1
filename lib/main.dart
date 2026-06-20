@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'app_state.dart';
 import 'pages/onboarding_page.dart';
 import 'pages/home_page.dart';
@@ -12,7 +13,12 @@ void main() async {
   await appState.load();
   await appState.checkDayChange();
 
-  runApp(MyApp(appState: appState));
+  runApp(
+    ChangeNotifierProvider.value(
+      value: appState,
+      child: MyApp(appState: appState),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
