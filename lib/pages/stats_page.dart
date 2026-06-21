@@ -82,7 +82,7 @@ class StatsPage extends StatelessWidget {
                         fontFamily: 'Inter',
                         color: const Color(0xFF50FAF1),
                         fontSize: titleFontSize,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.05,
                         shadows: [
                           Shadow(
@@ -158,7 +158,7 @@ class StatsPage extends StatelessWidget {
                                     fontFamily: 'Inter',
                                     color: quantityColor,
                                     fontSize: glassesCountFontSize,
-                                    fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
+                                    fontWeight: isToday ? FontWeight.w700 : FontWeight.w600,
                                     letterSpacing: -0.05,
                                   ),
                                 ),
@@ -169,7 +169,7 @@ class StatsPage extends StatelessWidget {
                                     fontFamily: 'Inter',
                                     color: const Color(0xFFB0B8D0),
                                     fontSize: mlTextFontSize,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: -0.05,
                                   ),
                                 ),

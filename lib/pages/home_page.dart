@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                     fontFamily: 'Inter',
                                     color: const Color(0xFF50FAF1),
                                     fontSize: percentFontSize,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: -0.15,
                                     shadows: [
                                       Shadow(
@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               fontFamily: 'Inter',
                               color: Colors.white,
                               fontSize: glassesTextFontSize,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.05,
                             ),
                             textAlign: TextAlign.center,
@@ -212,7 +212,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               fontFamily: 'Inter',
                               color: const Color(0xFFB0B8D0),
                               fontSize: mlTextFontSize,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.05,
                             ),
                             textAlign: TextAlign.center,
@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               fontFamily: 'Inter',
                               color: isDone ? const Color(0xFF50FAF1) : const Color(0xFFB0B8D0),
                               fontSize: congratsFontSize,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.05,
                               shadows: isDone
                                   ? [

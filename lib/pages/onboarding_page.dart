@@ -173,7 +173,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           fontFamily: 'Inter',
                           color: const Color(0xFF50FAF1),
                           fontSize: titleFontSize,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.05,
                           shadows: [
                             Shadow(
@@ -223,7 +223,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           fontFamily: 'Inter',
                           color: Colors.white,
                           fontSize: goalFontSize,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: -0.05,
                         ),
                         textAlign: TextAlign.center,
@@ -255,7 +255,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               fontFamily: 'Inter',
                               color: Colors.black,
                               fontSize: buttonFontSize,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.1,
                             ),
                           ),
@@ -321,7 +321,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       fontFamily: 'Inter',
                       color: const Color(0xFF50FAF1),
                       fontSize: minusPlusFontSize,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: -0.3,
                       shadows: [
                         Shadow(
@@ -344,7 +344,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     fontFamily: 'Inter',
                     color: const Color(0xFF50FAF1),
                     fontSize: numberFontSize,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: -1.5,
                     shadows: [
                       Shadow(
@@ -377,7 +377,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       fontFamily: 'Inter',
                       color: const Color(0xFF50FAF1),
                       fontSize: minusPlusFontSize,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       letterSpacing: -0.3,
                       shadows: [
                         Shadow(
@@ -399,7 +399,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               fontFamily: 'Inter',
               color: const Color(0xFFB0B8D0),
               fontSize: hintFontSize,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             textAlign: TextAlign.center,

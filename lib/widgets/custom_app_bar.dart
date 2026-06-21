@@ -68,7 +68,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     fontFamily: 'Inter',
                     color: Colors.white,
                     fontSize: 26, // ← ТОЧНЫЙ РАЗМЕР 26 ПИКСЕЛЕЙ
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: -0.1,
                   ),
                 ),
@@ -82,7 +82,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 fontFamily: 'Inter',
                 color: const Color(0xFFB0B8D0),
                 fontSize: 16, // ← ТОЧНЫЙ РАЗМЕР 16 ПИКСЕЛЕЙ (как в навигации)
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 letterSpacing: -0.05,
               ),
               textAlign: TextAlign.center,
