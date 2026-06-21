@@ -33,16 +33,16 @@ flutter:
     - assets/icons/
     - assets/fonts/
 
-  # ✅ НОВОЕ: Подключение локальных шрифтов
+  # ✅ НОВОЕ: Подключение локальных шрифтов (стандартный Inter, не 18pt)
   fonts:
     - family: Inter
       fonts:
-        - asset: assets/fonts/Inter_18pt-Regular.ttf
-        - asset: assets/fonts/Inter_18pt-Medium.ttf
+        - asset: assets/fonts/Inter-Regular.ttf
+        - asset: assets/fonts/Inter-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Inter_18pt-SemiBold.ttf
+        - asset: assets/fonts/Inter-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/Inter_18pt-Bold.ttf
+        - asset: assets/fonts/Inter-Bold.ttf
           weight: 700
 
 # 🔑 НАСТРОЙКА ГЕНЕРАЦИИ ИКОНОК
@@ -53,7 +53,7 @@ flutter_launcher_icons:
   adaptive_icon_background: "#fbfcfb"
   adaptive_icon_foreground: "assets/icons/app_icon.png"
 
-#  НАСТРОЙКА ЗАСТАВКИ (SPLASH SCREEN)
+# 🌊 НАСТРОЙКА ЗАСТАВКИ (SPLASH SCREEN)
 flutter_native_splash:
   color: "#fbfcfb"
   image: "assets/icons/app_icon.png"
