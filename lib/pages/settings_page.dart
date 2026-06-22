@@ -7,6 +7,7 @@ import 'dart:io' show Platform;
 import '../app_state.dart';
 import '../utils/pluralize.dart';
 import '../widgets/animated_button.dart';
+import '../utils/app_colors.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -66,15 +67,15 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
           content: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF162238),
+              color: AppColors.card,
               border: Border.all(
-                color: const Color(0xFF50FAF1), 
+                color: AppColors.accent, 
                 width: 2.0,
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xAA50FAF1),
+                  color: AppColors.accentMedium,
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),
@@ -84,7 +85,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
               children: [
                 Icon(
                   Icons.email, 
-                  color: const Color(0xFF50FAF1), 
+                  color: AppColors.accent, 
                   size: 32,
                 ),
                 const SizedBox(width: 16),
@@ -93,13 +94,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     'Если вы отправили нам письмо, мы ответим в течение 3 дней.',
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      color: const Color(0xFF50FAF1),
+                      color: AppColors.accent,
                       fontSize: 19.0,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.05,
                       shadows: [
                         Shadow(
-                          color: const Color(0xCC50FAF1),
+                          color: AppColors.accentGlow,
                           blurRadius: 10,
                           offset: Offset.zero,
                         ),
@@ -214,13 +215,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        color: const Color(0xFF50FAF1),
+                        color: AppColors.accent,
                         fontSize: titleFontSize,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.05,
                         shadows: [
                           Shadow(
-                            color: const Color(0xCC50FAF1),
+                            color: AppColors.accentGlow,
                             blurRadius: 12,
                             offset: Offset.zero,
                           ),
@@ -235,7 +236,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0x8850FAF1),
+                          color: AppColors.accentShadow,
                           blurRadius: 16,
                           spreadRadius: 3,
                         ),
@@ -266,7 +267,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     'Ваша цель: ${_dailyGoalGlasses * 250} мл',
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: goalFontSize,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.05,
@@ -288,7 +289,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   ),
                   
                   const SizedBox(height: 24),
-                  Divider(color: const Color(0xFF1A283F)),
+                  Divider(color: AppColors.divider),
                   const SizedBox(height: 16),
                   
                   GestureDetector(
@@ -335,7 +336,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                           'Написать в службу поддержки',
                           style: TextStyle(
                             fontFamily: 'Inter',
-                            color: const Color(0xFFB0B8D0),
+                            color: AppColors.textSecondary,
                             fontSize: subtitleFontSize,
                             fontWeight: FontWeight.w600,
                             letterSpacing: -0.05,
@@ -349,7 +350,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                           children: [
                             Icon(
                               Icons.email,
-                              color: const Color(0xFF50FAF1),
+                              color: AppColors.accent,
                               size: isTablet ? 22.0 : (isTinyScreen ? 15.0 : (isSmallScreen ? 16.0 : 18.0)),
                             ),
                             const SizedBox(width: 4),
@@ -357,7 +358,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                               'hello.tiana.apps@gmail.com',
                               style: TextStyle(
                                 fontFamily: 'Inter',
-                                color: const Color(0xFFB0B8D0),
+                                color: AppColors.textSecondary,
                                 fontSize: subtitleFontSize,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: -0.05,
@@ -395,7 +396,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFF162238),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -421,13 +422,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     '–',
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      color: const Color(0xFF50FAF1),
+                      color: AppColors.accent,
                       fontSize: minusPlusFontSize,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.3,
                       shadows: [
                         Shadow(
-                          color: const Color(0xCC50FAF1),
+                          color: AppColors.accentGlow,
                           blurRadius: 12,
                           offset: Offset.zero,
                         ),
@@ -444,13 +445,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   '$value',
                   style: TextStyle(
                     fontFamily: 'Inter',
-                    color: const Color(0xFF50FAF1),
+                    color: AppColors.accent,
                     fontSize: numberFontSize,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -1.5,
                     shadows: [
                       Shadow(
-                        color: const Color(0xCC50FAF1),
+                        color: AppColors.accentGlow,
                         blurRadius: 12,
                         offset: Offset.zero,
                       ),
@@ -475,13 +476,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     '+',
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      color: const Color(0xFF50FAF1),
+                      color: AppColors.accent,
                       fontSize: minusPlusFontSize,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.3,
                       shadows: [
                         Shadow(
-                          color: const Color(0xCC50FAF1),
+                          color: AppColors.accentGlow,
                           blurRadius: 12,
                           offset: Offset.zero,
                         ),
@@ -497,7 +498,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
             title,
             style: TextStyle(
               fontFamily: 'Inter',
-              color: const Color(0xFFB0B8D0),
+              color: AppColors.textSecondary,
               fontSize: hintFontSize,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,

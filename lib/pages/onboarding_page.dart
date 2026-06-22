@@ -5,6 +5,7 @@ import 'package:vibration/vibration.dart';
 import '../app_state.dart';
 import '../widgets/custom_app_bar.dart';
 import '../utils/pluralize.dart';
+import '../utils/app_colors.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -151,7 +152,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
-          backgroundColor: const Color(0xFF0D152A),
+          backgroundColor: AppColors.background,
           appBar: CustomAppBar(
             title: 'Трекер воды',
             subtitle: 'Следите за вашим водным балансом',
@@ -171,13 +172,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: 'Inter',
-                          color: const Color(0xFF50FAF1),
+                          color: AppColors.accent,
                           fontSize: titleFontSize,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.05,
                           shadows: [
                             Shadow(
-                              color: const Color(0xCC50FAF1),
+                              color: AppColors.accentGlow,
                               blurRadius: 12,
                               offset: Offset.zero,
                             ),
@@ -192,7 +193,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0x8850FAF1),
+                              color: AppColors.accentShadow,
                               blurRadius: 16,
                               spreadRadius: 3,
                             ),
@@ -221,7 +222,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         'Ваша цель: $previewMl мл',
                         style: TextStyle(
                           fontFamily: 'Inter',
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontSize: goalFontSize,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.05,
@@ -239,11 +240,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           height: buttonHeight,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF50FAF1),
+                            color: AppColors.accent,
                             borderRadius: BorderRadius.circular(28),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0x8850FAF1),
+                                color: AppColors.accentShadow,
                                 blurRadius: 16,
                                 spreadRadius: 3,
                               ),
@@ -253,7 +254,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             'Сохранить',
                             style: TextStyle(
                               fontFamily: 'Inter',
-                              color: Colors.black,
+                              color: AppColors.textOnAccent,
                               fontSize: buttonFontSize,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.1,
@@ -291,7 +292,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFF162238),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -319,13 +320,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     '–',
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      color: const Color(0xFF50FAF1),
+                      color: AppColors.accent,
                       fontSize: minusPlusFontSize,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.3,
                       shadows: [
                         Shadow(
-                          color: const Color(0xCC50FAF1),
+                          color: AppColors.accentGlow,
                           blurRadius: 12,
                           offset: Offset.zero,
                         ),
@@ -342,13 +343,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   '$value',
                   style: TextStyle(
                     fontFamily: 'Inter',
-                    color: const Color(0xFF50FAF1),
+                    color: AppColors.accent,
                     fontSize: numberFontSize,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -1.5,
                     shadows: [
                       Shadow(
-                        color: const Color(0xCC50FAF1),
+                        color: AppColors.accentGlow,
                         blurRadius: 12,
                         offset: Offset.zero,
                       ),
@@ -375,13 +376,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     '+',
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      color: const Color(0xFF50FAF1),
+                      color: AppColors.accent,
                       fontSize: minusPlusFontSize,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.3,
                       shadows: [
                         Shadow(
-                          color: const Color(0xCC50FAF1),
+                          color: AppColors.accentGlow,
                           blurRadius: 12,
                           offset: Offset.zero,
                         ),
@@ -397,7 +398,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             title,
             style: TextStyle(
               fontFamily: 'Inter',
-              color: const Color(0xFFB0B8D0),
+              color: AppColors.textSecondary,
               fontSize: hintFontSize,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,

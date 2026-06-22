@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -15,7 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return SafeArea(
       bottom: false,
       child: Container(
-        color: const Color(0xFF0D152A),
+        color: AppColors.background,
         height: preferredSize.height,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,13 +35,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       boxShadow: [
                         // ОСНОВНОЕ СВЕЧЕНИЕ (ОЧЕНЬ МЯГКОЕ)
                         BoxShadow(
-                          color: const Color(0x9950FAF1), // ← 60% непрозрачности
+                          color: AppColors.accentShadow, // ← 60% непрозрачности
                           blurRadius: 8,
                           spreadRadius: 1,
                         ),
                         // ДОПОЛНИТЕЛЬНОЕ СВЕЧЕНИЕ (ЕДВА ЗАМЕТНОЕ)
                         BoxShadow(
-                          color: const Color(0x3350FAF1), // ← 20% непрозрачности
+                          color: AppColors.accentSoft, // ← 20% непрозрачности
                           blurRadius: 16,
                           spreadRadius: 0,
                         ),
@@ -48,7 +49,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     child: ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                        const Color(0xFF50FAF1),
+                        AppColors.accent,
                         BlendMode.srcIn,
                       ),
                       child: Image.asset(
@@ -66,7 +67,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   title,
                   style: TextStyle(
                     fontFamily: 'Inter',
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 26, // ← ТОЧНЫЙ РАЗМЕР 26 ПИКСЕЛЕЙ
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.1,
@@ -80,7 +81,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               subtitle,
               style: TextStyle(
                 fontFamily: 'Inter',
-                color: const Color(0xFFB0B8D0),
+                color: AppColors.textSecondary,
                 fontSize: 16, // ← ТОЧНЫЙ РАЗМЕР 16 ПИКСЕЛЕЙ (как в навигации)
                 fontWeight: FontWeight.w600,
                 letterSpacing: -0.05,

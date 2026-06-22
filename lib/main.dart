@@ -6,6 +6,7 @@ import 'pages/home_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/settings_page.dart';
 import 'widgets/custom_app_bar.dart';
+import 'utils/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,14 +38,14 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           brightness: Brightness.dark,
           fontFamily: 'Inter', // ✅ ЗАМЕНЕНО: было GoogleFonts.inter().fontFamily
-          scaffoldBackgroundColor: const Color(0xFF0D152A),
+          scaffoldBackgroundColor: AppColors.background,
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFF0D152A),
+            backgroundColor: AppColors.background,
             elevation: 0,
             centerTitle: true,
             titleTextStyle: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 26,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.1,
@@ -53,105 +54,105 @@ class MyApp extends StatelessWidget {
           textTheme: const TextTheme(
             displayLarge: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 57,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.2,
             ),
             displayMedium: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 45,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.2,
             ),
             displaySmall: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 36,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.15,
             ),
             headlineLarge: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 32,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.1,
             ),
             headlineMedium: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 28,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.1,
             ),
             headlineSmall: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 24,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             titleLarge: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 22,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             titleMedium: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             titleSmall: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             bodyLarge: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             bodyMedium: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             bodySmall: TextStyle(
               fontFamily: 'Inter',
-              color: Color(0xFFB0B8D0),
+              color: AppColors.textSecondary,
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             labelLarge: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             labelMedium: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
             ),
             labelSmall: TextStyle(
               fontFamily: 'Inter',
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontSize: 11,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.05,
@@ -226,7 +227,7 @@ class _MainAppState extends State<MainApp> {
     context.watch<FFAppState>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D152A),
+      backgroundColor: AppColors.background,
       appBar: const CustomAppBar(),
       // 🔑 СТРУКТУРА С МЕСТОМ ПОД РЕКЛАМУ (60 dp)
       body: Column(
@@ -238,7 +239,7 @@ class _MainAppState extends State<MainApp> {
           // 🔑 МЕСТО ПОД РЕКЛАМУ (нейтральное, сливается с фоном)
           Container(
             height: 60,
-            color: const Color(0xFF0D152A), // ← ЦВЕТ ОСНОВНОГО ФОНА
+            color: AppColors.background, // ← ЦВЕТ ОСНОВНОГО ФОНА
             child: const SizedBox.shrink(), // ← ПУСТО (без текста)
           ),
         ],
@@ -248,7 +249,7 @@ class _MainAppState extends State<MainApp> {
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: Color(0xFF1A283F),
+              color: AppColors.divider,
               width: 1.5,
             ),
           ),
@@ -261,9 +262,9 @@ class _MainAppState extends State<MainApp> {
             BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Статистика'),
             BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Настройки'),
           ],
-          backgroundColor: const Color(0xFF0D152A),
-          selectedItemColor: const Color(0xFF50FAF1),
-          unselectedItemColor: const Color(0xFFB0B8D0),
+          backgroundColor: AppColors.background,
+          selectedItemColor: AppColors.accent,
+          unselectedItemColor: AppColors.textSecondary,
           showSelectedLabels: true,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,

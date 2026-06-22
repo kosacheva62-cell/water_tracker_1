@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../app_state.dart';
 import '../utils/pluralize.dart';
+import '../utils/app_colors.dart';
 
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
@@ -80,13 +81,13 @@ class StatsPage extends StatelessWidget {
                       'Недельная статистика:',
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        color: const Color(0xFF50FAF1),
+                        color: AppColors.accent,
                         fontSize: titleFontSize,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.05,
                         shadows: [
                           Shadow(
-                            color: const Color(0xCC50FAF1),
+                            color: AppColors.accentGlow,
                             blurRadius: 12,
                             offset: Offset.zero,
                           ),
@@ -114,11 +115,11 @@ class StatsPage extends StatelessWidget {
                     final dayGoalMl = dayGoalGlasses * 250;
                     
                     final dayNameColor = isToday 
-                        ? const Color(0xFF50FAF1) 
-                        : (isFutureDay ? const Color(0xFFB0B8D0) : Colors.white);
+                        ? AppColors.accent 
+                        : (isFutureDay ? AppColors.textSecondary : AppColors.textPrimary);
                     final quantityColor = isToday 
-                        ? const Color(0xFF50FAF1) 
-                        : (isFutureDay ? const Color(0xFFB0B8D0) : Colors.white);
+                        ? AppColors.accent 
+                        : (isFutureDay ? AppColors.textSecondary : AppColors.textPrimary);
                     
                     return Column(
                       children: [
@@ -131,7 +132,7 @@ class StatsPage extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.water_drop,
-                                  color: const Color(0xFF50FAF1),
+                                  color: AppColors.accent,
                                   size: iconSize,
                                 ),
                                 SizedBox(width: spaceAfterIcon),
@@ -167,7 +168,7 @@ class StatsPage extends StatelessWidget {
                                   '$mlConsumed из $dayGoalMl мл',
                                   style: TextStyle(
                                     fontFamily: 'Inter',
-                                    color: const Color(0xFFB0B8D0),
+                                    color: AppColors.textSecondary,
                                     fontSize: mlTextFontSize,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: -0.05,
@@ -181,7 +182,7 @@ class StatsPage extends StatelessWidget {
                           SizedBox(height: spaceBetweenDays),
                           Container(
                             height: 1,
-                            color: const Color(0xFF1A283F),
+                            color: AppColors.divider,
                           ),
                           SizedBox(height: spaceBetweenDays),
                         ],

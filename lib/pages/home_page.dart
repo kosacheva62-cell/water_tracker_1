@@ -6,6 +6,7 @@ import 'package:vibration/vibration.dart';
 import '../app_state.dart'; 
 import '../utils/pluralize.dart';
 import '../widgets/animated_button.dart';
+import '../utils/app_colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -143,7 +144,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0x8850FAF1),
+                                  color: AppColors.accentShadow,
                                   blurRadius: 16,
                                   spreadRadius: 3,
                                 ),
@@ -158,8 +159,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   child: CircularProgressIndicator(
                                     value: progress,
                                     strokeWidth: ringWidth,
-                                    valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF50FAF1)),
-                                    backgroundColor: const Color(0xFF143A47),
+                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+                                    backgroundColor: AppColors.progressBackground,
                                     strokeCap: StrokeCap.round,
                                   ),
                                 ),
@@ -168,20 +169,20 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   height: centerCircleSize,
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Color(0xFF0D152A),
+                                    color: AppColors.background,
                                   ),
                                 ),
                                 Text(
                                   '$percent%',
                                   style: TextStyle(
                                     fontFamily: 'Inter',
-                                    color: const Color(0xFF50FAF1),
+                                    color: AppColors.accent,
                                     fontSize: percentFontSize,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: -0.15,
                                     shadows: [
                                       Shadow(
-                                        color: const Color(0xCC50FAF1),
+                                        color: AppColors.accentGlow,
                                         blurRadius: 12,
                                         offset: Offset.zero,
                                       ),
@@ -197,7 +198,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             'Выпито: ${appState.waterGlassesToday} из ${appState.dailyGoalGlasses} $glassesGenitive',
                             style: TextStyle(
                               fontFamily: 'Inter',
-                              color: Colors.white,
+                              color: AppColors.textPrimary,
                               fontSize: glassesTextFontSize,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.05,
@@ -210,7 +211,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             '$currentMl мл из $goalMlValue мл',
                             style: TextStyle(
                               fontFamily: 'Inter',
-                              color: const Color(0xFFB0B8D0),
+                              color: AppColors.textSecondary,
                               fontSize: mlTextFontSize,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.05,
@@ -261,14 +262,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'Inter',
-                              color: isDone ? const Color(0xFF50FAF1) : const Color(0xFFB0B8D0),
+                              color: isDone ? AppColors.accent : AppColors.textSecondary,
                               fontSize: congratsFontSize,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.05,
                               shadows: isDone
                                   ? [
                                       Shadow(
-                                        color: const Color(0xCC50FAF1),
+                                        color: AppColors.accentGlow,
                                         blurRadius: 12,
                                         offset: Offset.zero,
                                       ),
