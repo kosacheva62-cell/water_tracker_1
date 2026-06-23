@@ -25,7 +25,6 @@ class FFAppState extends ChangeNotifier {
   // ⚙️ Состояние приложения
   bool isDarkMode = true;
   bool isOnboardingCompleted = false;
-  DateTime? lastUpdateDate;
   Map<String, int> dailyGoalsHistory = {};
   String? lastCheckedDay;
 
@@ -48,9 +47,6 @@ class FFAppState extends ChangeNotifier {
     isDoneToday = prefs.getBool('isDoneToday') ?? false;
     isOnboardingCompleted = prefs.getBool('isOnboardingCompleted') ?? false;
     isDarkMode = prefs.getBool('isDarkMode') ?? true;
-    
-    final dateStr = prefs.getString('lastUpdateDate');
-    lastUpdateDate = dateStr != null ? DateTime.tryParse(dateStr) : null;
     
     final saved = prefs.getStringList('weeklyWaterGlasses');
     weeklyWaterGlasses = (saved != null && saved.length == 7)
@@ -111,7 +107,6 @@ class FFAppState extends ChangeNotifier {
         prefs.setBool('isOnboardingCompleted', isOnboardingCompleted),
         prefs.setBool('isDarkMode', isDarkMode),
         prefs.setStringList('weeklyWaterGlasses', weeklyWaterGlasses.map((e) => e.toString()).toList()),
-        prefs.setString('lastUpdateDate', lastUpdateDate?.toIso8601String() ?? ''),
         prefs.setString('dailyGoalsHistory', jsonEncode(dailyGoalsHistory)),
         prefs.setString('lastCheckedDay', lastCheckedDay ?? ''),
       ]);
@@ -207,10 +202,8 @@ class FFAppState extends ChangeNotifier {
   Future<void> completeOnboarding(int glasses) async {
     await setDailyGoal(glasses);
     isOnboardingCompleted = true;
-    final now = DateTime.now();
-    lastUpdateDate = DateTime(now.year, now.month, now.day);
-    lastCheckedDay = DateFormat('yyyy-MM-dd').format(now);
-    final todayIndex = (now.weekday - 1) % 7;
+    lastCheckedDay = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final todayIndex = (DateTime.now().weekday - 1) % 7;
     weeklyWaterGlasses[todayIndex] = 0;
     waterGlassesToday = 0;
     isDoneToday = false;
