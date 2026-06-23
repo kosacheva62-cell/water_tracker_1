@@ -45,21 +45,22 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
-  // 🔑 Запуск дождя из 🎉 — 60 ЭМОДЗИ, ФИКСИРОВАННАЯ НЕПРОЗРАЧНОСТЬ
+  // 🔑 Запуск дождя из 🎉 — 25 КРУПНЫХ ЭМОДЗИ (ОПТИМИЗИРОВАНО ДЛЯ МЕЖДУНАРОДНЫХ РЫНКОВ)
   void _startConfettiRain() {
     // 🎨 НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ АНИМАЦИИ
-    const particleCount = 60;           // 🔑 УВЕЛИЧЕНО: 60 эмодзи (было 30)
+    const particleCount = 25;           // 🔑 ОПТИМИЗИРОВАНО: 25 эмодзи (было 60)
     const maxDelay = 0.5;               // Макс. задержка появления в сек
     const minOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
     const maxOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
-    const minScale = 0.8;               // Мин. размер эмодзи
-    const maxScale = 1.4;               // Макс. размер эмодзи
+    const minScale = 1.5;               // 🔑 УВЕЛИЧЕНО: было 0.8 (крупные)
+    const maxScale = 2.5;               // 🔑 УВЕЛИЧЕНО: было 1.4 (очень крупные)
     const fallSpeed = 0.75;             // Скорость падения для всех
 
     setState(() {
       _showRain = true;
       _particles = List.generate(particleCount, (index) => _ConfettiParticle(
-        x: Random().nextDouble(),
+        // 🔑 СТРАТИФИЦИРОВАННАЯ ВЫБОРКА: равномерное распределение по ширине
+        x: (index + Random().nextDouble()) / particleCount,
         delay: Random().nextDouble() * maxDelay,
         speed: fallSpeed,
         scale: minScale + Random().nextDouble() * (maxScale - minScale),
@@ -285,29 +286,32 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            // 🔑 Дождь из 🎉
+            // 🔑 Дождь из 🎉 (С РАВНОМЕРНЫМ РАСПРЕДЕЛЕНИЕМ)
             if (_showRain)
               AnimatedBuilder(
                 animation: _rainController,
                 builder: (context, child) {
-                  return Stack(
-                    children: _particles.map((particle) {
-                      final progress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
-                      final opacity = 1.0; 
-                      final top = progress * particle.speed * MediaQuery.of(context).size.height;
-                      
-                      return Positioned(
-                        left: particle.x * MediaQuery.of(context).size.width,
-                        top: top,
-                        child: Opacity(
-                          opacity: opacity,
-                          child: Text(
-                            '🎉',
-                            style: TextStyle(fontSize: 24 * particle.scale),
-                          ),
-                        ),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Stack(
+                        children: _particles.map((particle) {
+                          final progress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
+                          final top = progress * particle.speed * constraints.maxHeight;
+                          
+                          return Positioned(
+                            left: particle.x * constraints.maxWidth,
+                            top: top,
+                            child: Opacity(
+                              opacity: 1.0,
+                              child: Text(
+                                '🎉',  // ✅ ИСПРАВЛЕНО: добавлено эмодзи
+                                style: TextStyle(fontSize: 24 * particle.scale),
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       );
-                    }).toList(),
+                    },
                   );
                 },
               ),
