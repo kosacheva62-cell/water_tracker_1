@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           
                           Text(
                             isDone
-                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉🎉'
+                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉'
                                 : 'Продолжайте, ваша цель ещё не достигнута!',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -286,7 +286,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            // 🔑 Дождь из 🎉 (С РАВНОМЕРНЫМ РАСПРЕДЕЛЕНИЕМ)
+            // 🔑 Дождь из 🎉 (С КОМПЕНСАЦИЕЙ РАЗМЕРА ЭМОДЗИ)
             if (_showRain)
               AnimatedBuilder(
                 animation: _rainController,
@@ -298,13 +298,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           final progress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
                           final top = progress * particle.speed * constraints.maxHeight;
                           
+                          // 🔑 КОМПЕНСАЦИЯ: вычитаем половину ширины эмодзи
+                          final emojiWidth = 24 * particle.scale;
+                          final leftPos = particle.x * constraints.maxWidth - emojiWidth / 2;
+                          
                           return Positioned(
-                            left: particle.x * constraints.maxWidth,
+                            left: leftPos,
                             top: top,
                             child: Opacity(
                               opacity: 1.0,
                               child: Text(
-                                '🎉',  // ✅ ИСПРАВЛЕНО: добавлено эмодзи
+                                '🎉',
                                 style: TextStyle(fontSize: 24 * particle.scale),
                               ),
                             ),
