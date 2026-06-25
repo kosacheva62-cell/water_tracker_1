@@ -233,7 +233,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   
                                   if (willCompleteGoal) {
                                     _startConfettiRain();
-                                    await Vibration.vibrate(duration: 3000);
+                                    // ✅ ЗАДАЧА 4.17: ОПТИМИЗИРОВАНО с 3000 до 1000 мс (улучшение UX)
+                                    await Vibration.vibrate(duration: 1000);
                                     HapticFeedback.mediumImpact();
                                   } else {
                                     await Vibration.vibrate(duration: 50);
