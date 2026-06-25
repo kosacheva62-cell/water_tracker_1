@@ -17,13 +17,12 @@ class FFAppState extends ChangeNotifier {
   int get dailyGoalMl => dailyGoalGlasses * 250; // 1 стакан = 250 мл
   
   int waterGlassesToday = 0;
-  bool isDoneToday = false;
   
   // 📊 Недельная статистика (Пн=0, Вт=1, ..., Вс=6)
   List<int> weeklyWaterGlasses = List.filled(7, 0);
   
   // ⚙️ Состояние приложения
-  bool isDarkMode = true;
+  bool isDarkMode = true;  // ⚠️ Зарезервировано для V2 (переключатель темы)
   bool isOnboardingCompleted = false;
   Map<String, int> dailyGoalsHistory = {};
   String? lastCheckedDay;
@@ -44,7 +43,6 @@ class FFAppState extends ChangeNotifier {
     
     dailyGoalGlasses = prefs.getInt('dailyGoalGlasses') ?? 8;
     waterGlassesToday = prefs.getInt('waterGlassesToday') ?? 0;
-    isDoneToday = prefs.getBool('isDoneToday') ?? false;
     isOnboardingCompleted = prefs.getBool('isOnboardingCompleted') ?? false;
     isDarkMode = prefs.getBool('isDarkMode') ?? true;
     
@@ -103,7 +101,6 @@ class FFAppState extends ChangeNotifier {
       await Future.wait([
         prefs.setInt('dailyGoalGlasses', dailyGoalGlasses),
         prefs.setInt('waterGlassesToday', waterGlassesToday),
-        prefs.setBool('isDoneToday', isDoneToday),
         prefs.setBool('isOnboardingCompleted', isOnboardingCompleted),
         prefs.setBool('isDarkMode', isDarkMode),
         prefs.setStringList('weeklyWaterGlasses', weeklyWaterGlasses.map((e) => e.toString()).toList()),
@@ -161,7 +158,6 @@ class FFAppState extends ChangeNotifier {
       
       // 4. Сброс счетчиков текущего дня
       waterGlassesToday = 0;
-      isDoneToday = false;
       lastCheckedDay = todayString;
       
       await save();
@@ -193,7 +189,6 @@ class FFAppState extends ChangeNotifier {
     waterGlassesToday++;
     final todayIndex = (DateTime.now().weekday - 1) % 7;
     weeklyWaterGlasses[todayIndex] = waterGlassesToday;
-    if (waterGlassesToday >= dailyGoalGlasses) isDoneToday = true;
     await save();
     notifyListeners();
   }
@@ -206,7 +201,6 @@ class FFAppState extends ChangeNotifier {
     final todayIndex = (DateTime.now().weekday - 1) % 7;
     weeklyWaterGlasses[todayIndex] = 0;
     waterGlassesToday = 0;
-    isDoneToday = false;
     await save();
     notifyListeners();
   }

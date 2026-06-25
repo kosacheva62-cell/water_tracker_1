@@ -29,6 +29,7 @@
 - Склонение: через pluralizeGlasses() → "1 стакан", "2 стакана", "5 стаканов"
 - Проверка смены дня: через `lastCheckedDay` (String в формате "yyyy-MM-dd")
 - История целей: `dailyGoalsHistory` (Map<String, int>), очистка записей старше 90 дней
+- Статус достижения цели вычисляется динамически в UI: `waterGlassesToday >= dailyGoalGlasses`
 - Глобальное масштабирование шрифтов отключено: `TextScaler.noScaling` (решение для Honor)
 
 ## 💾 Хранение
@@ -36,9 +37,8 @@
   - dailyGoalGlasses (int)
   - waterGlassesToday (int)
   - weeklyWaterGlasses (List<int>, длина 7)
-  - isDarkMode (bool)
+  - isDarkMode (bool) — зарезервировано для V2 (переключатель темы)
   - isOnboardingCompleted (bool)
-  - isDoneToday (bool)
   - dailyGoalsHistory (Map<String, int>, JSON)
   - lastCheckedDay (String, формат "yyyy-MM-dd")
 - При старте — проверка смены дня → сброс прогресса, запись в weeklyWaterGlasses
