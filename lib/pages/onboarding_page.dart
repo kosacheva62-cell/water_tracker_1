@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import '../app_state.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/goal_stepper.dart';
 import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
@@ -49,7 +50,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
     try {
       final value = int.parse(text);
-      // ✅ ИСПРАВЛЕНО: Используем константы вместо хардкода
       _inputValue = value.clamp(
         FFAppState.minDailyGoalGlasses,
         FFAppState.maxDailyGoalGlasses,
@@ -60,20 +60,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() {});
   }
 
-  // ✅ ОБНОВЛЕНО: Добавлены async/await и обработка ошибок
   Future<void> _onSave() async {
-    // 🔹 Вибрация для Samsung (50 мс)
     Vibration.vibrate(duration: 50);
-    
-    //  Дополнительный тактильный отклик для Honor/Pixel
     HapticFeedback.lightImpact();
     
     try {
       await context.read<FFAppState>().completeOnboarding(_inputValue);
-
       await Future.delayed(const Duration(milliseconds: 100));
     } catch (e) {
-      // ✅ Обработка ошибок
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -84,7 +78,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
-  //  ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ ИЗВЛЕЧЕНИЯ ФОРМЫ СЛОВА "СТАКАН"
   String _getGlassesForm(int value) {
     return pluralizeGlasses(value).split(' ').last;
   }
@@ -92,60 +85,31 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
-    // 🔑 ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
-    // 🔑 АДАПТИВНЫЕ РАЗМЕРЫ
-    final titleFontSize = isTablet 
-        ? 32.0 
-        : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
-    final topPadding = isTablet 
-        ? 24.0 
-        : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
-    final spaceAfterTitle = isTablet 
-        ? 36.0 
-        : (isTinyScreen ? 20.0 : (isSmallScreen ? 24.0 : 28.0));
-    final controlWidth = isTablet 
-        ? 80.0 
-        : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
-    final controlHeight = isTablet 
-        ? 80.0 
-        : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
-    final minusPlusFontSize = isTablet 
-        ? 50.0 
-        : (isTinyScreen ? 36.0 : (isSmallScreen ? 38.0 : 40.0));
-    final numberFontSize = isTablet 
-        ? 80.0 
-        : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
-    final numberContainerWidth = isTablet 
-        ? 100.0 
-        : (isTinyScreen ? 72.0 : (isSmallScreen ? 76.0 : 80.0));
+    final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
+    final topPadding = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
+    final spaceAfterTitle = isTablet ? 36.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 24.0 : 28.0));
+    
+    final controlWidth = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
+    final controlHeight = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
+    final minusPlusFontSize = isTablet ? 50.0 : (isTinyScreen ? 36.0 : (isSmallScreen ? 38.0 : 40.0));
+    final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
+    final numberContainerWidth = isTablet ? 100.0 : (isTinyScreen ? 72.0 : (isSmallScreen ? 76.0 : 80.0));
     final spaceBetweenControls = isTinyScreen ? 1.0 : 2.0;
-    final hintFontSize = isTablet 
-        ? 20.0 
-        : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
-    final spaceAfterInput = isTablet 
-        ? 36.0 
-        : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
-    final goalFontSize = isTablet 
-        ? 28.0 
-        : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
-    final spaceAfterGoal = isTablet 
-        ? 36.0 
-        : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
-    final buttonWidth = isTablet 
-        ? 320.0 
-        : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
-    final buttonHeight = isTablet 
-        ? 72.0 
-        : (isTinyScreen ? 56.0 : (isSmallScreen ? 58.0 : 60.0));
-    final buttonFontSize = isTablet 
-        ? 32.0 
-        : (isTinyScreen ? 24.0 : (isSmallScreen ? 25.0 : 26.0));
+    final hintFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
+    
+    final spaceAfterInput = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
+    final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
+    final spaceAfterGoal = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
+    
+    final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
+    final buttonHeight = isTablet ? 72.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 58.0 : 60.0));
+    final buttonFontSize = isTablet ? 32.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 25.0 : 26.0));
 
     final previewMl = _inputValue * 250;
     final glassesForm = _getGlassesForm(_inputValue);
@@ -175,7 +139,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       SizedBox(height: spaceAfterTitle),
 
-                      // НЕОНОВОЕ СВЕЧЕНИЕ ВОКРУГ ОКНА ВВОДА
                       Container(
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
@@ -188,10 +151,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ],
                           borderRadius: BorderRadius.circular(24),
                         ),
-                        child: _buildSettingRow(
+                        child: GoalStepper(
                           title: '$glassesForm по 250 мл',
                           value: _inputValue,
-                          // ✅ ИСПРАВЛЕНО: Используем константы вместо хардкода
                           min: FFAppState.minDailyGoalGlasses,
                           max: FFAppState.maxDailyGoalGlasses,
                           onChanged: (value) => setState(() => _inputValue = value),
@@ -213,7 +175,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       SizedBox(height: spaceAfterGoal),
 
-                      // 🔑 КНОПКА С ВИБРАЦИЕЙ
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: _onSave,
@@ -248,98 +209,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         );
       },
-    );
-  }
-
-  // 🔑 МЕТОД ПОСТРОЕНИЯ СТРОКИ НАСТРОЙКИ (ОБНОВЛЁН С ВИБРАЦИЕЙ)
-  Widget _buildSettingRow({
-    required String title,
-    required int value,
-    required int min,
-    required int max,
-    required ValueChanged<int> onChanged,
-    required double controlWidth,
-    required double controlHeight,
-    required double minusPlusFontSize,
-    required double numberFontSize,
-    required double numberContainerWidth,
-    required double spaceBetweenControls,
-    required double hintFontSize,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 🔹 КНОПКА "–" С ВИБРАЦИЕЙ
-              GestureDetector(
-                onTap: () {
-                  if (value > min) {
-                    // 🔹 Короткая вибрация для всех устройств (30 мс — лёгкий щелчок)
-                    Vibration.vibrate(duration: 30);
-                    HapticFeedback.lightImpact();
-                    onChanged(value - 1);
-                  }
-                },
-                child: Container(
-                  width: controlWidth,
-                  height: controlHeight,
-                  alignment: Alignment.center,
-                  child: Text(
-                    '–',
-                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
-                  ),
-                ),
-              ),
-              SizedBox(width: spaceBetweenControls),
-              Container(
-                width: numberContainerWidth,
-                alignment: Alignment.center,
-                child: Text(
-                  '$value',
-                  style: TextStyles.number(fontSize: numberFontSize),
-                ),
-              ),
-              SizedBox(width: spaceBetweenControls),
-              // 🔹 КНОПКА "+" С ВИБРАЦИЕЙ
-              GestureDetector(
-                onTap: () {
-                  if (value < max) {
-                    // 🔹 Короткая вибрация для всех устройств (30 мс — лёгкий щелчок)
-                    Vibration.vibrate(duration: 30);
-                    HapticFeedback.lightImpact();
-                    onChanged(value + 1);
-                  }
-                },
-                child: Container(
-                  width: controlWidth,
-                  height: controlHeight,
-                  alignment: Alignment.center,
-                  child: Text(
-                    '+',
-                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyles.hint(fontSize: hintFontSize),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 }
