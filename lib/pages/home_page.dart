@@ -259,7 +259,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           
                           Text(
                             isDone
-                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉'
+                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉🎉'
                                 : 'Продолжайте, ваша цель ещё не достигнута!',
                             textAlign: TextAlign.center,
                             style: TextStyle(

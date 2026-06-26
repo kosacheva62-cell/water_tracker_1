@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 import 'dart:convert';
+
+// ✅ ЗАДАЧА: Своя функция форматирования дат вместо intl
+String formatDateKey(DateTime date) {
+  return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+}
 
 class FFAppState extends ChangeNotifier {
   static final FFAppState _instance = FFAppState._internal();
@@ -71,7 +75,7 @@ class FFAppState extends ChangeNotifier {
       final today = DateTime.now();
       for (int i = 0; i < 7; i++) {
         final date = today.subtract(Duration(days: i));
-        final key = DateFormat('yyyy-MM-dd').format(date);
+        final key = formatDateKey(date);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
         dailyGoalsHistory[key] = dailyGoalGlasses;
       }
       await save();
@@ -80,7 +84,7 @@ class FFAppState extends ChangeNotifier {
     // Инициализация lastCheckedDay
     if (lastCheckedDay == null) {
       dailyGoalGlasses = 8;
-      lastCheckedDay = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      lastCheckedDay = formatDateKey(DateTime.now());  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
       dailyGoalsHistory[lastCheckedDay!] = 8;
       await save();
     }
@@ -116,7 +120,7 @@ class FFAppState extends ChangeNotifier {
   // ✅ ЗАДАЧА 2.2: Добавлена очистка старых записей (старше 90 дней)
   Future<void> checkDayChange() async {
     final now = DateTime.now();
-    final todayString = DateFormat('yyyy-MM-dd').format(now);
+    final todayString = formatDateKey(now);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
 
     if (lastCheckedDay == null) {
       lastCheckedDay = todayString;
@@ -129,7 +133,7 @@ class FFAppState extends ChangeNotifier {
     if (lastCheckedDay != todayString) {
       // 1. Сохраняем итог за вчерашний день
       final yesterday = now.subtract(Duration(days: 1));
-      final yesterdayString = DateFormat('yyyy-MM-dd').format(yesterday);
+      final yesterdayString = formatDateKey(yesterday);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
       final yesterdayIndex = (yesterday.weekday - 1) % 7;
       weeklyWaterGlasses[yesterdayIndex] = waterGlassesToday;
       
@@ -142,7 +146,7 @@ class FFAppState extends ChangeNotifier {
         final missedIndex = (missedDate.weekday - 1) % 7;
         weeklyWaterGlasses[missedIndex] = 0;
         
-        final missedKey = DateFormat('yyyy-MM-dd').format(missedDate);
+        final missedKey = formatDateKey(missedDate);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
         dailyGoalsHistory[missedKey] = dailyGoalGlasses;
       }
       
@@ -152,7 +156,7 @@ class FFAppState extends ChangeNotifier {
       
       // ✅ ЗАДАЧА 2.2: ОЧИЩАЕМ СТАРЫЕ ЗАПИСИ (старше 90 дней)
       final cutoffDate = now.subtract(const Duration(days: 90));
-      final cutoffString = DateFormat('yyyy-MM-dd').format(cutoffDate);
+      final cutoffString = formatDateKey(cutoffDate);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
       
       dailyGoalsHistory.removeWhere((key, value) => key.compareTo(cutoffString) < 0);
       
@@ -168,7 +172,7 @@ class FFAppState extends ChangeNotifier {
   // 🎯 Изменение дневной цели (С ИСПОЛЬЗОВАНИЕМ КОНСТАНТ)
   Future<void> setDailyGoal(int glasses) async {
     dailyGoalGlasses = glasses.clamp(minDailyGoalGlasses, maxDailyGoalGlasses);
-    final todayString = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final todayString = formatDateKey(DateTime.now());  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
     dailyGoalsHistory[todayString] = dailyGoalGlasses;
     await save();
     notifyListeners();
@@ -180,7 +184,7 @@ class FFAppState extends ChangeNotifier {
     final todayIndex = (today.weekday - 1) % 7;
     final daysDiff = index - todayIndex;
     final targetDate = today.add(Duration(days: daysDiff));
-    final dateKey = DateFormat('yyyy-MM-dd').format(targetDate);
+    final dateKey = formatDateKey(targetDate);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
     return dailyGoalsHistory[dateKey] ?? dailyGoalGlasses;
   }
 
@@ -197,7 +201,7 @@ class FFAppState extends ChangeNotifier {
   Future<void> completeOnboarding(int glasses) async {
     await setDailyGoal(glasses);
     isOnboardingCompleted = true;
-    lastCheckedDay = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    lastCheckedDay = formatDateKey(DateTime.now());  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
     final todayIndex = (DateTime.now().weekday - 1) % 7;
     weeklyWaterGlasses[todayIndex] = 0;
     waterGlassesToday = 0;
