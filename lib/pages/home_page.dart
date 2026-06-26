@@ -46,13 +46,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
-  // 🔑 Запуск дождя из  — 25 КРУПНЫХ ЭМОДЗИ (ОПТИМИЗИРОВАНО ДЛЯ МЕЖДУНАРОДНЫХ РЫНКОВ)
+  // 🔑 Запуск дождя из 🎉 — 25 КРУПНЫХ ЭМОДЗИ (ОПТИМИЗИРОВАНО ДЛЯ МЕЖДУНАРОДНЫХ РЫНКОВ)
   void _startConfettiRain() {
     // 🎨 НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ АНИМАЦИИ
     const particleCount = 25;           // 🔑 ОПТИМИЗИРОВАНО: 25 эмодзи (было 60)
     const maxDelay = 0.5;               // Макс. задержка появления в сек
     const minOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
-    const maxOpacity = 1.0;             //  ФИКСИРОВАННАЯ: 100% непрозрачность
+    const maxOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
     const minScale = 1.5;               // 🔑 УВЕЛИЧЕНО: было 0.8 (крупные)
     const maxScale = 2.5;               // 🔑 УВЕЛИЧЕНО: было 1.4 (очень крупные)
     const fallSpeed = 0.75;             // Скорость падения для всех
@@ -270,7 +270,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            // 🔑 Дождь из  (С КОМПЕНСАЦИЕЙ РАЗМЕРА ЭМОДЗИ)
+            // 🔑 Дождь из 🎉 (С КОМПЕНСАЦИЕЙ РАЗМЕРА ЭМОДЗИ)
             if (_showRain)
               AnimatedBuilder(
                 animation: _rainController,
@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             child: Opacity(
                               opacity: 1.0,
                               child: Text(
-                                '',
+                                '🎉',
                                 style: TextStyles.emoji(fontSize: 24 * particle.scale),
                               ),
                             ),
