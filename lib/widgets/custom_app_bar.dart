@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -24,7 +25,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Капля со свечением (ЕЩЁ МЕНЬШАЯ ИНТЕНСИВНОСТЬ)
+                // Капля со свечением
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Container(
@@ -33,15 +34,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
-                        // ОСНОВНОЕ СВЕЧЕНИЕ (ОЧЕНЬ МЯГКОЕ)
                         BoxShadow(
-                          color: AppColors.accentShadow, // ← 60% непрозрачности
+                          color: AppColors.accentShadow,
                           blurRadius: 8,
                           spreadRadius: 1,
                         ),
-                        // ДОПОЛНИТЕЛЬНОЕ СВЕЧЕНИЕ (ЕДВА ЗАМЕТНОЕ)
                         BoxShadow(
-                          color: AppColors.accentSoft, // ← 20% непрозрачности
+                          color: AppColors.accentSoft,
                           blurRadius: 16,
                           spreadRadius: 0,
                         ),
@@ -62,30 +61,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                // КАСТОМНЫЙ СТИЛЬ с точным размером 26 пикселей
+                // ✅ ЗАМЕНЕНО: Используем TextStyles
                 Text(
                   title,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
+                  style: TextStyles.regular(
                     color: AppColors.textPrimary,
-                    fontSize: 26, // ← ТОЧНЫЙ РАЗМЕР 26 ПИКСЕЛЕЙ
-                    fontWeight: FontWeight.w600,
+                    fontSize: 26,
                     letterSpacing: -0.1,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 2), // ← УМЕНЬШЕННЫЙ ОТСТУП (было 4)
-            // КАСТОМНЫЙ СТИЛЬ с точным размером 16 пикселей (как микротекст)
+            const SizedBox(height: 2),
+            // ✅ ЗАМЕНЕНО: Используем TextStyles
             Text(
               subtitle,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                color: AppColors.textSecondary,
-                fontSize: 16, // ← ТОЧНЫЙ РАЗМЕР 16 ПИКСЕЛЕЙ (как в навигации)
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.05,
-              ),
+              style: TextStyles.subtitle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
           ],

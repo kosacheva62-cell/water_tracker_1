@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 import '../app_state.dart';
 import '../utils/pluralize.dart';
+import '../utils/text_styles.dart';
 import '../widgets/animated_button.dart';
 import '../utils/app_colors.dart';
 
@@ -92,19 +93,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                 Expanded(
                   child: Text(
                     'Если вы отправили нам письмо, мы ответим в течение 3 дней.',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
+                    style: TextStyles.neon(
                       color: AppColors.accent,
                       fontSize: 19.0,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.05,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.accentGlow,
-                          blurRadius: 10,
-                          offset: Offset.zero,
-                        ),
-                      ],
                     ),
                   ),
                 ),
@@ -209,25 +200,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Center(
-                    child: Text(
-                      'Установите цель на день:',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        color: AppColors.accent,
-                        fontSize: titleFontSize,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.05,
-                        shadows: [
-                          Shadow(
-                            color: AppColors.accentGlow,
-                            blurRadius: 12,
-                            offset: Offset.zero,
-                          ),
-                        ],
-                      ),
-                    ),
+                  Text(
+                    'Установите цель на день:',
+                    textAlign: TextAlign.center,
+                    style: TextStyles.title(fontSize: titleFontSize),
                   ),
                   SizedBox(height: spaceAfterTitle),
                   
@@ -246,7 +222,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     child: _buildSettingRow(
                       title: '$glassesForm по 250 мл',
                       value: _dailyGoalGlasses,
-                      // ✅ ИСПРАВЛЕНО: Используем константы из FFAppState вместо хардкода
                       min: FFAppState.minDailyGoalGlasses,
                       max: FFAppState.maxDailyGoalGlasses,
                       onChanged: (value) => setState(() {
@@ -265,13 +240,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   
                   Text(
                     'Ваша цель: ${_dailyGoalGlasses * 250} мл',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      color: AppColors.textPrimary,
-                      fontSize: goalFontSize,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.05,
-                    ),
+                    style: TextStyles.goal(fontSize: goalFontSize),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: spaceAfterGoal),
@@ -334,13 +303,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       children: [
                         Text(
                           'Написать в службу поддержки',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            color: AppColors.textSecondary,
-                            fontSize: subtitleFontSize,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.05,
-                          ),
+                          style: TextStyles.subtitle(fontSize: subtitleFontSize),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 4),
@@ -356,13 +319,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             const SizedBox(width: 4),
                             Text(
                               'hello.tiana.apps@gmail.com',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                color: AppColors.textSecondary,
-                                fontSize: subtitleFontSize,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.05,
-                              ),
+                              style: TextStyles.subtitle(fontSize: subtitleFontSize),
                             ),
                           ],
                         ),
@@ -420,20 +377,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   alignment: Alignment.center,
                   child: Text(
                     '–',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      color: AppColors.accent,
-                      fontSize: minusPlusFontSize,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.3,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.accentGlow,
-                          blurRadius: 12,
-                          offset: Offset.zero,
-                        ),
-                      ],
-                    ),
+                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
                   ),
                 ),
               ),
@@ -443,20 +387,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                 alignment: Alignment.center,
                 child: Text(
                   '$value',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    color: AppColors.accent,
-                    fontSize: numberFontSize,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -1.5,
-                    shadows: [
-                      Shadow(
-                        color: AppColors.accentGlow,
-                        blurRadius: 12,
-                        offset: Offset.zero,
-                      ),
-                    ],
-                  ),
+                  style: TextStyles.number(fontSize: numberFontSize),
                 ),
               ),
               SizedBox(width: spaceBetweenControls),
@@ -474,20 +405,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   alignment: Alignment.center,
                   child: Text(
                     '+',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      color: AppColors.accent,
-                      fontSize: minusPlusFontSize,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.3,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.accentGlow,
-                          blurRadius: 12,
-                          offset: Offset.zero,
-                        ),
-                      ],
-                    ),
+                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
                   ),
                 ),
               ),
@@ -496,13 +414,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
           const SizedBox(height: 12),
           Text(
             title,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              color: AppColors.textSecondary,
-              fontSize: hintFontSize,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.05,
-            ),
+            style: TextStyles.hint(fontSize: hintFontSize),
             textAlign: TextAlign.center,
           ),
         ],

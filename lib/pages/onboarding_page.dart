@@ -5,6 +5,7 @@ import 'package:vibration/vibration.dart';
 import '../app_state.dart';
 import '../widgets/custom_app_bar.dart';
 import '../utils/pluralize.dart';
+import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -64,7 +65,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     // 🔹 Вибрация для Samsung (50 мс)
     Vibration.vibrate(duration: 50);
     
-    // 🔹 Дополнительный тактильный отклик для Honor/Pixel
+    //  Дополнительный тактильный отклик для Honor/Pixel
     HapticFeedback.lightImpact();
     
     try {
@@ -83,7 +84,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
-  // 🔑 ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ ИЗВЛЕЧЕНИЯ ФОРМЫ СЛОВА "СТАКАН"
+  //  ВСПОМОГАТЕЛЬНЫЙ МЕТОД ДЛЯ ИЗВЛЕЧЕНИЯ ФОРМЫ СЛОВА "СТАКАН"
   String _getGlassesForm(int value) {
     return pluralizeGlasses(value).split(' ').last;
   }
@@ -170,20 +171,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       Text(
                         'Привет! Какая ваша цель по воде на день?',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          color: AppColors.accent,
-                          fontSize: titleFontSize,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.05,
-                          shadows: [
-                            Shadow(
-                              color: AppColors.accentGlow,
-                              blurRadius: 12,
-                              offset: Offset.zero,
-                            ),
-                          ],
-                        ),
+                        style: TextStyles.title(fontSize: titleFontSize),
                       ),
                       SizedBox(height: spaceAfterTitle),
 
@@ -220,13 +208,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                       Text(
                         'Ваша цель: $previewMl мл',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          color: AppColors.textPrimary,
-                          fontSize: goalFontSize,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.05,
-                        ),
+                        style: TextStyles.goal(fontSize: goalFontSize),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: spaceAfterGoal),
@@ -252,12 +234,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ),
                           child: Text(
                             'Сохранить',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              color: AppColors.textOnAccent,
+                            style: TextStyles.button.copyWith(
                               fontSize: buttonFontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.1,
                             ),
                           ),
                         ),
@@ -318,20 +296,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   alignment: Alignment.center,
                   child: Text(
                     '–',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      color: AppColors.accent,
-                      fontSize: minusPlusFontSize,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.3,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.accentGlow,
-                          blurRadius: 12,
-                          offset: Offset.zero,
-                        ),
-                      ],
-                    ),
+                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
                   ),
                 ),
               ),
@@ -341,20 +306,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 alignment: Alignment.center,
                 child: Text(
                   '$value',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    color: AppColors.accent,
-                    fontSize: numberFontSize,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -1.5,
-                    shadows: [
-                      Shadow(
-                        color: AppColors.accentGlow,
-                        blurRadius: 12,
-                        offset: Offset.zero,
-                      ),
-                    ],
-                  ),
+                  style: TextStyles.number(fontSize: numberFontSize),
                 ),
               ),
               SizedBox(width: spaceBetweenControls),
@@ -374,20 +326,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   alignment: Alignment.center,
                   child: Text(
                     '+',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      color: AppColors.accent,
-                      fontSize: minusPlusFontSize,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.3,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.accentGlow,
-                          blurRadius: 12,
-                          offset: Offset.zero,
-                        ),
-                      ],
-                    ),
+                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
                   ),
                 ),
               ),
@@ -396,13 +335,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           const SizedBox(height: 12),
           Text(
             title,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              color: AppColors.textSecondary,
-              fontSize: hintFontSize,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.05,
-            ),
+            style: TextStyles.hint(fontSize: hintFontSize),
             textAlign: TextAlign.center,
           ),
         ],

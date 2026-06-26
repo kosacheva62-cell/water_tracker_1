@@ -1,9 +1,9 @@
 # Проектные правила для Water Tracker v1
 
-## 🎯 Цель
+##  Цель
 Оффлайн-приложение для учёта воды. Без аккаунтов, без интернета, без Firebase. Данные — только на устройстве.
 
-## 🧠 Архитектура
+##  Архитектура
 - Единое состояние: `FFAppState` (singleton, persisted через shared_preferences)
 - Нет Bloc/Riverpod/GetX — только StatefulWidget + setState + Provider
 - Все данные — локальные, без сервера
@@ -14,9 +14,11 @@
 - Комментарии: на русском (только где логика неочевидна)
 - UI: полностью на русском (ru-RU)
 
-## 🎨 Дизайн
+##  Дизайн
 - Тема: тёмная неоновая (фон `#0D152A`, акцент `#50FAF1`)
 - Все цвета централизованы в `utils/app_colors.dart` (класс `AppColors`)
+- Все стили текста централизованы в `utils/text_styles.dart` (класс `TextStyles`)
+- Использование `.copyWith()` для устранения дублирования стилей
 - AppBar: двухстрочный ("💧Трекер воды" + "Следите за водным балансом")
 - BottomNavigationBar: на всех экранах, кроме OnboardingPage
 - Резерв под баннер: Container(height: 60) над навигацией
@@ -28,11 +30,12 @@
 - Некорректный ввод → fallback на 8
 - Склонение: через pluralizeGlasses() → "1 стакан", "2 стакана", "5 стаканов"
 - Проверка смены дня: через `lastCheckedDay` (String в формате "yyyy-MM-dd")
+- Форматирование дат: через собственную функцию `formatDateKey()` (без явного использования `intl`)
 - История целей: `dailyGoalsHistory` (Map<String, int>), очистка записей старше 90 дней
 - Статус достижения цели вычисляется динамически в UI: `waterGlassesToday >= dailyGoalGlasses`
 - Глобальное масштабирование шрифтов отключено: `TextScaler.noScaling` (решение для Honor)
 
-## 💾 Хранение
+##  Хранение
 - Все переменные — persisted через SharedPreferences:
   - dailyGoalGlasses (int)
   - waterGlassesToday (int)
@@ -61,9 +64,10 @@
 lib/
 ├── main.dart
 ├── app_state.dart
-├── utils/
+── utils/
 │   ├── pluralize.dart
-│   └── app_colors.dart
+│   ├── app_colors.dart
+│   └── text_styles.dart
 ├── widgets/
 │   ├── custom_app_bar.dart
 │   └── animated_button.dart

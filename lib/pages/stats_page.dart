@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../app_state.dart';
 import '../utils/pluralize.dart';
+import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
 
 class StatsPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class StatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<FFAppState>();
-    // 🔑 ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ: ОПРЕДЕЛЯЕМ КАТЕГОРИЮ ЭКРАНА
+    //  ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ: ОПРЕДЕЛЯЕМ КАТЕГОРИЮ ЭКРАНА
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
@@ -55,8 +56,6 @@ class StatsPage extends StatelessWidget {
 
     const List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
     final todayIndex = (DateTime.now().weekday - 1) % 7;
-    // 🔑 УДАЛЕНО: final dailyGoalMl = appState.dailyGoalGlasses * 250; 
-    // (теперь цель вычисляется индивидуально для каждого дня)
 
     // 🔑 УСЛОВНАЯ ПРОКРУТКА КАК РЕЗЕРВНЫЙ МЕХАНИЗМ
     return LayoutBuilder(
@@ -79,20 +78,7 @@ class StatsPage extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       'Недельная статистика:',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        color: AppColors.accent,
-                        fontSize: titleFontSize,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.05,
-                        shadows: [
-                          Shadow(
-                            color: AppColors.accentGlow,
-                            blurRadius: 12,
-                            offset: Offset.zero,
-                          ),
-                        ],
-                      ),
+                      style: TextStyles.title(fontSize: titleFontSize),
                     ),
                   ),
                   SizedBox(height: spaceAfterTitle),
@@ -138,12 +124,10 @@ class StatsPage extends StatelessWidget {
                                 SizedBox(width: spaceAfterIcon),
                                 Text(
                                   day,
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
+                                  style: TextStyles.base.copyWith(
                                     color: dayNameColor,
                                     fontSize: dayNameFontSize,
                                     fontWeight: isToday ? FontWeight.w700 : FontWeight.w600,
-                                    letterSpacing: -0.05,
                                   ),
                                 ),
                               ],
@@ -155,24 +139,16 @@ class StatsPage extends StatelessWidget {
                               children: [
                                 Text(
                                   '$glasses ${pluralizeGlasses(glasses)}',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
+                                  style: TextStyles.base.copyWith(
                                     color: quantityColor,
                                     fontSize: glassesCountFontSize,
                                     fontWeight: isToday ? FontWeight.w700 : FontWeight.w600,
-                                    letterSpacing: -0.05,
                                   ),
                                 ),
                                 // 🔑 КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Используем индивидуальную цель дня
                                 Text(
                                   '$mlConsumed из $dayGoalMl мл',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    color: AppColors.textSecondary,
-                                    fontSize: mlTextFontSize,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: -0.05,
-                                  ),
+                                  style: TextStyles.subtitle(fontSize: mlTextFontSize),
                                 ),
                               ],
                             ),

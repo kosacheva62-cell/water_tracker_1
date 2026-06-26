@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import '../app_state.dart'; 
 import '../utils/pluralize.dart';
+import '../utils/text_styles.dart';
 import '../widgets/animated_button.dart';
 import '../utils/app_colors.dart';
 
@@ -45,13 +46,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
-  // 🔑 Запуск дождя из 🎉 — 25 КРУПНЫХ ЭМОДЗИ (ОПТИМИЗИРОВАНО ДЛЯ МЕЖДУНАРОДНЫХ РЫНКОВ)
+  // 🔑 Запуск дождя из  — 25 КРУПНЫХ ЭМОДЗИ (ОПТИМИЗИРОВАНО ДЛЯ МЕЖДУНАРОДНЫХ РЫНКОВ)
   void _startConfettiRain() {
     // 🎨 НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ АНИМАЦИИ
     const particleCount = 25;           // 🔑 ОПТИМИЗИРОВАНО: 25 эмодзи (было 60)
     const maxDelay = 0.5;               // Макс. задержка появления в сек
     const minOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
-    const maxOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
+    const maxOpacity = 1.0;             //  ФИКСИРОВАННАЯ: 100% непрозрачность
     const minScale = 1.5;               // 🔑 УВЕЛИЧЕНО: было 0.8 (крупные)
     const maxScale = 2.5;               // 🔑 УВЕЛИЧЕНО: было 1.4 (очень крупные)
     const fallSpeed = 0.75;             // Скорость падения для всех
@@ -175,19 +176,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                 ),
                                 Text(
                                   '$percent%',
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
+                                  style: TextStyles.neon(
                                     color: AppColors.accent,
                                     fontSize: percentFontSize,
-                                    fontWeight: FontWeight.w600,
                                     letterSpacing: -0.15,
-                                    shadows: [
-                                      Shadow(
-                                        color: AppColors.accentGlow,
-                                        blurRadius: 12,
-                                        offset: Offset.zero,
-                                      ),
-                                    ],
                                   ),
                                 ),
                               ],
@@ -197,12 +189,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           
                           Text(
                             'Выпито: ${appState.waterGlassesToday} из ${appState.dailyGoalGlasses} $glassesGenitive',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
+                            style: TextStyles.regular(
                               color: AppColors.textPrimary,
                               fontSize: glassesTextFontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.05,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -210,12 +199,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           
                           Text(
                             '$currentMl мл из $goalMlValue мл',
-                            style: TextStyle(
-                              fontFamily: 'Inter',
+                            style: TextStyles.regular(
                               color: AppColors.textSecondary,
                               fontSize: mlTextFontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.05,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -262,12 +248,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                 ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉🎉'
                                 : 'Продолжайте, ваша цель ещё не достигнута!',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
+                            style: TextStyles.base.copyWith(
                               color: isDone ? AppColors.accent : AppColors.textSecondary,
                               fontSize: congratsFontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.05,
                               shadows: isDone
                                   ? [
                                       Shadow(
@@ -287,7 +270,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            // 🔑 Дождь из 🎉 (С КОМПЕНСАЦИЕЙ РАЗМЕРА ЭМОДЗИ)
+            // 🔑 Дождь из  (С КОМПЕНСАЦИЕЙ РАЗМЕРА ЭМОДЗИ)
             if (_showRain)
               AnimatedBuilder(
                 animation: _rainController,
@@ -309,8 +292,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             child: Opacity(
                               opacity: 1.0,
                               child: Text(
-                                '🎉',
-                                style: TextStyle(fontSize: 24 * particle.scale),
+                                '',
+                                style: TextStyles.emoji(fontSize: 24 * particle.scale),
                               ),
                             ),
                           );

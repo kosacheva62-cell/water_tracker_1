@@ -1,18 +1,19 @@
 // lib/widgets/animated_button.dart
 import 'package:flutter/material.dart';
+import '../utils/text_styles.dart';
 
 class AnimatedButton extends StatefulWidget {
   final VoidCallback onPressed;
   final String text;
-  final double? width;   // ✅ Опциональная ширина (адаптивная)
-  final double? height;  // ✅ Опциональная высота (адаптивная)
+  final double? width;
+  final double? height;
 
   const AnimatedButton({
     super.key,
     required this.onPressed,
     required this.text,
-    this.width,          // ✅ Добавлено: ширина кнопки
-    this.height,         // ✅ Добавлено: высота кнопки
+    this.width,
+    this.height,
   });
 
   @override
@@ -76,9 +77,7 @@ class _AnimatedButtonState extends State<AnimatedButton> with SingleTickerProvid
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: Container(
-              // ✅ Используем переданную ширину или 260 по умолчанию
               width: widget.width ?? 260,
-              // ✅ Используем переданную высоту или 60 по умолчанию
               height: widget.height ?? 60,
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -94,13 +93,8 @@ class _AnimatedButtonState extends State<AnimatedButton> with SingleTickerProvid
               ),
               child: Text(
                 widget.text,
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  color: Colors.black,
-                  fontSize: 26,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.1,
-                ),
+                // ✅ ЗАМЕНЕНО: Используем TextStyles.button
+                style: TextStyles.button,
               ),
             ),
           );
