@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vibration/vibration.dart';
-import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
 
 class GoalStepper extends StatelessWidget {
@@ -9,6 +8,7 @@ class GoalStepper extends StatelessWidget {
   final int value;
   final int min;
   final int max;
+  final int step;
   final ValueChanged<int> onChanged;
   final double controlWidth;
   final double controlHeight;
@@ -24,6 +24,7 @@ class GoalStepper extends StatelessWidget {
     required this.value,
     required this.min,
     required this.max,
+    this.step = 1,
     required this.onChanged,
     required this.controlWidth,
     required this.controlHeight,
@@ -45,63 +46,91 @@ class GoalStepper extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  if (value > min) {
-                    Vibration.vibrate(duration: 30);
-                    HapticFeedback.lightImpact();
-                    onChanged(value - 1);
-                  }
-                },
-                child: Container(
-                  width: controlWidth,
-                  height: controlHeight,
-                  alignment: Alignment.center,
-                  child: Text(
-                    '–',
-                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    if (value - step >= min) {
+                      Vibration.vibrate(duration: 30);
+                      HapticFeedback.lightImpact();
+                      onChanged(value - step);
+                    }
+                  },
+                  child: Container(
+                    width: controlWidth,
+                    height: controlHeight,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '–',
+                      style: TextStyle(
+                        fontSize: minusPlusFontSize,
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: spaceBetweenControls),
-              Container(
-                width: numberContainerWidth,
-                alignment: Alignment.center,
-                child: Text(
-                  '$value',
-                  style: TextStyles.number(fontSize: numberFontSize),
-                ),
-              ),
-              SizedBox(width: spaceBetweenControls),
-              GestureDetector(
-                onTap: () {
-                  if (value < max) {
-                    Vibration.vibrate(duration: 30);
-                    HapticFeedback.lightImpact();
-                    onChanged(value + 1);
-                  }
-                },
-                child: Container(
-                  width: controlWidth,
-                  height: controlHeight,
+                SizedBox(width: spaceBetweenControls),
+                
+                // ✅ ВОССТАНОВЛЕНО: используем numberContainerWidth без увеличения
+                Container(
+                  width: numberContainerWidth,
                   alignment: Alignment.center,
-                  child: Text(
-                    '+',
-                    style: TextStyles.plusMinus(fontSize: minusPlusFontSize),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '$value',
+                      style: TextStyle(
+                        fontSize: numberFontSize,
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w700,
+                        height: 1.0,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(width: spaceBetweenControls),
+                
+                GestureDetector(
+                  onTap: () {
+                    if (value + step <= max) {
+                      Vibration.vibrate(duration: 30);
+                      HapticFeedback.lightImpact();
+                      onChanged(value + step);
+                    }
+                  },
+                  child: Container(
+                    width: controlWidth,
+                    height: controlHeight,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '+',
+                      style: TextStyle(
+                        fontSize: minusPlusFontSize,
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
+          
+          const SizedBox(height: 8),
+          
           Text(
             title,
-            style: TextStyles.hint(fontSize: hintFontSize),
+            style: TextStyle(
+              fontSize: hintFontSize,
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w500,
+            ),
             textAlign: TextAlign.center,
           ),
         ],

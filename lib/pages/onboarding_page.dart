@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import '../app_state.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/goal_stepper.dart';
 import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
@@ -17,55 +16,30 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  late int _inputValue;
-  late TextEditingController _controller;
+  late int _goalMl;
   bool _initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      _inputValue = context.read<FFAppState>().dailyGoalGlasses.clamp(
-        FFAppState.minDailyGoalGlasses,
-        FFAppState.maxDailyGoalGlasses,
+      final appState = context.read<FFAppState>();
+      // 🥛 Инициализация целью в мл (дефолт 2000 или сохранённое значение)
+      _goalMl = appState.dailyGoalMl.clamp(
+        FFAppState.minDailyGoalMl,
+        FFAppState.maxDailyGoalMl,
       );
-      _controller = TextEditingController(text: _inputValue.toString());
-      _controller.addListener(_onTextChanged);
       _initialized = true;
     }
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_onTextChanged);
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _onTextChanged() {
-    final text = _controller.text;
-    if (text.isEmpty) {
-      _inputValue = 8;
-      return;
-    }
-    try {
-      final value = int.parse(text);
-      _inputValue = value.clamp(
-        FFAppState.minDailyGoalGlasses,
-        FFAppState.maxDailyGoalGlasses,
-      );
-    } catch (e) {
-      _inputValue = 8;
-    }
-    setState(() {});
   }
 
   Future<void> _onSave() async {
     Vibration.vibrate(duration: 50);
     HapticFeedback.lightImpact();
-    
+
     try {
-      await context.read<FFAppState>().completeOnboarding(_inputValue);
+      // 🥛 Передаём цель в мл вместо стаканов
+      await context.read<FFAppState>().completeOnboarding(_goalMl);
       await Future.delayed(const Duration(milliseconds: 100));
     } catch (e) {
       if (!mounted) return;
@@ -76,10 +50,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ),
       );
     }
-  }
-
-  String _getGlassesForm(int value) {
-    return pluralizeGlasses(value).split(' ').last;
   }
 
   @override
@@ -94,7 +64,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     final topPadding = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
     final spaceAfterTitle = isTablet ? 36.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 24.0 : 28.0));
-    
     final controlWidth = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
     final controlHeight = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
     final minusPlusFontSize = isTablet ? 50.0 : (isTinyScreen ? 36.0 : (isSmallScreen ? 38.0 : 40.0));
@@ -102,23 +71,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final numberContainerWidth = isTablet ? 100.0 : (isTinyScreen ? 72.0 : (isSmallScreen ? 76.0 : 80.0));
     final spaceBetweenControls = isTinyScreen ? 1.0 : 2.0;
     final hintFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
-    
     final spaceAfterInput = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
     final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     final spaceAfterGoal = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
-    
     final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
     final buttonHeight = isTablet ? 72.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 58.0 : 60.0));
     final buttonFontSize = isTablet ? 32.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 25.0 : 26.0));
 
-    final previewMl = _inputValue * 250;
-    final glassesForm = _getGlassesForm(_inputValue);
+    // 🥛 Динамический расчёт стаканов для подсказки
+    final glassSize = context.watch<FFAppState>().glassSizeMl;
+    final glassesCount = (_goalMl / glassSize).ceil();
+    final glassesForm = pluralizeGlasses(glassesCount).split(' ').last;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          appBar: CustomAppBar(
+          appBar: const CustomAppBar(
             title: 'Трекер воды',
             subtitle: 'Следите за вашим водным балансом',
           ),
@@ -131,7 +100,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: Column(
                     children: [
                       SizedBox(height: topPadding),
-                      
+
                       Text(
                         'Привет! Какая ваша цель по воде на день?',
                         textAlign: TextAlign.center,
@@ -142,21 +111,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       Container(
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.accentShadow,
-                              blurRadius: 16,
-                              spreadRadius: 3,
-                            ),
-                          ],
+                          boxShadow: [BoxShadow(color: AppColors.accentShadow, blurRadius: 16, spreadRadius: 3)],
                           borderRadius: BorderRadius.circular(24),
                         ),
-                        child: GoalStepper(
-                          title: '$glassesForm по 250 мл',
-                          value: _inputValue,
-                          min: FFAppState.minDailyGoalGlasses,
-                          max: FFAppState.maxDailyGoalGlasses,
-                          onChanged: (value) => setState(() => _inputValue = value),
+                        child: _buildSettingRow(
+                          title: '$glassesCount $glassesForm по $glassSize мл',
+                          value: _goalMl,
+                          min: FFAppState.minDailyGoalMl,
+                          max: FFAppState.maxDailyGoalMl,
+                          step: FFAppState.dailyGoalStepMl,
+                          onChanged: (value) => setState(() => _goalMl = value),
                           controlWidth: controlWidth,
                           controlHeight: controlHeight,
                           minusPlusFontSize: minusPlusFontSize,
@@ -169,7 +133,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       SizedBox(height: spaceAfterInput),
 
                       Text(
-                        'Ваша цель: $previewMl мл',
+                        'Ваша цель: $_goalMl мл',
                         style: TextStyles.goal(fontSize: goalFontSize),
                         textAlign: TextAlign.center,
                       ),
@@ -185,19 +149,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           decoration: BoxDecoration(
                             color: AppColors.accent,
                             borderRadius: BorderRadius.circular(28),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.accentShadow,
-                                blurRadius: 16,
-                                spreadRadius: 3,
-                              ),
-                            ],
+                            boxShadow: [BoxShadow(color: AppColors.accentShadow, blurRadius: 16, spreadRadius: 3)],
                           ),
                           child: Text(
                             'Сохранить',
-                            style: TextStyles.button.copyWith(
-                              fontSize: buttonFontSize,
-                            ),
+                            style: TextStyles.button.copyWith(fontSize: buttonFontSize),
                           ),
                         ),
                       ),
@@ -209,6 +165,85 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSettingRow({
+    required String title,
+    required int value,
+    required int min,
+    required int max,
+    required int step,
+    required ValueChanged<int> onChanged,
+    required double controlWidth,
+    required double controlHeight,
+    required double minusPlusFontSize,
+    required double numberFontSize,
+    required double numberContainerWidth,
+    required double spaceBetweenControls,
+    required double hintFontSize,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  if (value - step >= min) {
+                    Vibration.vibrate(duration: 30);
+                    HapticFeedback.lightImpact();
+                    onChanged(value - step);
+                  }
+                },
+                child: Container(
+                  width: controlWidth,
+                  height: controlHeight,
+                  alignment: Alignment.center,
+                  child: Text('–', style: TextStyles.plusMinus(fontSize: minusPlusFontSize)),
+                ),
+              ),
+              SizedBox(width: spaceBetweenControls),
+              Container(
+                width: numberContainerWidth,
+                alignment: Alignment.center,
+                child: Text('$value', style: TextStyles.number(fontSize: numberFontSize)),
+              ),
+              SizedBox(width: spaceBetweenControls),
+              GestureDetector(
+                onTap: () {
+                  if (value + step <= max) {
+                    Vibration.vibrate(duration: 30);
+                    HapticFeedback.lightImpact();
+                    onChanged(value + step);
+                  }
+                },
+                child: Container(
+                  width: controlWidth,
+                  height: controlHeight,
+                  alignment: Alignment.center,
+                  child: Text('+', style: TextStyles.plusMinus(fontSize: minusPlusFontSize)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyles.hint(fontSize: hintFontSize),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

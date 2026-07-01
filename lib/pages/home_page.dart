@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import '../app_state.dart'; 
+import '../app_state.dart';
 import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
 import '../widgets/animated_button.dart';
@@ -24,8 +24,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    
-    // 🔹 Инициализация анимации конфетти
     _rainController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -35,9 +33,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         _rainController.reset();
       }
     });
-
-    // ✅ УДАЛЕНО: Двойной вызов load() + checkDayChange()
-    // Данные уже загружаются в main.dart, повторная загрузка создавала гонку состояний
   }
 
   @override
@@ -46,31 +41,23 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
-  // 🔑 Запуск дождя из 🎉 — 25 КРУПНЫХ ЭМОДЗИ (ОПТИМИЗИРОВАНО ДЛЯ МЕЖДУНАРОДНЫХ РЫНКОВ)
   void _startConfettiRain() {
-    // 🎨 НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ АНИМАЦИИ
-    const particleCount = 25;           // 🔑 ОПТИМИЗИРОВАНО: 25 эмодзи (было 60)
-    const maxDelay = 0.5;               // Макс. задержка появления в сек
-    const minOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
-    const maxOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
-    const minScale = 1.5;               // 🔑 УВЕЛИЧЕНО: было 0.8 (крупные)
-    const maxScale = 2.5;               // 🔑 УВЕЛИЧЕНО: было 1.4 (очень крупные)
-    const fallSpeed = 0.75;             // Скорость падения для всех
+    const particleCount = 25;
+    const maxDelay = 0.5;
+    const minScale = 1.5;
+    const maxScale = 2.5;
+    const fallSpeed = 0.75;
 
     setState(() {
       _showRain = true;
       _particles = List.generate(particleCount, (index) => _ConfettiParticle(
-        // 🔑 СТРАТИФИЦИРОВАННАЯ ВЫБОРКА: равномерное распределение по ширине
         x: (index + Random().nextDouble()) / particleCount,
         delay: Random().nextDouble() * maxDelay,
         speed: fallSpeed,
         scale: minScale + Random().nextDouble() * (maxScale - minScale),
-        rotation: 0.0,                  // Без вращения
-        minOpacity: minOpacity,         // 🔑 Фиксированная непрозрачность
-        maxOpacity: maxOpacity,         // 🔑 Фиксированная непрозрачность
+        rotation: 0.0,
       ));
     });
-    
     _rainController.forward();
   }
 
@@ -89,35 +76,27 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final ringWidth = isTablet ? 20.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
     final centerCircleSize = isTablet ? 265.0 : (isTinyScreen ? 138.0 : (isSmallScreen ? 176.0 : 212.0));
     final percentFontSize = isTablet ? 72.0 : (isTinyScreen ? 40.0 : (isSmallScreen ? 48.0 : 56.0));
-    
-    // 🔑 УВЕЛИЧЕНО: Отступы для визуального соответствия другим страницам
-    final topPadding = isTablet 
-        ? 32.0      // было 24.0
-        : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));  // было 12.0/14.0/16.0
-    
+    final topPadding = isTablet ? 32.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     final spaceAfterCircle = isTablet ? 32.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0));
-    final spaceBetweenTexts = isTinyScreen ? 2.0 : 2.0;
+    final spaceBetweenTexts = 2.0;
     final spaceAfterMl = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
     final spaceAfterButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
-    
     final glassesTextFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     final mlTextFontSize = isTablet ? 26.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     final congratsFontSize = isTablet ? 30.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 22.0 : 24.0));
+    final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
-    // 🔑 Адаптивная ширина кнопки (как в onboarding_page.dart)
-    final buttonWidth = isTablet 
-        ? 320.0 
-        : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
-
-    final progress = appState.dailyGoalGlasses > 0
-        ? (appState.waterGlassesToday / appState.dailyGoalGlasses).clamp(0.0, 1.0)
-        : 0.0;
-    
-    final isDone = appState.waterGlassesToday >= appState.dailyGoalGlasses;
+    // 🥛 ИСПОЛЬЗУЕМ НОВЫЕ ГЕТТЕРЫ ИЗ APP_STATE
+    final progress = appState.progress;
+    final isDone = appState.isGoalReached;
     final percent = (progress * 100).floor();
-    final glassesGenitive = pluralizeGlassesGenitive(appState.dailyGoalGlasses);
-    final currentMl = appState.waterGlassesToday * 250;
-    final goalMlValue = appState.dailyGoalGlasses * 250;
+    final currentMl = appState.waterMlToday;
+    final goalMl = appState.dailyGoalMl;
+    
+    // Для отображения стаканов (визуальная подсказка)
+    final glassesCount = appState.waterGlassesToday;
+    final goalGlasses = appState.dailyGoalGlasses;
+    final glassesGenitive = pluralizeGlassesGenitive(goalGlasses);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -128,29 +107,20 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Padding(
                   padding: EdgeInsets.only(top: topPadding, bottom: 16),
-                  child: Align(  // ✅ topCenter: центр по горизонтали, верх по вертикали
+                  child: Align(
                     alignment: Alignment.topCenter,
-                    child: ConstrainedBox(  // ✅ Ограничение ширины на планшетах
-                      constraints: BoxConstraints(
-                        maxWidth: isTablet ? 600 : double.infinity,
-                      ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: isTablet ? 600 : double.infinity),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Внешнее свечение (прогресс-круг)
                           Container(
                             width: circleSize,
                             height: circleSize,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.accentShadow,
-                                  blurRadius: 16,
-                                  spreadRadius: 3,
-                                ),
-                              ],
+                              boxShadow: [BoxShadow(color: AppColors.accentShadow, blurRadius: 16, spreadRadius: 3)],
                             ),
                             child: Stack(
                               alignment: Alignment.center,
@@ -169,72 +139,55 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                 Container(
                                   width: centerCircleSize,
                                   height: centerCircleSize,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.background,
-                                  ),
+                                  decoration: const BoxDecoration(shape: BoxShape.circle, color: AppColors.background),
                                 ),
                                 Text(
                                   '$percent%',
-                                  style: TextStyles.neon(
-                                    color: AppColors.accent,
-                                    fontSize: percentFontSize,
-                                    letterSpacing: -0.15,
-                                  ),
+                                  style: TextStyles.neon(color: AppColors.accent, fontSize: percentFontSize, letterSpacing: -0.15),
                                 ),
                               ],
                             ),
                           ),
                           SizedBox(height: spaceAfterCircle),
-                          
+
+                          // 🥛 ТЕКСТ С СТАКАНАМИ (визуальная подсказка)
                           Text(
-                            'Выпито: ${appState.waterGlassesToday} из ${appState.dailyGoalGlasses} $glassesGenitive',
-                            style: TextStyles.regular(
-                              color: AppColors.textPrimary,
-                              fontSize: glassesTextFontSize,
-                            ),
+                            'Выпито: $glassesCount из $goalGlasses $glassesGenitive',
+                            style: TextStyles.regular(color: AppColors.textPrimary, fontSize: glassesTextFontSize),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: spaceBetweenTexts),
-                          
+
+                          // 🥛 ОСНОВНОЙ ТЕКСТ В МЛ
                           Text(
-                            '$currentMl мл из $goalMlValue мл',
-                            style: TextStyles.regular(
-                              color: AppColors.textSecondary,
-                              fontSize: mlTextFontSize,
-                            ),
+                            '$currentMl мл из $goalMl мл',
+                            style: TextStyles.regular(color: AppColors.textSecondary, fontSize: mlTextFontSize),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: spaceAfterMl),
-                          
-                          // 🔑 Кнопка с адаптивной фиксированной шириной
+
                           Center(
                             child: AnimatedButton(
-                              width: buttonWidth,  // ✅ Адаптивная ширина
+                              width: buttonWidth,
                               onPressed: () async {
                                 try {
                                   final state = context.read<FFAppState>();
-                                  final willCompleteGoal = state.dailyGoalGlasses > 0 
-                                      && state.waterGlassesToday + 1 >= state.dailyGoalGlasses;
-                                  
+                                  final willCompleteGoal = !state.isGoalReached && 
+                                      (state.waterMlToday + state.glassSizeMl) >= state.dailyGoalMl;
+
                                   if (willCompleteGoal) {
                                     _startConfettiRain();
-                                    // ✅ ЗАДАЧА 4.17: ОПТИМИЗИРОВАНО с 3000 до 1000 мс (улучшение UX)
                                     await Vibration.vibrate(duration: 1000);
                                     HapticFeedback.mediumImpact();
                                   } else {
                                     await Vibration.vibrate(duration: 50);
                                     HapticFeedback.mediumImpact();
                                   }
-                                  
                                   await state.addGlass();
                                 } catch (e) {
                                   if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Не удалось сохранить данные'),
-                                      duration: Duration(seconds: 2),
-                                    ),
+                                    const SnackBar(content: Text('Не удалось сохранить данные'), duration: Duration(seconds: 2)),
                                   );
                                 }
                               },
@@ -242,7 +195,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             ),
                           ),
                           SizedBox(height: spaceAfterButton),
-                          
+
                           Text(
                             isDone
                                 ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉🎉'
@@ -251,15 +204,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             style: TextStyles.base.copyWith(
                               color: isDone ? AppColors.accent : AppColors.textSecondary,
                               fontSize: congratsFontSize,
-                              shadows: isDone
-                                  ? [
-                                      Shadow(
-                                        color: AppColors.accentGlow,
-                                        blurRadius: 12,
-                                        offset: Offset.zero,
-                                      ),
-                                    ]
-                                  : null,
+                              shadows: isDone ? [Shadow(color: AppColors.accentGlow, blurRadius: 12, offset: Offset.zero)] : null,
                             ),
                           ),
                         ],
@@ -269,8 +214,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ),
               ),
             ),
-            
-            // 🔑 Дождь из 🎉 (С КОМПЕНСАЦИЕЙ РАЗМЕРА ЭМОДЗИ)
+
             if (_showRain)
               AnimatedBuilder(
                 animation: _rainController,
@@ -279,22 +223,16 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     builder: (context, constraints) {
                       return Stack(
                         children: _particles.map((particle) {
-                          final progress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
-                          final top = progress * particle.speed * constraints.maxHeight;
-                          
-                          // 🔑 КОМПЕНСАЦИЯ: вычитаем половину ширины эмодзи
+                          final animProgress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
+                          final top = animProgress * particle.speed * constraints.maxHeight;
                           final emojiWidth = 24 * particle.scale;
                           final leftPos = particle.x * constraints.maxWidth - emojiWidth / 2;
-                          
                           return Positioned(
                             left: leftPos,
                             top: top,
                             child: Opacity(
                               opacity: 1.0,
-                              child: Text(
-                                '🎉',
-                                style: TextStyles.emoji(fontSize: 24 * particle.scale),
-                              ),
+                              child: Text('🎉', style: TextStyles.emoji(fontSize: 24 * particle.scale)),
                             ),
                           );
                         }).toList(),
@@ -312,15 +250,5 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
 class _ConfettiParticle {
   final double x, delay, speed, scale, rotation;
-  final double minOpacity, maxOpacity;
-  
-  _ConfettiParticle({
-    required this.x, 
-    required this.delay, 
-    required this.speed, 
-    required this.scale, 
-    required this.rotation,
-    this.minOpacity = 0.0,
-    this.maxOpacity = 1.0,
-  });
+  _ConfettiParticle({required this.x, required this.delay, required this.speed, required this.scale, required this.rotation});
 }
