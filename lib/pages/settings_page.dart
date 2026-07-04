@@ -5,7 +5,6 @@ import 'package:vibration/vibration.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 import '../app_state.dart';
-import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
 import '../widgets/animated_button.dart';
 import '../utils/app_colors.dart';
@@ -120,6 +119,19 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     }
   }
 
+  // ✅ ФУНКЦИЯ ДЛЯ СКЛОНЕНИЯ СЛОВА "СТАКАН" ДЛЯ ДРОБНЫХ ЧИСЕЛ
+  String _getPluralFormForFractional(double number) {
+    final int wholePart = number.floor();
+    
+    if (wholePart == 1) {
+      return 'стакан';
+    } else if (wholePart >= 2 && wholePart <= 4) {
+      return 'стакана';
+    } else {
+      return 'стаканов';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -130,7 +142,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
-    final topPadding = 0.0; // ✅ МИНИМАЛЬНЫЙ ОТСТУП 0px (было 8px)
+    final topPadding = 0.0;
     final horizontalPadding = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
 
     final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 52.0 : (isSmallScreen ? 58.0 : 64.0));
@@ -142,9 +154,17 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
-    // 🥛 ДИНАМИЧЕСКИЙ РАСЧЁТ КОЛИЧЕСТВА СТАКАНОВ ДЛЯ ПОДСКАЗКИ
-    final glassesCount = (_dailyGoalMl / _glassSizeMl).ceil();
-    final glassesForm = pluralizeGlasses(glassesCount).split(' ').last;
+    // 🥛 ИСПРАВЛЕНИЕ: используем значение из контроллера только если оно в допустимом диапазоне
+    final parsedGlassSize = int.tryParse(_glassSizeController.text);
+    final glassSizeForCalc = (parsedGlassSize != null && 
+        parsedGlassSize >= FFAppState.minGlassSizeMl && 
+        parsedGlassSize <= FFAppState.maxGlassSizeMl) 
+        ? parsedGlassSize 
+        : 250; // ✅ Дефолтное значение 250 мл
+    
+    final glassesCountExact = _dailyGoalMl / glassSizeForCalc;
+    final glassesCountDisplay = glassesCountExact.toStringAsFixed(1);
+    final glassesForm = _getPluralFormForFractional(glassesCountExact);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -239,7 +259,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         const SizedBox(height: 8),
                         
                         Text(
-                          '$glassesCount $glassesForm по $_glassSizeMl мл',
+                          '$glassesCountDisplay $glassesForm по $glassSizeForCalc мл',
                           style: TextStyle(
                             fontSize: hintFontSize,
                             color: AppColors.textSecondary,
@@ -271,7 +291,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider),
                   const SizedBox(height: 0),
 
-                  // ═══════════════════════════════════════
+                  // ══════════════════════════════════════
                   // 🔹 БЛОК 2: ОБЪЁМ СТАКАНА (TextField)
                   // ═══════════════════════════════════════
                   Text(
