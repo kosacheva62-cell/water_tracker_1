@@ -19,7 +19,7 @@ class StatsPage extends StatelessWidget {
 
     // 🔑 Адаптивные размеры
     final titleFontSize = isTablet ? 30.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 22.0 : 24.0));
-    final topPadding = isTablet ? 20.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
+    final topPadding = 0.0; // ✅ МИНИМАЛЬНЫЙ ОТСТУП 0px (было адаптивным 12-20px)
     final spaceAfterTitle = isTablet ? 20.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
     final iconSize = isTablet ? 24.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 16.0 : 18.0));
     final spaceAfterIcon = isTablet ? 12.0 : (isTinyScreen ? 8.0 : (isSmallScreen ? 9.0 : 10.0));
