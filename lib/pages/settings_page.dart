@@ -130,7 +130,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
-    final topPadding = 8.0; // ✅ МИНИМАЛЬНЫЙ ОТСТУП 8px от верхней границы
+    final topPadding = 8.0;
     final horizontalPadding = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
 
     final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 52.0 : (isSmallScreen ? 58.0 : 64.0));
@@ -269,7 +269,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   // ═══════════════════════════════════════
                   const SizedBox(height: 10),
                   Divider(color: AppColors.divider),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 0), // ✅ ИЗМЕНЕНО: было 10, стало 0
 
                   // ═══════════════════════════════════════
                   // 🔹 БЛОК 2: ОБЪЁМ СТАКАНА (TextField)
@@ -383,10 +383,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   // ═══════════════════════════════════════
                   const SizedBox(height: 10),
                   Divider(color: AppColors.divider),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 0), // ✅ ИЗМЕНЕНО: было 10, стало 0
 
                   // ═══════════════════════════════════════
-                  // 🔹 БЛОК 3: СЛУЖБА ПОДДЕРЖКИ
+                  //  БЛОК 3: СЛУЖБА ПОДДЕРЖКИ
                   // ═══════════════════════════════════════
                   GestureDetector(
                     onTap: () async {
