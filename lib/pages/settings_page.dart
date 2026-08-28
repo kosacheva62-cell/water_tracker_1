@@ -23,6 +23,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
   late TextEditingController _glassSizeController;
   bool _shouldShowThanksMessage = false;
   bool _initialized = false;
+  
+  // ✅ Сохраняем предыдущее валидное значение для отмены
+  late int _previousGlassSizeMl;
+  late int _previousDailyGoalMl;
 
   @override
   void initState() {
@@ -37,6 +41,8 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
       final appState = context.read<FFAppState>();
       _dailyGoalMl = appState.dailyGoalMl;
       _glassSizeMl = appState.glassSizeMl;
+      _previousDailyGoalMl = _dailyGoalMl;
+      _previousGlassSizeMl = _glassSizeMl;
       _dailyGoalController = TextEditingController(text: _dailyGoalMl.toString());
       _glassSizeController = TextEditingController(text: _glassSizeMl.toString());
       _initialized = true;
@@ -97,9 +103,42 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     }
   }
 
+  // ✅ ВАЛИДАЦИЯ И СОХРАНЕНИЕ ЦЕЛИ
   Future<void> _saveDailyGoal() async {
+    final parsed = int.tryParse(_dailyGoalController.text);
+    
+    // ✅ Проверяем валидность
+    if (parsed == null || 
+        parsed < FFAppState.minDailyGoalMl || 
+        parsed > FFAppState.maxDailyGoalMl) {
+      // ❌ Показываем ошибку
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Цель должна быть от ${FFAppState.minDailyGoalMl} до ${FFAppState.maxDailyGoalMl} мл',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red.shade700,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      // ↩️ Возвращаем предыдущее значение
+      _dailyGoalController.text = _previousDailyGoalMl.toString();
+      setState(() {
+        _dailyGoalMl = _previousDailyGoalMl;
+      });
+      return;
+    }
+    
+    // ✅ Всё валидно — сохраняем
     try {
-      await context.read<FFAppState>().setDailyGoalMl(_dailyGoalMl);
+      await context.read<FFAppState>().setDailyGoalMl(parsed);
+      setState(() {
+        _previousDailyGoalMl = parsed; // ✅ Обновляем предыдущее значение
+      });
+      Vibration.vibrate(duration: 50);
+      HapticFeedback.lightImpact();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -108,9 +147,42 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     }
   }
 
+  // ✅ ВАЛИДАЦИЯ И СОХРАНЕНИЕ ОБЪЁМА СТАКАНА
   Future<void> _saveGlassSize() async {
+    final parsed = int.tryParse(_glassSizeController.text);
+    
+    // ✅ Проверяем валидность
+    if (parsed == null || 
+        parsed < FFAppState.minGlassSizeMl || 
+        parsed > FFAppState.maxGlassSizeMl) {
+      // ❌ Показываем ошибку
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Объём стакана должен быть от ${FFAppState.minGlassSizeMl} до ${FFAppState.maxGlassSizeMl} мл',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red.shade700,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      // ↩️ Возвращаем предыдущее значение
+      _glassSizeController.text = _previousGlassSizeMl.toString();
+      setState(() {
+        _glassSizeMl = _previousGlassSizeMl;
+      });
+      return;
+    }
+    
+    // ✅ Всё валидно — сохраняем
     try {
-      await context.read<FFAppState>().setGlassSize(_glassSizeMl);
+      await context.read<FFAppState>().setGlassSize(parsed);
+      setState(() {
+        _previousGlassSizeMl = parsed; // ✅ Обновляем предыдущее значение
+      });
+      Vibration.vibrate(duration: 50);
+      HapticFeedback.lightImpact();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -130,6 +202,34 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     } else {
       return 'стаканов';
     }
+  }
+
+  // ✅ ФОРМАТИРОВАНИЕ КОЛИЧЕСТВА СТАКАНОВ: если целое — без дробной части
+  String _formatGlassesCount(double number) {
+    if (number == number.roundToDouble()) {
+      return number.round().toString(); // ✅ Целое число: "2", "8"
+    } else {
+      return number.toStringAsFixed(1); // ✅ Дробное число: "6.7", "3.3"
+    }
+  }
+
+  // ✅ ОТМЕНА ВВОДА ПРИ ПОТЕРЕ ФОКУСА
+  void _cancelGlassSizeInput() {
+    FocusScope.of(context).unfocus();
+    // ↩️ Возвращаем предыдущее валидное значение
+    _glassSizeController.text = _previousGlassSizeMl.toString();
+    setState(() {
+      _glassSizeMl = _previousGlassSizeMl;
+    });
+  }
+
+  void _cancelDailyGoalInput() {
+    FocusScope.of(context).unfocus();
+    // ↩️ Возвращаем предыдущее валидное значение
+    _dailyGoalController.text = _previousDailyGoalMl.toString();
+    setState(() {
+      _dailyGoalMl = _previousDailyGoalMl;
+    });
   }
 
   @override
@@ -154,16 +254,17 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
-    // 🥛 ИСПРАВЛЕНИЕ: используем значение из контроллера только если оно в допустимом диапазоне
+    // 🥛 РАСЧЁТ КОЛИЧЕСТВА СТАКАНОВ
     final parsedGlassSize = int.tryParse(_glassSizeController.text);
     final glassSizeForCalc = (parsedGlassSize != null && 
         parsedGlassSize >= FFAppState.minGlassSizeMl && 
         parsedGlassSize <= FFAppState.maxGlassSizeMl) 
         ? parsedGlassSize 
-        : 250; // ✅ Дефолтное значение 250 мл
+        : 250;
     
     final glassesCountExact = _dailyGoalMl / glassSizeForCalc;
-    final glassesCountDisplay = glassesCountExact.toStringAsFixed(1);
+    // ✅ Форматируем: целые числа без дробной части, дробные — с 1 знаком
+    final glassesCountDisplay = _formatGlassesCount(glassesCountExact);
     final glassesForm = _getPluralFormForFractional(glassesCountExact);
 
     return LayoutBuilder(
@@ -178,7 +279,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ═══════════════════════════════════════
-                  // 🔹 БЛОК 1: ЦЕЛЬ НА ДЕНЬ (TextField)
+                  //  БЛОК 1: ЦЕЛЬ НА ДЕНЬ (TextField)
                   // ═══════════════════════════════════════
                   Text(
                     'Введите цель на день:',
@@ -228,7 +329,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                     contentPadding: EdgeInsets.zero,
                                     isDense: true,
                                   ),
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(5),
+                                  ],
+                                  // ✅ При клике вне поля — отмена ввода
+                                  onTapOutside: (event) => _cancelDailyGoalInput(),
                                   onChanged: (value) {
                                     final parsed = int.tryParse(value);
                                     if (parsed != null) {
@@ -275,11 +381,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Center(
                     child: AnimatedButton(
                       width: buttonWidth,
-                      onPressed: () {
-                        Vibration.vibrate(duration: 50);
-                        HapticFeedback.lightImpact();
-                        _saveDailyGoal();
-                      },
+                      onPressed: _saveDailyGoal, // ✅ Валидация и сохранение
                       text: 'Сохранить',
                     ),
                   ),
@@ -292,7 +394,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   const SizedBox(height: 0),
 
                   // ══════════════════════════════════════
-                  // 🔹 БЛОК 2: ОБЪЁМ СТАКАНА (TextField)
+                  //  БЛОК 2: ОБЪЁМ СТАКАНА (TextField)
                   // ═══════════════════════════════════════
                   Text(
                     'Введите объём стакана:',
@@ -342,7 +444,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                     contentPadding: EdgeInsets.zero,
                                     isDense: true,
                                   ),
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(4),
+                                  ],
+                                  // ✅ При клике вне поля — отмена ввода
+                                  onTapOutside: (event) => _cancelGlassSizeInput(),
                                   onChanged: (value) {
                                     final parsed = int.tryParse(value);
                                     if (parsed != null) {
@@ -389,17 +496,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Center(
                     child: AnimatedButton(
                       width: buttonWidth,
-                      onPressed: () {
-                        Vibration.vibrate(duration: 50);
-                        HapticFeedback.lightImpact();
-                        _saveGlassSize();
-                      },
+                      onPressed: _saveGlassSize, // ✅ Валидация и сохранение
                       text: 'Сохранить',
                     ),
                   ),
 
                   // ═══════════════════════════════════════
-                  // 🔹 РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ 2
+                  //  РАЗДЕЛИТЕЛЬНАЯ ЛИНИЯ 2
                   // ═══════════════════════════════════════
                   const SizedBox(height: 10),
                   Divider(color: AppColors.divider),
@@ -407,7 +510,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 
                   // ═══════════════════════════════════════
                   // 🔹 БЛОК 3: СЛУЖБА ПОДДЕРЖКИ
-                  // ═══════════════════════════════════════
+                  // ══════════════════════════════════════
                   GestureDetector(
                     onTap: () async {
                       final deviceInfo = '''
@@ -416,7 +519,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 Версия приложения: 1.0.0
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📝 НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
+ НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
 
 ''';
                       final encodedBody = deviceInfo.replaceAll(' ', '%20').replaceAll('\n', '%0D%0A');
