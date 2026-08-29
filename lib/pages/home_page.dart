@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     setState(() {
       _showRain = true;
-      // 🔑 УВЕЛИЧЕНА АМПЛИТУДА ПОКАЧИВАНИЯ: от -30 до +30 пикселей
       _particles = List.generate(particleCount, (index) => _ConfettiParticle(
         x: (index + Random().nextDouble()) / particleCount,
         delay: Random().nextDouble() * maxDelay,
@@ -222,7 +221,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           
                           Text(
                             isDone
-                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉'
+                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉🎉'
                                 : 'Продолжайте, ваша цель ещё не достигнута!',
                             textAlign: TextAlign.center,
                             style: TextStyles.base.copyWith(
@@ -247,48 +246,42 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            // 🔑 ДОЖДЬ С УВЕЛИЧЕННОЙ АМПЛИТУДОЙ ПОКАЧИВАНИЯ
+            // 🔑 УПРОЩЕННЫЙ ДОЖДЬ БЕЗ CLIPRECT (БЕЗОПАСНО ДЛЯ РЕАЛЬНЫХ УСТРОЙСТВ)
             if (_showRain)
-              ClipRect(
-                child: Positioned.fill(
-                  child: IgnorePointer(
-                    child: AnimatedBuilder(
-                      animation: _rainController,
-                      builder: (context, child) {
-                        return LayoutBuilder(
-                          builder: (context, stackConstraints) {
-                            return Stack(
-                              clipBehavior: Clip.none,
-                              children: _particles.map((particle) {
-                                final animProgress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
-                                
-                                // Падение с увеличенной дистанцией
-                                final fallDistance = stackConstraints.maxHeight * 1.8;
-                                final top = animProgress * particle.speed * fallDistance;
-                                
-                                // 🔑 ЗАМЕДЛЕННАЯ ЧАСТОТА КОЛЕБАНИЙ ДЛЯ БОЛЕЕ ПЛАВНОГО ЭФФЕКТА
-                                final sway = sin(animProgress * 3.14) * particle.swayAmplitude;
-                                
-                                final emojiWidth = 24 * particle.scale;
-                                final leftPos = particle.x * stackConstraints.maxWidth - emojiWidth / 2 + sway;
-                                
-                                return Positioned(
-                                  left: leftPos,
-                                  top: top,
-                                  child: Opacity(
-                                    opacity: 1.0,
-                                    child: Text(
-                                      '🎉',
-                                      style: TextStyles.emoji(fontSize: 24 * particle.scale),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          },
-                        );
-                      },
-                    ),
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: AnimatedBuilder(
+                    animation: _rainController,
+                    builder: (context, child) {
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: _particles.map((particle) {
+                          final animProgress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
+                          
+                          // Падение с увеличенной дистанцией
+                          final fallDistance = constraints.maxHeight * 1.8;
+                          final top = animProgress * particle.speed * fallDistance;
+                          
+                          // Покачивание с замедленной частотой
+                          final sway = sin(animProgress * 3.14) * particle.swayAmplitude;
+                          
+                          final emojiWidth = 24 * particle.scale;
+                          final leftPos = particle.x * constraints.maxWidth - emojiWidth / 2 + sway;
+                          
+                          return Positioned(
+                            left: leftPos,
+                            top: top,
+                            child: Opacity(
+                              opacity: 1.0,
+                              child: Text(
+                                '🎉',
+                                style: TextStyles.emoji(fontSize: 24 * particle.scale),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
                   ),
                 ),
               ),
