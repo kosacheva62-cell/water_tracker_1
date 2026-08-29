@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     
-    // 🔹 Инициализация анимации конфетти
     _rainController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -35,9 +34,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         _rainController.reset();
       }
     });
-
-    // ✅ УДАЛЕНО: Двойной вызов load() + checkDayChange()
-    // Данные уже загружаются в main.dart, повторная загрузка создавала гонку состояний
   }
 
   @override
@@ -46,28 +42,22 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.dispose();
   }
 
-  // 🔑 Запуск дождя из 🎉 — 25 КРУПНЫХ ЭМОДЗИ (ОПТИМИЗИРОВАНО ДЛЯ МЕЖДУНАРОДНЫХ РЫНКОВ)
   void _startConfettiRain() {
-    // 🎨 НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ АНИМАЦИИ
-    const particleCount = 25;           // 🔑 ОПТИМИЗИРОВАНО: 25 эмодзи (было 60)
-    const maxDelay = 0.5;               // Макс. задержка появления в сек
-    const minOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
-    const maxOpacity = 1.0;             // 🔑 ФИКСИРОВАННАЯ: 100% непрозрачность
-    const minScale = 1.5;               // 🔑 УВЕЛИЧЕНО: было 0.8 (крупные)
-    const maxScale = 2.5;               // 🔑 УВЕЛИЧЕНО: было 1.4 (очень крупные)
-    const fallSpeed = 0.75;             // Скорость падения для всех
+    const particleCount = 25;           
+    const maxDelay = 0.5;               
+    const minScale = 1.5;               
+    const maxScale = 2.5;               
+    const fallSpeed = 0.75;             
 
     setState(() {
       _showRain = true;
+      // 🔑 УВЕЛИЧЕНА АМПЛИТУДА ПОКАЧИВАНИЯ: от -30 до +30 пикселей
       _particles = List.generate(particleCount, (index) => _ConfettiParticle(
-        // 🔑 СТРАТИФИЦИРОВАННАЯ ВЫБОРКА: равномерное распределение по ширине
         x: (index + Random().nextDouble()) / particleCount,
         delay: Random().nextDouble() * maxDelay,
         speed: fallSpeed,
         scale: minScale + Random().nextDouble() * (maxScale - minScale),
-        rotation: 0.0,                  // Без вращения
-        minOpacity: minOpacity,         // 🔑 Фиксированная непрозрачность
-        maxOpacity: maxOpacity,         // 🔑 Фиксированная непрозрачность
+        swayAmplitude: Random().nextDouble() * 60 - 30, 
       ));
     });
     
@@ -83,31 +73,23 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
-    // 🔑 Адаптивные размеры
+    // Адаптивные размеры
     final circleSize = isTablet ? 300.0 : (isTinyScreen ? 160.0 : (isSmallScreen ? 200.0 : 240.0));
     final ringSize = isTablet ? 285.0 : (isTinyScreen ? 150.0 : (isSmallScreen ? 190.0 : 228.0));
     final ringWidth = isTablet ? 20.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
     final centerCircleSize = isTablet ? 265.0 : (isTinyScreen ? 138.0 : (isSmallScreen ? 176.0 : 212.0));
     final percentFontSize = isTablet ? 72.0 : (isTinyScreen ? 40.0 : (isSmallScreen ? 48.0 : 56.0));
     
-    // 🔑 УВЕЛИЧЕНО: Отступы для визуального соответствия другим страницам
-    final topPadding = isTablet 
-        ? 32.0      // было 24.0
-        : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));  // было 12.0/14.0/16.0
-    
+    final topPadding = isTablet ? 32.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));  
     final spaceAfterCircle = isTablet ? 32.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0));
-    final spaceBetweenTexts = isTinyScreen ? 2.0 : 2.0;
+    final spaceBetweenTexts = 2.0;
     final spaceAfterMl = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
     final spaceAfterButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
     
     final glassesTextFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     final mlTextFontSize = isTablet ? 26.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     final congratsFontSize = isTablet ? 30.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 22.0 : 24.0));
-
-    // 🔑 Адаптивная ширина кнопки (как в onboarding_page.dart)
-    final buttonWidth = isTablet 
-        ? 320.0 
-        : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
+    final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
     final progress = appState.dailyGoalGlasses > 0
         ? (appState.waterGlassesToday / appState.dailyGoalGlasses).clamp(0.0, 1.0)
@@ -128,17 +110,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Padding(
                   padding: EdgeInsets.only(top: topPadding, bottom: 16),
-                  child: Align(  // ✅ topCenter: центр по горизонтали, верх по вертикали
+                  child: Align(
                     alignment: Alignment.topCenter,
-                    child: ConstrainedBox(  // ✅ Ограничение ширины на планшетах
-                      constraints: BoxConstraints(
-                        maxWidth: isTablet ? 600 : double.infinity,
-                      ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: isTablet ? 600 : double.infinity),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Внешнее свечение (прогресс-круг)
                           Container(
                             width: circleSize,
                             height: circleSize,
@@ -207,10 +186,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           ),
                           SizedBox(height: spaceAfterMl),
                           
-                          // 🔑 Кнопка с адаптивной фиксированной шириной
                           Center(
                             child: AnimatedButton(
-                              width: buttonWidth,  // ✅ Адаптивная ширина
+                              width: buttonWidth,
                               onPressed: () async {
                                 try {
                                   final state = context.read<FFAppState>();
@@ -219,7 +197,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   
                                   if (willCompleteGoal) {
                                     _startConfettiRain();
-                                    // ✅ ЗАДАЧА 4.17: ОПТИМИЗИРОВАНО с 3000 до 1000 мс (улучшение UX)
                                     await Vibration.vibrate(duration: 1000);
                                     HapticFeedback.mediumImpact();
                                   } else {
@@ -245,7 +222,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           
                           Text(
                             isDone
-                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉🎉'
+                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉'
                                 : 'Продолжайте, ваша цель ещё не достигнута!',
                             textAlign: TextAlign.center,
                             style: TextStyles.base.copyWith(
@@ -270,38 +247,50 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            // 🔑 Дождь из 🎉 (С КОМПЕНСАЦИЕЙ РАЗМЕРА ЭМОДЗИ)
+            // 🔑 ДОЖДЬ С УВЕЛИЧЕННОЙ АМПЛИТУДОЙ ПОКАЧИВАНИЯ
             if (_showRain)
-              AnimatedBuilder(
-                animation: _rainController,
-                builder: (context, child) {
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Stack(
-                        children: _particles.map((particle) {
-                          final progress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
-                          final top = progress * particle.speed * constraints.maxHeight;
-                          
-                          // 🔑 КОМПЕНСАЦИЯ: вычитаем половину ширины эмодзи
-                          final emojiWidth = 24 * particle.scale;
-                          final leftPos = particle.x * constraints.maxWidth - emojiWidth / 2;
-                          
-                          return Positioned(
-                            left: leftPos,
-                            top: top,
-                            child: Opacity(
-                              opacity: 1.0,
-                              child: Text(
-                                '🎉',
-                                style: TextStyles.emoji(fontSize: 24 * particle.scale),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    },
-                  );
-                },
+              ClipRect(
+                child: Positioned.fill(
+                  child: IgnorePointer(
+                    child: AnimatedBuilder(
+                      animation: _rainController,
+                      builder: (context, child) {
+                        return LayoutBuilder(
+                          builder: (context, stackConstraints) {
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              children: _particles.map((particle) {
+                                final animProgress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
+                                
+                                // Падение с увеличенной дистанцией
+                                final fallDistance = stackConstraints.maxHeight * 1.8;
+                                final top = animProgress * particle.speed * fallDistance;
+                                
+                                // 🔑 ЗАМЕДЛЕННАЯ ЧАСТОТА КОЛЕБАНИЙ ДЛЯ БОЛЕЕ ПЛАВНОГО ЭФФЕКТА
+                                final sway = sin(animProgress * 3.14) * particle.swayAmplitude;
+                                
+                                final emojiWidth = 24 * particle.scale;
+                                final leftPos = particle.x * stackConstraints.maxWidth - emojiWidth / 2 + sway;
+                                
+                                return Positioned(
+                                  left: leftPos,
+                                  top: top,
+                                  child: Opacity(
+                                    opacity: 1.0,
+                                    child: Text(
+                                      '🎉',
+                                      style: TextStyles.emoji(fontSize: 24 * particle.scale),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ),
           ],
         );
@@ -311,16 +300,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 }
 
 class _ConfettiParticle {
-  final double x, delay, speed, scale, rotation;
-  final double minOpacity, maxOpacity;
+  final double x, delay, speed, scale, swayAmplitude;
   
   _ConfettiParticle({
     required this.x, 
     required this.delay, 
     required this.speed, 
-    required this.scale, 
-    required this.rotation,
-    this.minOpacity = 0.0,
-    this.maxOpacity = 1.0,
+    required this.scale,
+    required this.swayAmplitude,
   });
 }
