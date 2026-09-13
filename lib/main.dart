@@ -229,22 +229,25 @@ class _MainAppState extends State<MainApp> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(),
-      // 🔑 СТРУКТУРА С МЕСТОМ ПОД РЕКЛАМУ (60 dp)
+      
+      // 🔑 СТРУКТУРА С ЗАКОММЕНТИРОВАННЫМ МЕСТОМ ПОД РЕКЛАМУ
       body: Column(
         children: [
           // Контент страницы занимает всё доступное пространство НАД рекламным блоком
           Flexible(
             child: _pages[_currentIndex],
           ),
-          // 🔑 МЕСТО ПОД РЕКЛАМУ (нейтральное, сливается с фоном)
-          Container(
-            height: 60,
-            color: AppColors.background, // ← ЦВЕТ ОСНОВНОГО ФОНА
-            child: const SizedBox.shrink(), // ← ПУСТО (без текста)
-          ),
+          
+          // TODO: Вернуть рекламу, если донаты не покроют расходы
+          // Container(
+          //   height: 60,
+          //   color: AppColors.background,
+          //   child: const SizedBox.shrink(),
+          // ),
         ],
       ),
-      // 🔑 ГРАНИЦА МЕЖДУ РЕКЛАМНЫМ БЛОКОМ И ПАНЕЛЬЮ НАВИГАЦИИ
+      
+      // Граница между контентом и панелью навигации
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           border: Border(

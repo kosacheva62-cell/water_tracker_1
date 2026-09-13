@@ -54,63 +54,61 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
   }
 
   void _showThanksMessage() {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.only(
-            bottom: 140, 
-            left: 20, 
-            right: 20,
-          ),
-          duration: const Duration(seconds: 6),
-          content: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              border: Border.all(
-                color: AppColors.accent, 
-                width: 2.0,
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 140, left: 20, right: 20),
+        duration: const Duration(seconds: 6),
+        content: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            border: Border.all(color: AppColors.accent, width: 2.0),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.accentMedium,
+                blurRadius: 15,
+                spreadRadius: 2,
               ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.accentMedium,
-                  blurRadius: 15,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.email, 
-                  color: AppColors.accent, 
-                  size: 32,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    'Если вы отправили нам письмо, мы ответим в течение 3 дней.',
-                    style: TextStyles.neon(
-                      color: AppColors.accent,
-                      fontSize: 19.0,
-                    ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.email, color: AppColors.accent, size: 32),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  'Если вы отправили нам письмо, мы ответим в течение 3 дней.',
+                  style: TextStyles.neon(
+                    color: AppColors.accent,
+                    fontSize: 19.0,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   Future<void> _saveSettings() async {
     try {
       await context.read<FFAppState>().setDailyGoal(_dailyGoalGlasses);
+      
+      // ✅ Проверка безопасности перед использованием context
+      if (!mounted) return; 
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Настройки сохранены'),
+          duration: Duration(seconds: 2),
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -131,6 +129,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
+    // Адаптивные размеры
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     final topPadding = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
@@ -230,9 +229,80 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider),
                   const SizedBox(height: 16),
                   
-                  GestureDetector(
-                    onTap: () async {
-                      final deviceInfo = '''
+                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (С РАЗДЕЛИТЕЛЕМ И ПРАВИЛЬНЫМИ ЭМОДЗИ)
+                  Column(
+                    children: [
+                      // 1. Поясняющий текст с красным сердцем ❤️ в конце
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyles.subtitle(fontSize: subtitleFontSize),
+                            children: [
+                              const TextSpan(text: 'Это приложение бесплатное и без рекламы. Ваша поддержка поможет ему развиваться '),
+                              TextSpan(
+                                text: '❤️',
+                                style: TextStyle(color: Colors.redAccent), // Явно задаем красный цвет
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 12),
+                      
+                      // 2. Кнопка с эмодзи "объятия" 🫶 в конце (без пробела)
+                      SizedBox(
+                        width: buttonWidth,
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final url = Uri.parse('https://pay.cloudtips.ru/p/ee11f14f');
+                            
+                            if (!mounted) return;
+                            
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                            } else {
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Не удалось открыть ссылку')),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accent,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            elevation: 0,
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: TextStyles.button.copyWith(fontSize: 22),
+                              children: [
+                                // Неразрывный пробел \u00A0 предотвращает разрыв строки перед эмодзи
+                                TextSpan(text: 'Поддержать приложение\u00A0'),
+                                const TextSpan(text: '🫶'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // 3. Разделительная черта (аналогичная верхней)
+                      const SizedBox(height: 24),
+                      Divider(color: AppColors.divider),
+                      const SizedBox(height: 16),
+                      
+                      // 4. Блок обратной связи
+                      GestureDetector(
+                        onTap: () async {
+                          final deviceInfo = '''
 Устройство: ${Platform.operatingSystem}
 Версия ОС: ${Platform.operatingSystemVersion}
 Версия приложения: 1.0.0
@@ -241,59 +311,61 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 📝 НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
 
 ''';
-                      
-                      final encodedBody = deviceInfo
-                          .replaceAll(' ', '%20')
-                          .replaceAll('\n', '%0D%0A');
-                      
-                      final subject = '"Трекер воды": обратная связь';
-                      final encodedSubject = subject.replaceAll(' ', '%20');
-                      
-                      final mailtoUri = 'mailto:hello.tiana.apps@gmail.com'
-                          '?subject=$encodedSubject'
-                          '&body=$encodedBody';
-                      
-                      final uri = Uri.parse(mailtoUri);
-                      
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri);
-                        _shouldShowThanksMessage = true;
-                      } else {
-                        if (!mounted) return;
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Не удалось открыть почтовый клиент')),
-                          );
-                        }
-                      }
-                    },
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Написать в службу поддержки',
-                          style: TextStyles.subtitle(fontSize: subtitleFontSize),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
+                          
+                          final encodedBody = deviceInfo
+                              .replaceAll(' ', '%20')
+                              .replaceAll('\n', '%0D%0A');
+                          
+                          final subject = '"Трекер воды": обратная связь';
+                          final encodedSubject = subject.replaceAll(' ', '%20');
+                          
+                          final mailtoUri = 'mailto:hello.tiana.apps@gmail.com'
+                              '?subject=$encodedSubject'
+                              '&body=$encodedBody';
+                          
+                          final uri = Uri.parse(mailtoUri);
+                          
+                          if (!mounted) return;
+                          
+                          if (await canLaunchUrl(uri)) {
+                            await launchUrl(uri);
+                            _shouldShowThanksMessage = true;
+                          } else {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Не удалось открыть почтовый клиент')),
+                            );
+                          }
+                        },
+                        child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.email,
-                              color: AppColors.accent,
-                              size: isTablet ? 22.0 : (isTinyScreen ? 15.0 : (isSmallScreen ? 16.0 : 18.0)),
-                            ),
-                            const SizedBox(width: 4),
                             Text(
-                              'hello.tiana.apps@gmail.com',
+                              'Написать в службу поддержки',
                               style: TextStyles.subtitle(fontSize: subtitleFontSize),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.email,
+                                  color: AppColors.accent,
+                                  size: isTablet ? 22.0 : (isTinyScreen ? 15.0 : (isSmallScreen ? 16.0 : 18.0)),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'hello.tiana.apps@gmail.com',
+                                  style: TextStyles.subtitle(fontSize: subtitleFontSize),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
