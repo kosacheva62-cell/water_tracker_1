@@ -229,10 +229,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider),
                   const SizedBox(height: 16),
                   
-                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (С РАЗДЕЛИТЕЛЕМ И ПРАВИЛЬНЫМИ ЭМОДЗИ)
+                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (UNICODE ЭМОДЗИ + ЕСТЕСТВЕННЫЕ ОТСТУПЫ)
                   Column(
                     children: [
-                      // 1. Поясняющий текст с красным сердцем ❤️ в конце
+                      // 1. Поясняющий текст с эмодзи 🙏 через Unicode
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
                         child: RichText(
@@ -241,18 +241,23 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             style: TextStyles.subtitle(fontSize: subtitleFontSize),
                             children: [
                               const TextSpan(text: 'Это приложение бесплатное и без рекламы. Ваша поддержка поможет ему развиваться '),
+                              // ✅ НАДЕЖНЫЙ UNICODE КОД ДЛЯ 🙏
                               TextSpan(
-                                text: '❤️',
-                                style: TextStyle(color: Colors.redAccent), // Явно задаем красный цвет
+                                text: '\u{1F64F}',
+                                style: TextStyle(
+                                  fontSize: 20, 
+                                  height: 1.0,
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
                       
-                      const SizedBox(height: 12),
+                      // ✅ ОТСТУП 32px (сохранен для защиты от будущего свечения)
+                      const SizedBox(height: 32),
                       
-                      // 2. Кнопка с эмодзи "объятия" 🫶 в конце (без пробела)
+                      // 2. Кнопка с сердцем ❤️ БЕЗ ИСКУССТВЕННЫХ СДВИГОВ
                       SizedBox(
                         width: buttonWidth,
                         height: 60,
@@ -280,21 +285,28 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             elevation: 0,
                             padding: EdgeInsets.zero,
                           ),
+                          // ✅ ПРОСТОЙ RICHTEXT С ОБЫЧНЫМ ПРОБЕЛОМ
                           child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
                               style: TextStyles.button.copyWith(fontSize: 22),
                               children: [
-                                // Неразрывный пробел \u00A0 предотвращает разрыв строки перед эмодзи
-                                TextSpan(text: 'Поддержать приложение\u00A0'),
-                                const TextSpan(text: '🫶'),
+                                const TextSpan(text: 'Поддержать приложение '),
+                                TextSpan(
+                                  text: '❤️',
+                                  style: TextStyle(
+                                    fontSize: 30, 
+                                    color: Colors.redAccent,
+                                    height: 1.0,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                         ),
                       ),
 
-                      // 3. Разделительная черта (аналогичная верхней)
+                      // 3. Разделительная черта
                       const SizedBox(height: 24),
                       Divider(color: AppColors.divider),
                       const SizedBox(height: 16),
@@ -308,7 +320,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 Версия приложения: 1.0.0
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📝 НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
+ НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
 
 ''';
                           
