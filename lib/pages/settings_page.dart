@@ -229,7 +229,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider),
                   const SizedBox(height: 16),
                   
-                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (НЕОНОВО-ГОЛУБОЙ ТЕКСТ + КРАСНОЕ СЕРДЦЕ)
+                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (УВЕЛИЧЕННАЯ ВЫСОТА КНОПКИ)
                   Column(
                     children: [
                       // 1. Поясняющий текст с эмодзи 🙏 через Unicode
@@ -257,10 +257,11 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       // ✅ ОТСТУП 32px (сохранен для защиты от будущего свечения)
                       const SizedBox(height: 32),
                       
-                      // 2. Кнопка с темным фоном, неоновым текстом и красным сердцем ❤️
+                      // 2. Кнопка с увеличенной высотой (72px), неоновым текстом и красным сердцем ❤️
                       Container(
                         width: buttonWidth,
-                        height: 60,
+                        // ✅ УВЕЛИЧЕНА ВЫСОТА С 60 ДО 72 ДЛЯ ДВУХ СТРОК ТЕКСТА
+                        height: 72, 
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           color: AppColors.card,
@@ -289,7 +290,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
-                            foregroundColor: AppColors.accent, // ✅ НЕОНОВО-ГОЛУБОЙ ЦВЕТ ДЛЯ ВСЕЙ КНОПКИ
+                            foregroundColor: AppColors.accent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -301,7 +302,14 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             text: TextSpan(
                               style: TextStyles.button.copyWith(
                                 fontSize: 22,
-                                color: AppColors.accent, // ✅ ЯВНЫЙ НЕОНОВЫЙ ЦВЕТ ДЛЯ ТЕКСТА
+                                color: AppColors.accent,
+                                shadows: [
+                                  Shadow(
+                                    color: AppColors.accent.withOpacity(0.5),
+                                    blurRadius: 8,
+                                    offset: Offset.zero,
+                                  ),
+                                ],
                               ),
                               children: [
                                 const TextSpan(text: 'Поддержать приложение '),
@@ -309,7 +317,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                   text: '❤️',
                                   style: TextStyle(
                                     fontSize: 30, 
-                                    color: Colors.redAccent, // ✅ СЕРДЦЕ ОСТАЕТСЯ КРАСНЫМ
+                                    color: Colors.redAccent,
                                     height: 1.0,
                                   ),
                                 ),
