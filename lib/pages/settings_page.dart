@@ -229,7 +229,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider),
                   const SizedBox(height: 16),
                   
-                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (UNICODE ЭМОДЗИ + ЕСТЕСТВЕННЫЕ ОТСТУПЫ)
+                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (НЕОНОВО-ГОЛУБОЙ ТЕКСТ + КРАСНОЕ СЕРДЦЕ)
                   Column(
                     children: [
                       // 1. Поясняющий текст с эмодзи 🙏 через Unicode
@@ -257,10 +257,21 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       // ✅ ОТСТУП 32px (сохранен для защиты от будущего свечения)
                       const SizedBox(height: 32),
                       
-                      // 2. Кнопка с сердцем ❤️ БЕЗ ИСКУССТВЕННЫХ СДВИГОВ
-                      SizedBox(
+                      // 2. Кнопка с темным фоном, неоновым текстом и красным сердцем ❤️
+                      Container(
                         width: buttonWidth,
                         height: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: AppColors.card,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.accentShadow,
+                              blurRadius: 16,
+                              spreadRadius: 3,
+                            ),
+                          ],
+                        ),
                         child: ElevatedButton(
                           onPressed: () async {
                             final url = Uri.parse('https://pay.cloudtips.ru/p/ee11f14f');
@@ -277,26 +288,28 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accent,
-                            foregroundColor: Colors.black,
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: AppColors.accent, // ✅ НЕОНОВО-ГОЛУБОЙ ЦВЕТ ДЛЯ ВСЕЙ КНОПКИ
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
                             elevation: 0,
                             padding: EdgeInsets.zero,
                           ),
-                          // ✅ ПРОСТОЙ RICHTEXT С ОБЫЧНЫМ ПРОБЕЛОМ
                           child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              style: TextStyles.button.copyWith(fontSize: 22),
+                              style: TextStyles.button.copyWith(
+                                fontSize: 22,
+                                color: AppColors.accent, // ✅ ЯВНЫЙ НЕОНОВЫЙ ЦВЕТ ДЛЯ ТЕКСТА
+                              ),
                               children: [
                                 const TextSpan(text: 'Поддержать приложение '),
                                 TextSpan(
                                   text: '❤️',
                                   style: TextStyle(
                                     fontSize: 30, 
-                                    color: Colors.redAccent,
+                                    color: Colors.redAccent, // ✅ СЕРДЦЕ ОСТАЕТСЯ КРАСНЫМ
                                     height: 1.0,
                                   ),
                                 ),
@@ -320,7 +333,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 Версия приложения: 1.0.0
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
+📝 НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
 
 ''';
                           
