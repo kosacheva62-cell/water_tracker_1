@@ -131,7 +131,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 
     // Адаптивные размеры
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
-    final topPadding = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
+    
+    // ✅ ФИКСИРОВАННЫЙ МИНИМАЛЬНЫЙ ОТСТУП СВЕРХУ (16px)
+    final topPadding = 16.0; 
+    
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     
     final controlWidth = isTablet ? 80.0 : (isTinyScreen ? 52.0 : (isSmallScreen ? 58.0 : 64.0));
@@ -168,10 +171,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // ✅ ЗАГОЛОВОК С УМЕНЬШЕННЫМ МЕЖСТРОЧНЫМ ИНТЕРВАЛОМ 1.1
                   Text(
                     'Установите цель на день:',
                     textAlign: TextAlign.center,
-                    style: TextStyles.title(fontSize: titleFontSize),
+                    style: TextStyles.title(
+                      fontSize: titleFontSize,
+                    ).copyWith(height: 1.1), 
                   ),
                   SizedBox(height: spaceAfterTitle),
                   
