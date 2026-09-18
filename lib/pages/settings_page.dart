@@ -229,10 +229,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider),
                   const SizedBox(height: 16),
                   
-                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (КРАСНОЕ НЕОНОВОЕ СЕРДЦЕ)
+                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (УСИЛЕННОЕ СВЕЧЕНИЕ ТЕКСТА КНОПКИ)
                   Column(
                     children: [
-                      // 1. Поясняющий текст с эмодзи  через Unicode
+                      // 1. Поясняющий текст с эмодзи 🙏 через Unicode
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
                         child: RichText(
@@ -257,7 +257,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       // ✅ ОТСТУП 32px (сохранен для защиты от будущего свечения)
                       const SizedBox(height: 32),
                       
-                      // 2. Кнопка с высотой 72px, неоновым текстом и КРАСНЫМ неоновым сердцем ❤️
+                      // 2. Кнопка с высотой 72px, усиленным неоновым текстом и КРАСНЫМ неоновым сердцем ❤️
                       Container(
                         width: buttonWidth,
                         height: 72, // Увеличенная высота для двух строк
@@ -302,10 +302,11 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                               style: TextStyles.button.copyWith(
                                 fontSize: 22,
                                 color: AppColors.accent,
+                                // ✅ УСИЛЕННОЕ СВЕЧЕНИЕ: blurRadius 12, opacity 0.7
                                 shadows: [
                                   Shadow(
-                                    color: AppColors.accent.withOpacity(0.5),
-                                    blurRadius: 8,
+                                    color: AppColors.accent.withOpacity(0.7),
+                                    blurRadius: 12,
                                     offset: Offset.zero,
                                   ),
                                 ],
@@ -321,8 +322,8 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                     height: 1.0,
                                     shadows: [
                                       Shadow(
-                                        color: Colors.redAccent.withOpacity(0.6), // Красная полупрозрачная тень
-                                        blurRadius: 10,                           // Мягкое свечение
+                                        color: Colors.redAccent.withOpacity(0.6),
+                                        blurRadius: 10,
                                         offset: Offset.zero,
                                       ),
                                     ],
