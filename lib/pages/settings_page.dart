@@ -229,10 +229,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider),
                   const SizedBox(height: 16),
                   
-                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (УВЕЛИЧЕННАЯ ВЫСОТА КНОПКИ)
+                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (КРАСНОЕ НЕОНОВОЕ СЕРДЦЕ)
                   Column(
                     children: [
-                      // 1. Поясняющий текст с эмодзи 🙏 через Unicode
+                      // 1. Поясняющий текст с эмодзи  через Unicode
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
                         child: RichText(
@@ -257,11 +257,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       // ✅ ОТСТУП 32px (сохранен для защиты от будущего свечения)
                       const SizedBox(height: 32),
                       
-                      // 2. Кнопка с увеличенной высотой (72px), неоновым текстом и красным сердцем ❤️
+                      // 2. Кнопка с высотой 72px, неоновым текстом и КРАСНЫМ неоновым сердцем ❤️
                       Container(
                         width: buttonWidth,
-                        // ✅ УВЕЛИЧЕНА ВЫСОТА С 60 ДО 72 ДЛЯ ДВУХ СТРОК ТЕКСТА
-                        height: 72, 
+                        height: 72, // Увеличенная высота для двух строк
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           color: AppColors.card,
@@ -313,12 +312,20 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                               ),
                               children: [
                                 const TextSpan(text: 'Поддержать приложение '),
+                                // ✅ СЕРДЦУ ДОБАВЛЕНА СОБСТВЕННАЯ КРАСНАЯ ТЕНЬ
                                 TextSpan(
                                   text: '❤️',
                                   style: TextStyle(
                                     fontSize: 30, 
                                     color: Colors.redAccent,
                                     height: 1.0,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.redAccent.withOpacity(0.6), // Красная полупрозрачная тень
+                                        blurRadius: 10,                           // Мягкое свечение
+                                        offset: Offset.zero,
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
