@@ -19,13 +19,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         color: AppColors.background,
         height: preferredSize.height,
+        // ✅ Верхний отступ от часов (безопасный)
+        padding: const EdgeInsets.only(top: 12.0), 
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          // ✅ ИЗМЕНЕНО: Start вместо Center
+          // Контент начинается сразу после padding, без лишней пустоты сверху
+          mainAxisAlignment: MainAxisAlignment.start, 
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Капля со свечением
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Container(
@@ -61,7 +65,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                // ✅ ЗАМЕНЕНО: Используем TextStyles
                 Text(
                   title,
                   style: TextStyles.regular(
@@ -73,18 +76,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ],
             ),
             const SizedBox(height: 2),
-            // ✅ ЗАМЕНЕНО: Используем TextStyles
             Text(
               subtitle,
               style: TextStyles.subtitle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
+            // ✅ Остальное пространство (~26px) теперь автоматически уходит СЮДА, вниз
+            // Это и есть та самая "мертвая зона", которую мы хотим компенсировать
           ],
         ),
       ),
     );
   }
 
+  // ✅ ВОЗВРАЩАЕМ БЕЗОПАСНУЮ ВЫСОТУ 80px
   @override
-  Size get preferredSize => const Size.fromHeight(80.0);
+  Size get preferredSize => const Size.fromHeight(80.0); 
 }

@@ -132,8 +132,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     // Адаптивные размеры
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     
-    // ✅ ФИКСИРОВАННЫЙ МИНИМАЛЬНЫЙ ОТСТУП СВЕРХУ (16px)
-    final topPadding = 16.0; 
+    // ✅ СБАЛАНСИРОВАННАЯ АДАПТИВНАЯ ЛОГИКА ОТСТУПА
+    final topPadding = isTablet 
+        ? 16.0   
+        : (isTinyScreen ? 4.0 : 6.0); 
     
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     
@@ -238,7 +240,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (УСИЛЕННОЕ СВЕЧЕНИЕ ТЕКСТА КНОПКИ)
                   Column(
                     children: [
-                      // 1. Поясняющий текст с эмодзи 🙏 через Unicode
+                      // 1. Поясняющий текст с эмодзи  через Unicode
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
                         child: RichText(
@@ -355,7 +357,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 Версия приложения: 1.0.0
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📝 НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
+ НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
 
 ''';
                           
