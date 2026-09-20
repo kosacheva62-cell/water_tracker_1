@@ -129,10 +129,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
-    // Адаптивные размеры
+    // Адаптивные размеры шрифтов и контролов
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     
-    // ✅ СБАЛАНСИРОВАННАЯ АДАПТИВНАЯ ЛОГИКА ОТСТУПА
+    // ✅ СБАЛАНСИРОВАННЫЙ ВЕРХНИЙ ОТСТУП
     final topPadding = isTablet 
         ? 16.0   
         : (isTinyScreen ? 4.0 : 6.0); 
@@ -146,9 +146,17 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final numberContainerWidth = isTablet ? 100.0 : (isTinyScreen ? 68.0 : (isSmallScreen ? 74.0 : 80.0));
     final spaceBetweenControls = isTinyScreen ? 1.0 : 2.0;
     
-    final spaceAfterTitle = isTablet ? 36.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 24.0 : 28.0));
-    final spaceAfterInput = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
-    final spaceAfterGoal = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
+    // ✅ ВИЗУАЛЬНО СБАЛАНСИРОВАННЫЕ ОТСТУПЫ
+    
+    // 1. Верхний отступ УВЕЛИЧЕН до 24px для компенсации высоты шрифта заголовка
+    final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0)); 
+    
+    // 2. Нижний отступ оставляем 18px (визуально он и так хорош)
+    final spaceAfterInput = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 18.0)); 
+    
+    // 3. Отступ после цели тоже 18px для симметрии нижней части
+    final spaceAfterGoal = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 18.0)); 
+    
     final hintFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     
@@ -233,14 +241,15 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     ),
                   ),
                   
-                  const SizedBox(height: 24),
-                  Divider(color: AppColors.divider),
+                  // ✅ КОМПАКТНЫЕ РАЗДЕЛИТЕЛИ (ОТСТУП УМЕНЬШЕН ДО 16PX ДЛЯ СИММЕТРИИ)
+                  const SizedBox(height: 16), 
+                  Divider(color: AppColors.divider, thickness: 1),
                   const SizedBox(height: 16),
                   
-                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ (УСИЛЕННОЕ СВЕЧЕНИЕ ТЕКСТА КНОПКИ)
+                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ
                   Column(
                     children: [
-                      // 1. Поясняющий текст с эмодзи  через Unicode
+                      // 1. Поясняющий текст с эмодзи 🙏 через Unicode
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
                         child: RichText(
@@ -249,7 +258,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             style: TextStyles.subtitle(fontSize: subtitleFontSize),
                             children: [
                               const TextSpan(text: 'Это приложение бесплатное и без рекламы. Ваша поддержка поможет ему развиваться '),
-                              // ✅ НАДЕЖНЫЙ UNICODE КОД ДЛЯ 🙏
                               TextSpan(
                                 text: '\u{1F64F}',
                                 style: TextStyle(
@@ -262,13 +270,13 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
                       
-                      // ✅ ОТСТУП 32px (сохранен для защиты от будущего свечения)
-                      const SizedBox(height: 32),
+                      // ✅ ОТСТУП ДО КНОПКИ ПОДДЕРЖКИ УМЕНЬШЕН ДО 18PX
+                      const SizedBox(height: 18), 
                       
                       // 2. Кнопка с высотой 72px, усиленным неоновым текстом и КРАСНЫМ неоновым сердцем ❤️
                       Container(
                         width: buttonWidth,
-                        height: 72, // Увеличенная высота для двух строк
+                        height: 72, 
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           color: AppColors.card,
@@ -310,7 +318,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                               style: TextStyles.button.copyWith(
                                 fontSize: 22,
                                 color: AppColors.accent,
-                                // ✅ УСИЛЕННОЕ СВЕЧЕНИЕ: blurRadius 12, opacity 0.7
                                 shadows: [
                                   Shadow(
                                     color: AppColors.accent.withOpacity(0.7),
@@ -321,7 +328,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                               ),
                               children: [
                                 const TextSpan(text: 'Поддержать приложение '),
-                                // ✅ СЕРДЦУ ДОБАВЛЕНА СОБСТВЕННАЯ КРАСНАЯ ТЕНЬ
                                 TextSpan(
                                   text: '❤️',
                                   style: TextStyle(
@@ -343,10 +349,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
 
-                      // 3. Разделительная черта
-                      const SizedBox(height: 24),
-                      Divider(color: AppColors.divider),
-                      const SizedBox(height: 16),
+                      // ✅ КОМПАКТНЫЙ НИЖНИЙ БЛОК
+                      const SizedBox(height: 20), 
+                      Divider(color: AppColors.divider, thickness: 1),
+                      const SizedBox(height: 12), 
                       
                       // 4. Блок обратной связи
                       GestureDetector(
@@ -357,7 +363,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 Версия приложения: 1.0.0
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
+📝 НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
 
 ''';
                           
@@ -389,12 +395,16 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // ✅ УПЛОТНЕННЫЙ МЕЖСТРОЧНЫЙ ИНТЕРВАЛ (height: 1.0)
                             Text(
                               'Написать в службу поддержки',
-                              style: TextStyles.subtitle(fontSize: subtitleFontSize),
+                              style: TextStyles.subtitle(
+                                fontSize: subtitleFontSize,
+                              ).copyWith(height: 1.0), 
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 4),
+                            // ✅ УМЕНЬШЕННЫЙ ВНЕШНИЙ ОТСТУП (2px вместо 4px)
+                            const SizedBox(height: 2), 
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -405,9 +415,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                   size: isTablet ? 22.0 : (isTinyScreen ? 15.0 : (isSmallScreen ? 16.0 : 18.0)),
                                 ),
                                 const SizedBox(width: 4),
+                                // ✅ УПЛОТНЕННЫЙ МЕЖСТРОЧНЫЙ ИНТЕРВАЛ (height: 1.0)
                                 Text(
                                   'hello.tiana.apps@gmail.com',
-                                  style: TextStyles.subtitle(fontSize: subtitleFontSize),
+                                  style: TextStyles.subtitle(
+                                    fontSize: subtitleFontSize,
+                                  ).copyWith(height: 1.0), 
                                 ),
                               ],
                             ),
