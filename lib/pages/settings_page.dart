@@ -241,10 +241,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     ),
                   ),
                   
-                  // ✅ КОМПАКТНЫЕ РАЗДЕЛИТЕЛИ (ОТСТУП УМЕНЬШЕН ДО 16PX ДЛЯ СИММЕТРИИ)
+                  // ✅ ИЗМЕНЕНО: ОТСТУП ПОД ЛИНИЕЙ ТЕПЕРЬ 12PX (БЫЛО 16)
                   const SizedBox(height: 16), 
                   Divider(color: AppColors.divider, thickness: 1),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8), 
                   
                   // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ
                   Column(
@@ -270,7 +270,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
                       
-                      // ✅ ОТСТУП ДО КНОПКИ ПОДДЕРЖКИ УМЕНЬШЕН ДО 18PX
+                      // ✅ ОТСТУП ДО КНОПКИ ПОДДЕРЖКИ 18PX
                       const SizedBox(height: 18), 
                       
                       // 2. Кнопка с высотой 72px, усиленным неоновым текстом и КРАСНЫМ неоновым сердцем ❤️
