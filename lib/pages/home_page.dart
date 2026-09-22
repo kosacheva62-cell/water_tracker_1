@@ -223,23 +223,43 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           ),
                           SizedBox(height: spaceAfterButton),
                           
-                          Text(
-                            isDone
-                                ? 'Поздравляю, ваша цель на сегодня достигнута!🎉🎉🎉'
-                                : 'Продолжайте, ваша цель ещё не достигнута!',
-                            textAlign: TextAlign.center,
-                            style: TextStyles.base.copyWith(
-                              color: isDone ? AppColors.accent : AppColors.textSecondary,
-                              fontSize: congratsFontSize,
-                              shadows: isDone
-                                  ? [
-                                      Shadow(
-                                        color: AppColors.accentGlow,
-                                        blurRadius: 12,
-                                        offset: Offset.zero,
+                          // ✅ РАЗДЕЛЬНОЕ СТИЛИЗОВАНИЕ: ТЕКСТ С НЕОНОМ, ЭМОДЗИ БЕЗ ТЕНЕЙ
+                          Center(
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: TextStyles.base.copyWith(
+                                  color: isDone ? AppColors.accent : AppColors.textSecondary,
+                                  fontSize: congratsFontSize,
+                                  shadows: isDone
+                                      ? [
+                                          Shadow(
+                                            color: AppColors.accentGlow,
+                                            blurRadius: 12,
+                                            offset: Offset.zero,
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: isDone
+                                        ? 'Поздравляю, ваша цель на сегодня достигнута!'
+                                        : 'Продолжайте, ваша цель ещё не достигнута!',
+                                  ),
+                                  if (isDone)
+                                    TextSpan(
+                                      text: '🎉🎉🎉',
+                                      // ✅ ЯВНЫЙ СТИЛЬ БЕЗ НАСЛЕДОВАНИЯ ТЕНЕЙ
+                                      style: TextStyle(
+                                        fontSize: congratsFontSize,
+                                        height: 1.0,
+                                        color: isDone ? AppColors.accent : AppColors.textSecondary,
+                                        shadows: [], // Пустой список вместо null
                                       ),
-                                    ]
-                                  : null,
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
