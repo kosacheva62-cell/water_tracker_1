@@ -11,7 +11,8 @@ class StatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<FFAppState>();
-    //  ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ: ОПРЕДЕЛЯЕМ КАТЕГОРИЮ ЭКРАНА
+    
+    // ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ: ОПРЕДЕЛЯЕМ КАТЕГОРИЮ ЭКРАНА
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
@@ -22,9 +23,12 @@ class StatsPage extends StatelessWidget {
     final titleFontSize = isTablet 
         ? 30.0 
         : (isTinyScreen ? 20.0 : (isSmallScreen ? 22.0 : 24.0));
+        
+    // ✅ ИЗМЕНЕНО: ОТСТУП ТЕПЕРЬ ИДЕНТИЧЕН СТРАНИЦЕ "НАСТРОЙКИ"
     final topPadding = isTablet 
-        ? 20.0 
-        : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
+        ? 16.0   
+        : (isTinyScreen ? 4.0 : 6.0); 
+        
     final spaceAfterTitle = isTablet 
         ? 20.0 
         : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
@@ -57,7 +61,7 @@ class StatsPage extends StatelessWidget {
     const List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
     final todayIndex = (DateTime.now().weekday - 1) % 7;
 
-    // 🔑 УСЛОВНАЯ ПРОКРУТКА КАК РЕЗЕРВНЫЙ МЕХАНИЗМ
+    // УСЛОВНАЯ ПРОКРУТКА КАК РЕЗЕРВНЫЙ МЕХАНИЗМ
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -96,7 +100,7 @@ class StatsPage extends StatelessWidget {
                     final mlConsumed = glasses * 250;
                     final day = weekDays[index];
                     
-                    // 🔑 КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Получаем цель КОНКРЕТНО для этого дня из истории
+                    // КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Получаем цель КОНКРЕТНО для этого дня из истории
                     final dayGoalGlasses = appState.getGoalForWeekDay(index);
                     final dayGoalMl = dayGoalGlasses * 250;
                     
@@ -145,7 +149,7 @@ class StatsPage extends StatelessWidget {
                                     fontWeight: isToday ? FontWeight.w700 : FontWeight.w600,
                                   ),
                                 ),
-                                // 🔑 КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Используем индивидуальную цель дня
+                                // КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: Используем индивидуальную цель дня
                                 Text(
                                   '$mlConsumed из $dayGoalMl мл',
                                   style: TextStyles.subtitle(fontSize: mlTextFontSize),
