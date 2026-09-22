@@ -79,7 +79,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final centerCircleSize = isTablet ? 265.0 : (isTinyScreen ? 138.0 : (isSmallScreen ? 176.0 : 212.0));
     final percentFontSize = isTablet ? 72.0 : (isTinyScreen ? 40.0 : (isSmallScreen ? 48.0 : 56.0));
     
-    final topPadding = isTablet ? 32.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));  
+    // ✅ УВЕЛИЧЕННЫЙ ОТСТУП ДЛЯ ЭФФЕКТА ВОЗДУШНОСТИ И ПАРЕНИЯ
+    final topPadding = isTablet 
+        ? 48.0   
+        : (isTinyScreen ? 24.0 : (isSmallScreen ? 32.0 : 40.0));  
+        
     final spaceAfterCircle = isTablet ? 32.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0));
     final spaceBetweenTexts = 2.0;
     final spaceAfterMl = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
