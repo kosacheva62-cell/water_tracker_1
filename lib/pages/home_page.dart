@@ -218,8 +218,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   );
                                 }
                               },
-                              // ✅ ЗАМЕНЕНО НА СТАКАН С СОЛОМИНКОЙ БЕЗ ПРОБЕЛА
-                              text: '+1 стакан🥤',
+                              // ✅ ЗАМЕНЕНО НА BUBBLE TEA БЕЗ ПРОБЕЛА
+                              text: '+1 стакан🧋',
                             ),
                           ),
                           SizedBox(height: spaceAfterButton),
@@ -271,7 +271,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            //  УПРОЩЕННЫЙ ДОЖДЬ БЕЗ CLIPRECT (БЕЗОПАСНО ДЛЯ РЕАЛЬНЫХ УСТРОЙСТВ)
+            // 🔑 УПРОЩЕННЫЙ ДОЖДЬ БЕЗ CLIPRECT (БЕЗОПАСНО ДЛЯ РЕАЛЬНЫХ УСТРОЙСТВ)
             if (_showRain)
               Positioned.fill(
                 child: IgnorePointer(
