@@ -218,8 +218,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   );
                                 }
                               },
-                              // ✅ ЗАМЕНЕНО НА BUBBLE TEA БЕЗ ПРОБЕЛА
-                              text: '+1 стакан🧋',
+                              // ✅ ЗАМЕНЕНО НА СТАКАН С СОЛОМИНКОЙ БЕЗ ПРОБЕЛА
+                              text: '+1 стакан🥤',
                             ),
                           ),
                           SizedBox(height: spaceAfterButton),
