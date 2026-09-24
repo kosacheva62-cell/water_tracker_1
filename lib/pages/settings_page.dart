@@ -245,7 +245,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   SizedBox(height: spaceBelowSaveButton), 
                   
                   Divider(color: AppColors.divider, thickness: 1),
-                  const SizedBox(height: 8), 
+                  
+                  // ✅ ИЗМЕНЕНО: ОТСТУП ПОД ЛИНИЕЙ ТЕПЕРЬ 12PX (БЫЛО 8)
+                  const SizedBox(height: 12), 
                   
                   //  ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ
                   Column(
