@@ -149,8 +149,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0)); 
     final spaceAfterInput = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 18.0)); 
     
-    // ✅ УДАЛЕНО: spaceAfterGoal больше не используется
-    
     final hintFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     
@@ -160,6 +158,11 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     // ✅ НОВЫЕ АДАПТИВНЫЕ ОТСТУПЫ ДЛЯ КНОПКИ "СОХРАНИТЬ" (АНАЛОГ ГЛАВНОЙ)
     final spaceAboveSaveButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
     final spaceBelowSaveButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
+
+    // ✅ НОВЫЕ АДАПТИВНЫЕ ОТСТУПЫ В БЛОКЕ ПОДДЕРЖКИ
+    // Планшет (24px), Tiny (18px), Small (18px), Standard (20px)
+    final spaceAfterSupportText = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
+    final spaceAfterDonateButton = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
@@ -225,7 +228,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     textAlign: TextAlign.center,
                   ),
                   
-                  // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП ВМЕСТО ФИКСИРОВАННОГО spaceAfterGoal
                   SizedBox(height: spaceAboveSaveButton),
                   
                   Center(
@@ -240,7 +242,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     ),
                   ),
                   
-                  // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП ВМЕСТО ФИКСИРОВАННОГО 16PX
                   SizedBox(height: spaceBelowSaveButton), 
                   
                   Divider(color: AppColors.divider, thickness: 1),
@@ -269,7 +270,8 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
                       
-                      const SizedBox(height: 18), 
+                      // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП
+                      SizedBox(height: spaceAfterSupportText), 
                       
                       Container(
                         width: buttonWidth,
@@ -346,7 +348,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
 
-                      const SizedBox(height: 20), 
+                      // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП
+                      SizedBox(height: spaceAfterDonateButton), 
+                      
                       Divider(color: AppColors.divider, thickness: 1),
                       const SizedBox(height: 12), 
                       
