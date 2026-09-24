@@ -100,7 +100,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     try {
       await context.read<FFAppState>().setDailyGoal(_dailyGoalGlasses);
       
-      // ✅ Проверка безопасности перед использованием context
       if (!mounted) return; 
       
       ScaffoldMessenger.of(context).showSnackBar(
@@ -132,7 +131,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     // Адаптивные размеры шрифтов и контролов
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     
-    // ✅ СБАЛАНСИРОВАННЫЙ ВЕРХНИЙ ОТСТУП
     final topPadding = isTablet 
         ? 16.0   
         : (isTinyScreen ? 4.0 : 6.0); 
@@ -148,20 +146,22 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     
     // ✅ ВИЗУАЛЬНО СБАЛАНСИРОВАННЫЕ ОТСТУПЫ
     
-    // 1. Верхний отступ УВЕЛИЧЕН до 24px для компенсации высоты шрифта заголовка
     final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0)); 
-    
-    // 2. Нижний отступ оставляем 18px (визуально он и так хорош)
     final spaceAfterInput = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 18.0)); 
     
-    // 3. Отступ после цели тоже 18px для симметрии нижней части
-    final spaceAfterGoal = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 18.0)); 
+    // ✅ НОВАЯ ПЕРЕМЕННАЯ: ОТСТУП ПОСЛЕ ЦЕЛИ (КАК НА ГЛАВНОЙ ПОСЛЕ МЛ)
+    // Приводим к значениям spaceAfterMl с Главной страницы
+    final spaceAfterGoal = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0)); 
     
     final hintFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
     
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
+
+    // ✅ НОВЫЕ АДАПТИВНЫЕ ОТСТУПЫ ДЛЯ КНОПКИ "СОХРАНИТЬ" (АНАЛОГ ГЛАВНОЙ)
+    final spaceAboveSaveButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
+    final spaceBelowSaveButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
@@ -181,7 +181,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // ✅ ЗАГОЛОВОК С УМЕНЬШЕННЫМ МЕЖСТРОЧНЫМ ИНТЕРВАЛОМ 1.1
                   Text(
                     'Установите цель на день:',
                     textAlign: TextAlign.center,
@@ -227,7 +226,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     style: TextStyles.goal(fontSize: goalFontSize),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: spaceAfterGoal),
+                  
+                  // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП ВМЕСТО ФИКСИРОВАННОГО spaceAfterGoal
+                  SizedBox(height: spaceAboveSaveButton),
                   
                   Center(
                     child: AnimatedButton(
@@ -241,15 +242,15 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     ),
                   ),
                   
-                  // ✅ ИЗМЕНЕНО: ОТСТУП ПОД ЛИНИЕЙ ТЕПЕРЬ 12PX (БЫЛО 16)
-                  const SizedBox(height: 16), 
+                  // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП ВМЕСТО ФИКСИРОВАННОГО 16PX
+                  SizedBox(height: spaceBelowSaveButton), 
+                  
                   Divider(color: AppColors.divider, thickness: 1),
                   const SizedBox(height: 8), 
                   
-                  // 🔑 ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ
+                  //  ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ
                   Column(
                     children: [
-                      // 1. Поясняющий текст с эмодзи 🙏 через Unicode
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
                         child: RichText(
@@ -270,10 +271,8 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
                       
-                      // ✅ ОТСТУП ДО КНОПКИ ПОДДЕРЖКИ 18PX
                       const SizedBox(height: 18), 
                       
-                      // 2. Кнопка с высотой 72px, усиленным неоновым текстом и КРАСНЫМ неоновым сердцем ❤️
                       Container(
                         width: buttonWidth,
                         height: 72, 
@@ -349,12 +348,10 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
 
-                      // ✅ КОМПАКТНЫЙ НИЖНИЙ БЛОК
                       const SizedBox(height: 20), 
                       Divider(color: AppColors.divider, thickness: 1),
                       const SizedBox(height: 12), 
                       
-                      // 4. Блок обратной связи
                       GestureDetector(
                         onTap: () async {
                           final deviceInfo = '''
@@ -395,7 +392,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // ✅ УПЛОТНЕННЫЙ МЕЖСТРОЧНЫЙ ИНТЕРВАЛ (height: 1.0)
                             Text(
                               'Написать в службу поддержки',
                               style: TextStyles.subtitle(
@@ -403,7 +399,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                               ).copyWith(height: 1.0), 
                               textAlign: TextAlign.center,
                             ),
-                            // ✅ УМЕНЬШЕННЫЙ ВНЕШНИЙ ОТСТУП (2px вместо 4px)
                             const SizedBox(height: 2), 
                             Row(
                               mainAxisSize: MainAxisSize.min,
@@ -415,7 +410,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                   size: isTablet ? 22.0 : (isTinyScreen ? 15.0 : (isSmallScreen ? 16.0 : 18.0)),
                                 ),
                                 const SizedBox(width: 4),
-                                // ✅ УПЛОТНЕННЫЙ МЕЖСТРОЧНЫЙ ИНТЕРВАЛ (height: 1.0)
                                 Text(
                                   'hello.tiana.apps@gmail.com',
                                   style: TextStyles.subtitle(
