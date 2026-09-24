@@ -149,9 +149,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0)); 
     final spaceAfterInput = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 18.0)); 
     
-    // ✅ НОВАЯ ПЕРЕМЕННАЯ: ОТСТУП ПОСЛЕ ЦЕЛИ (КАК НА ГЛАВНОЙ ПОСЛЕ МЛ)
-    // Приводим к значениям spaceAfterMl с Главной страницы
-    final spaceAfterGoal = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0)); 
+    // ✅ УДАЛЕНО: spaceAfterGoal больше не используется
     
     final hintFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
