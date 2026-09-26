@@ -160,7 +160,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     final spaceBelowSaveButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
 
     // ✅ НОВЫЕ АДАПТИВНЫЕ ОТСТУПЫ В БЛОКЕ ПОДДЕРЖКИ
-    // Планшет (24px), Tiny (18px), Small (18px), Standard (20px)
     final spaceAfterSupportText = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
     final spaceAfterDonateButton = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
 
@@ -246,10 +245,8 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   
                   Divider(color: AppColors.divider, thickness: 1),
                   
-                  // ✅ ИЗМЕНЕНО: ОТСТУП ПОД ЛИНИЕЙ ТЕПЕРЬ 12PX (БЫЛО 8)
                   const SizedBox(height: 12), 
                   
-                  //  ФИНАЛЬНЫЙ БЛОК ПОДДЕРЖКИ
                   Column(
                     children: [
                       Padding(
@@ -272,9 +269,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                         ),
                       ),
                       
-                      // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП
                       SizedBox(height: spaceAfterSupportText), 
                       
+                      // ✅ КНОПКА "ПОДДЕРЖАТЬ" С УМЕНЬШЕННОЙ ЖИРНОСТЬЮ (w600)
                       Container(
                         width: buttonWidth,
                         height: 72, 
@@ -313,44 +310,63 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             elevation: 0,
                             padding: EdgeInsets.zero,
                           ),
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              style: TextStyles.button.copyWith(
-                                fontSize: 22,
-                                color: AppColors.accent,
-                                shadows: [
-                                  Shadow(
-                                    color: AppColors.accent.withOpacity(0.7),
-                                    blurRadius: 12,
-                                    offset: Offset.zero,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Поддержать',
+                                style: TextStyle(
+                                  fontSize: isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 20.0 : 22.0)),
+                                  fontWeight: FontWeight.w600, // ✅ ИЗМЕНЕНО: было bold (700), стало w600
+                                  color: AppColors.accent,
+                                  height: 1.0,
+                                  shadows: [
+                                    Shadow(
+                                      color: AppColors.accent.withOpacity(0.7),
+                                      blurRadius: 12,
+                                      offset: Offset.zero,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'приложение ',
+                                    style: TextStyle(
+                                      fontSize: isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 20.0 : 22.0)),
+                                      fontWeight: FontWeight.w600, // ✅ ИЗМЕНЕНО: было bold (700), стало w600
+                                      color: AppColors.accent,
+                                      height: 1.0,
+                                      shadows: [
+                                        Shadow(
+                                          color: AppColors.accent.withOpacity(0.7),
+                                          blurRadius: 12,
+                                          offset: Offset.zero,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Text(
+                                    '❤️',
+                                    style: TextStyle(
+                                      fontSize: 30, 
+                                      color: Colors.redAccent,
+                                      height: 1.0,
+                                    ),
                                   ),
                                 ],
                               ),
-                              children: [
-                                const TextSpan(text: 'Поддержать приложение '),
-                                TextSpan(
-                                  text: '❤️',
-                                  style: TextStyle(
-                                    fontSize: 30, 
-                                    color: Colors.redAccent,
-                                    height: 1.0,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.redAccent.withOpacity(0.6),
-                                        blurRadius: 10,
-                                        offset: Offset.zero,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
                         ),
                       ),
 
-                      // ✅ ИСПОЛЬЗУЕМ АДАПТИВНЫЙ ОТСТУП
                       SizedBox(height: spaceAfterDonateButton), 
                       
                       Divider(color: AppColors.divider, thickness: 1),
