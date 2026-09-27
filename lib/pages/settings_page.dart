@@ -249,29 +249,21 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   
                   Column(
                     children: [
+                      // ✅ ИСПРАВЛЕНО: ДОБАВЛЕНО height: 1.0 ДЛЯ КОМПАКТНОСТИ
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
-                        child: RichText(
+                        child: Text(
+                          'Это приложение бесплатное и без рекламы. Ваша поддержка поможет ему развиваться',
+                          style: TextStyles.subtitle(
+                            fontSize: subtitleFontSize,
+                          ).copyWith(height: 1.0), 
                           textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyles.subtitle(fontSize: subtitleFontSize),
-                            children: [
-                              const TextSpan(text: 'Это приложение бесплатное и без рекламы. Ваша поддержка поможет ему развиваться '),
-                              TextSpan(
-                                text: '\u{1F64F}',
-                                style: TextStyle(
-                                  fontSize: 20, 
-                                  height: 1.0,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                       
                       SizedBox(height: spaceAfterSupportText), 
                       
-                      // ✅ КНОПКА "ПОДДЕРЖАТЬ" С УМЕНЬШЕННОЙ ЖИРНОСТЬЮ (w600)
+                      // ✅ КНОПКА "ПОДДЕРЖАТЬ" С УМЕНЬШЕННОЙ ЖИРНОСТЬЮ (w600) И СЕРДЦЕМ 28PX
                       Container(
                         width: buttonWidth,
                         height: 72, 
@@ -319,7 +311,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                 'Поддержать',
                                 style: TextStyle(
                                   fontSize: isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 20.0 : 22.0)),
-                                  fontWeight: FontWeight.w600, // ✅ ИЗМЕНЕНО: было bold (700), стало w600
+                                  fontWeight: FontWeight.w600, 
                                   color: AppColors.accent,
                                   height: 1.0,
                                   shadows: [
@@ -340,7 +332,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                     'приложение ',
                                     style: TextStyle(
                                       fontSize: isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 20.0 : 22.0)),
-                                      fontWeight: FontWeight.w600, // ✅ ИЗМЕНЕНО: было bold (700), стало w600
+                                      fontWeight: FontWeight.w600, 
                                       color: AppColors.accent,
                                       height: 1.0,
                                       shadows: [
@@ -355,7 +347,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                                   Text(
                                     '❤️',
                                     style: TextStyle(
-                                      fontSize: 30, 
+                                      fontSize: 28, 
                                       color: Colors.redAccent,
                                       height: 1.0,
                                     ),
