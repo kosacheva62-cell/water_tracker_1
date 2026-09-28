@@ -53,45 +53,15 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
     }
   }
 
+  // ✅ УВЕДОМЛЕНИЕ О ПИСЬМЕ: 4 СЕКУНДЫ, НАСЛЕДУЕТ ТЕМУ ПРИЛОЖЕНИЯ
   void _showThanksMessage() {
     if (!mounted) return;
+    
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.only(bottom: 140, left: 20, right: 20),
-        duration: const Duration(seconds: 6),
-        content: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppColors.card,
-            border: Border.all(color: AppColors.accent, width: 2.0),
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accentMedium,
-                blurRadius: 15,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.email, color: AppColors.accent, size: 32),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  'Если вы отправили нам письмо, мы ответим в течение 3 дней.',
-                  style: TextStyles.neon(
-                    color: AppColors.accent,
-                    fontSize: 19.0,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+      const SnackBar(
+        content: Text('Если вы отправили нам письмо, мы ответим в течение 3 дней.'),
+        duration: Duration(seconds: 4), // ✅ ЯВНО ЗАДАНО 4 СЕКУНДЫ
+        // Цвета и шрифт берутся из темы автоматически (светлый фон / темный текст)
       ),
     );
   }
@@ -249,7 +219,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   
                   Column(
                     children: [
-                      // ✅ ИСПРАВЛЕНО: ДОБАВЛЕНО height: 1.0 ДЛЯ КОМПАКТНОСТИ
+                      // ✅ КОМПАКТНЫЙ ТЕКСТ ПОДДЕРЖКИ (height: 1.0)
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
                         child: Text(
@@ -263,7 +233,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                       
                       SizedBox(height: spaceAfterSupportText), 
                       
-                      // ✅ КНОПКА "ПОДДЕРЖАТЬ" С УМЕНЬШЕННОЙ ЖИРНОСТЬЮ (w600) И СЕРДЦЕМ 28PX
+                      // ✅ КНОПКА "ПОДДЕРЖАТЬ" (w600, сердце 28px, без рук)
                       Container(
                         width: buttonWidth,
                         height: 72, 
@@ -288,8 +258,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                               await launchUrl(url, mode: LaunchMode.externalApplication);
                             } else {
                               if (!mounted) return;
+                              // ✅ ЯВНЫЙ DURATION 2 СЕКУНДЫ ДЛЯ ОШИБКИ ССЫЛКИ
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Не удалось открыть ссылку')),
+                                const SnackBar(
+                                  content: Text('Не удалось открыть ссылку'),
+                                  duration: Duration(seconds: 2),
+                                ),
                               );
                             }
                           },
@@ -396,8 +370,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                             _shouldShowThanksMessage = true;
                           } else {
                             if (!mounted) return;
+                            // ✅ ЯВНЫЙ DURATION 2 СЕКУНДЫ ДЛЯ ОШИБКИ ПОЧТЫ
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Не удалось открыть почтовый клиент')),
+                              const SnackBar(
+                                content: Text('Не удалось открыть почтовый клиент'),
+                                duration: Duration(seconds: 2),
+                              ),
                             );
                           }
                         },
