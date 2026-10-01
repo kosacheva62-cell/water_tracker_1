@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-// ✅ ЗАДАЧА: Своя функция форматирования дат вместо intl
+// ✅ Функция форматирования дат
 String formatDateKey(DateTime date) {
   return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 }
@@ -12,40 +12,46 @@ class FFAppState extends ChangeNotifier {
   factory FFAppState() => _instance;
   FFAppState._internal();
 
-  // 🎯 КОНСТАНТЫ ЛИМИТОВ (Задача 1.3)
+  // 🎯 КОНСТАНТЫ ЛИМИТОВ
   static const int minDailyGoalGlasses = 1;
   static const int maxDailyGoalGlasses = 50;
+  
+  // ✅ НОВАЯ КОНСТАНТА: Лимиты для объема стакана
+  static const int minCupVolume = 50;
+  static const int maxCupVolume = 1000;
 
   // 🎯 Основные настройки и счетчики
   int dailyGoalGlasses = 8;
-  int get dailyGoalMl => dailyGoalGlasses * 250; // 1 стакан = 250 мл
+  int cupVolume = 250; // ✅ ДОБАВЛЕНО: Объем стакана (по умолчанию 250 мл)
+  
+  // ✅ ИСПРАВЛЕНО: Расчет цели теперь динамический
+  int get dailyGoalMl => dailyGoalGlasses * cupVolume; 
   
   int waterGlassesToday = 0;
   
-  // 📊 Недельная статистика (Пн=0, Вт=1, ..., Вс=6)
+  // 📊 Недельная статистика
   List<int> weeklyWaterGlasses = List.filled(7, 0);
   
-  // ⚙️ Состояние приложения
-  bool isDarkMode = true;  // ⚠️ Зарезервировано для V2 (переключатель темы)
+  // ️ Состояние приложения
+  bool isDarkMode = true;
   bool isOnboardingCompleted = false;
   Map<String, int> dailyGoalsHistory = {};
   String? lastCheckedDay;
 
-  // ✅ ЗАДАЧА 2.1: Кэш экземпляра SharedPreferences
+  // ✅ Кэш SharedPreferences
   SharedPreferences? _prefs;
 
-  // ✅ ЗАДАЧА 2.1: Геттер для получения кэшированного экземпляра
   Future<SharedPreferences> get _preferences async {
     _prefs ??= await SharedPreferences.getInstance();
     return _prefs!;
   }
 
-  // 🔹 Загрузка данных из SharedPreferences
+  //  Загрузка данных
   Future<void> load() async {
-    // ✅ ЗАДАЧА 2.1: Используем кэш вместо SharedPreferences.getInstance()
     final prefs = await _preferences;
     
     dailyGoalGlasses = prefs.getInt('dailyGoalGlasses') ?? 8;
+    cupVolume = prefs.getInt('cupVolume') ?? 250; // ✅ ЗАГРУЖАЕМ ОБЪЕМ ИЗ ПАМЯТИ
     waterGlassesToday = prefs.getInt('waterGlassesToday') ?? 0;
     isOnboardingCompleted = prefs.getBool('isOnboardingCompleted') ?? false;
     isDarkMode = prefs.getBool('isDarkMode') ?? true;
@@ -75,7 +81,7 @@ class FFAppState extends ChangeNotifier {
       final today = DateTime.now();
       for (int i = 0; i < 7; i++) {
         final date = today.subtract(Duration(days: i));
-        final key = formatDateKey(date);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
+        final key = formatDateKey(date);
         dailyGoalsHistory[key] = dailyGoalGlasses;
       }
       await save();
@@ -84,8 +90,9 @@ class FFAppState extends ChangeNotifier {
     // Инициализация lastCheckedDay
     if (lastCheckedDay == null) {
       dailyGoalGlasses = 8;
-      lastCheckedDay = formatDateKey(DateTime.now());  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
-      dailyGoalsHistory[lastCheckedDay!] = 8;
+      cupVolume = 250; // ✅ УБЕЖДАЕМСЯ, ЧТО ПРИ ПЕРВОМ ЗАПУСКЕ ТОЖЕ 250
+      lastCheckedDay = formatDateKey(DateTime.now());
+      dailyGoalsHistory[lastCheckedDay!] = dailyGoalGlasses;
       await save();
     }
 
@@ -96,14 +103,14 @@ class FFAppState extends ChangeNotifier {
     }
   }
 
-  // 💾 Сохранение данных в SharedPreferences
-  // ✅ ЗАДАЧА 2.1: Кэш + Future.wait (параллельные операции)
+  // 💾 Сохранение данных
   Future<void> save() async {
     try {
       final prefs = await _preferences;
       
       await Future.wait([
         prefs.setInt('dailyGoalGlasses', dailyGoalGlasses),
+        prefs.setInt('cupVolume', cupVolume), // ✅ СОХРАНЯЕМ ОБЪЕМ
         prefs.setInt('waterGlassesToday', waterGlassesToday),
         prefs.setBool('isOnboardingCompleted', isOnboardingCompleted),
         prefs.setBool('isDarkMode', isDarkMode),
@@ -117,10 +124,9 @@ class FFAppState extends ChangeNotifier {
   }
 
   // 🔄 ПРОВЕРКА СМЕНЫ ДНЯ
-  // ✅ ЗАДАЧА 2.2: Добавлена очистка старых записей (старше 90 дней)
   Future<void> checkDayChange() async {
     final now = DateTime.now();
-    final todayString = formatDateKey(now);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
+    final todayString = formatDateKey(now);
 
     if (lastCheckedDay == null) {
       lastCheckedDay = todayString;
@@ -131,13 +137,11 @@ class FFAppState extends ChangeNotifier {
     }
 
     if (lastCheckedDay != todayString) {
-      // 1. Сохраняем итог за вчерашний день
       final yesterday = now.subtract(Duration(days: 1));
-      final yesterdayString = formatDateKey(yesterday);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
+      final yesterdayString = formatDateKey(yesterday);
       final yesterdayIndex = (yesterday.weekday - 1) % 7;
       weeklyWaterGlasses[yesterdayIndex] = waterGlassesToday;
       
-      // 2. ОБНУЛЯЕМ ВСЕ ПРОПУЩЕННЫЕ ДНИ
       final lastCheckedDate = DateTime.parse(lastCheckedDay!);
       final daysDiff = now.difference(lastCheckedDate).inDays;
       
@@ -146,21 +150,17 @@ class FFAppState extends ChangeNotifier {
         final missedIndex = (missedDate.weekday - 1) % 7;
         weeklyWaterGlasses[missedIndex] = 0;
         
-        final missedKey = formatDateKey(missedDate);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
+        final missedKey = formatDateKey(missedDate);
         dailyGoalsHistory[missedKey] = dailyGoalGlasses;
       }
       
-      // 3. Фиксируем цели для вчерашнего и сегодняшнего дня
       dailyGoalsHistory[yesterdayString] = dailyGoalGlasses;
       dailyGoalsHistory[todayString] = dailyGoalGlasses;
       
-      // ✅ ЗАДАЧА 2.2: ОЧИЩАЕМ СТАРЫЕ ЗАПИСИ (старше 90 дней)
       final cutoffDate = now.subtract(const Duration(days: 90));
-      final cutoffString = formatDateKey(cutoffDate);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
-      
+      final cutoffString = formatDateKey(cutoffDate);
       dailyGoalsHistory.removeWhere((key, value) => key.compareTo(cutoffString) < 0);
       
-      // 4. Сброс счетчиков текущего дня
       waterGlassesToday = 0;
       lastCheckedDay = todayString;
       
@@ -169,22 +169,29 @@ class FFAppState extends ChangeNotifier {
     }
   }
 
-  // 🎯 Изменение дневной цели (С ИСПОЛЬЗОВАНИЕМ КОНСТАНТ)
+  // 🎯 Изменение дневной цели
   Future<void> setDailyGoal(int glasses) async {
     dailyGoalGlasses = glasses.clamp(minDailyGoalGlasses, maxDailyGoalGlasses);
-    final todayString = formatDateKey(DateTime.now());  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
+    final todayString = formatDateKey(DateTime.now());
     dailyGoalsHistory[todayString] = dailyGoalGlasses;
     await save();
     notifyListeners();
   }
 
-  // 📊 Получение цели для конкретного дня недели (0=Пн, 6=Вс)
+  // ✅ НОВЫЙ МЕТОД: Изменение объема стакана
+  Future<void> setCupVolume(int volume) async {
+    cupVolume = volume.clamp(minCupVolume, maxCupVolume);
+    await save();
+    notifyListeners();
+  }
+
+  // 📊 Получение цели для конкретного дня недели
   int getGoalForWeekDay(int index) {
     final today = DateTime.now();
     final todayIndex = (today.weekday - 1) % 7;
     final daysDiff = index - todayIndex;
     final targetDate = today.add(Duration(days: daysDiff));
-    final dateKey = formatDateKey(targetDate);  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
+    final dateKey = formatDateKey(targetDate);
     return dailyGoalsHistory[dateKey] ?? dailyGoalGlasses;
   }
 
@@ -201,7 +208,7 @@ class FFAppState extends ChangeNotifier {
   Future<void> completeOnboarding(int glasses) async {
     await setDailyGoal(glasses);
     isOnboardingCompleted = true;
-    lastCheckedDay = formatDateKey(DateTime.now());  // ✅ ЗАМЕНЕНО: DateFormat → formatDateKey
+    lastCheckedDay = formatDateKey(DateTime.now());
     final todayIndex = (DateTime.now().weekday - 1) % 7;
     weeklyWaterGlasses[todayIndex] = 0;
     waterGlassesToday = 0;
