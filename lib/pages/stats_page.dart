@@ -7,7 +7,7 @@ import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
 
-// ✅ ИЗМЕНЕНО: Теперь это StatefulWidget, чтобы отслеживать возврат из почты
+// ✅ StatefulWidget для отслеживания возврата из почтового приложения
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
 
@@ -16,24 +16,21 @@ class StatsPage extends StatefulWidget {
 }
 
 class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
-  // Переменная для отложенного показа сообщения об успехе
   bool _shouldShowThanksMessage = false;
 
   @override
   void initState() {
     super.initState();
-    // Подписываемся на события жизненного цикла приложения
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    // Отписываемся при уничтожении виджета
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
-  // ✅ МЕТОД ЖИЗНЕННОГО ЦИКЛА: Срабатывает, когда пользователь возвращается в приложение
+  // Отслеживаем возврат пользователя в приложение после отправки письма
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -43,7 +40,6 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
     }
   }
 
-  // Метод показа уведомления об успешной отправке
   void _showThanksMessage() {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -75,14 +71,14 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
     final glassesCountFontSize = isTablet ? 26.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 20.0));
     final mlTextFontSize = isTablet ? 18.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 13.0 : 14.0));
     
-    // ЭТОТ ОТСТУП ИСПОЛЬЗУЕТСЯ ВЕЗДЕ ДЛЯ СОХРАНЕНИЯ РИТМА
+    // Единый ритмичный отступ
     final spaceBetweenDays = isTablet ? 8.0 : (isTinyScreen ? 5.0 : (isSmallScreen ? 6.0 : 7.0));
     
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     final spaceBeforeIcon = isTablet ? 12.0 : (isTinyScreen ? 8.0 : (isSmallScreen ? 10.0 : 12.0));
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
 
-    // АДАПТИВНЫЙ НИЖНИЙ ОТСТУП (БЕЗОПАСНАЯ ЗОНА ДЛЯ НАВИГАЦИИ)
+    // Безопасная зона снизу для навигации
     final bottomPadding = isTinyScreen ? 80.0 : (isSmallScreen ? 60.0 : 16.0);
 
     const List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -186,7 +182,7 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                   );
                 }),
 
-                // ИДЕАЛЬНАЯ СИММЕТРИЯ
+                // Идеальная симметрия отступов вокруг разделителя
                 SizedBox(height: spaceBetweenDays), 
                 Divider(color: AppColors.divider, thickness: 1),
                 SizedBox(height: spaceBetweenDays), 
@@ -211,14 +207,11 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                       final mailtoUri = 'mailto:hello.tiana.apps@gmail.com?subject=$encodedSubject&body=$encodedBody';
                       final uri = Uri.parse(mailtoUri);
                       
-                      // ✅ ДОБАВЛЕНА ЛОГИКА ПОКАЗА СИСТЕМНЫХ СООБЩЕНИЙ
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri);
-                        // Устанавливаем флаг, что письмо "отправлено" (почта открыта)
                         _shouldShowThanksMessage = true;
                       } else {
                         if (!mounted) return;
-                        // Показываем ошибку, если почтовый клиент не найден
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Не удалось открыть почтовый клиент'),
@@ -230,8 +223,9 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // ✅ ПЕРЕИМЕНОВАНО: "Написать разработчику приложения"
                         Text(
-                          'Написать в службу поддержки',
+                          'Написать разработчику приложения',
                           style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(height: 1.0), 
                           textAlign: TextAlign.center,
                         ),
