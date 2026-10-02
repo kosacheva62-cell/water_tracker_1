@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'dart:io' show Platform;
+import 'package:url_launcher/url_launcher.dart'; // ✅ ВЕРНУЛ ЭТОТ ИМПОРТ!
 import '../app_state.dart';
 import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
@@ -17,19 +16,12 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver {
+class _SettingsPageState extends State<SettingsPage> {
   late int _dailyGoalGlasses;
   int _cupVolume = 250;
-  bool _shouldShowThanksMessage = false;
   bool _initialized = false;
 
   final List<int> _standardVolumes = [150, 200, 250, 300, 500];
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
 
   @override
   void didChangeDependencies() {
@@ -40,31 +32,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
       _cupVolume = appState.cupVolume;
       _initialized = true;
     }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed && _shouldShowThanksMessage) {
-      _showThanksMessage();
-      _shouldShowThanksMessage = false;
-    }
-  }
-
-  void _showThanksMessage() {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Если вы отправили нам письмо, мы ответим в течение 3 дней.'),
-        duration: Duration(seconds: 4),
-      ),
-    );
   }
 
   Future<void> _saveSettings() async {
@@ -78,8 +45,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
       );
     } catch (e) {
       if (!mounted) return;
+      // ✅ ОБНОВЛЕНО: Добавлена рекомендация и увеличена длительность
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Не удалось сохранить настройки'), duration: Duration(seconds: 2)),
+        const SnackBar(
+          content: Text('Не удалось сохранить настройки. Перезапустите приложение.'), 
+          duration: Duration(seconds: 3)
+        ),
       );
     }
   }
@@ -187,37 +158,21 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
 
     // Адаптивные размеры шрифтов и контролов
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
-    
-    final topPadding = isTablet 
-        ? 16.0   
-        : (isTinyScreen ? 4.0 : 6.0); 
-    
+    final topPadding = isTablet ? 16.0 : (isTinyScreen ? 4.0 : 6.0); 
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
-    
     final minusPlusFontSize = isTablet ? 50.0 : (isTinyScreen ? 34.0 : (isSmallScreen ? 37.0 : 40.0));
     final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 52.0 : (isSmallScreen ? 58.0 : 64.0));
     final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
-    
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
-    // ✅ УМНЫЕ АДАПТИВНЫЕ ОТСТУПЫ С ЗАЩИТОЙ ОТ СЛИЯНИЯ СВЕЧЕНИЙ
-    
-    // Базовый отступ ПОСЛЕ заголовка "Установите цель..."
+    // УМНЫЕ АДАПТИВНЫЕ ОТСТУПЫ С ЗАЩИТОЙ ОТ СЛИЯНИЯ СВЕЧЕНИЙ
     final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0)); 
     
-    // ✅ РАСЧЕТ БЕЗОПАСНОГО ОТСТУПА ПЕРЕД КНОПКОЙ "СОХРАНИТЬ"
-    // Минимальное безопасное расстояние = 32px (т.к. blurRadius у обоих элементов = 16px)
-    // Если базовый отступ + добавка (10px) меньше 32, принудительно ставим 32.
-    // Это гарантирует, что неоновые ауры никогда не сольются, даже на крошечных экранах.
     final minSafeGap = 32.0;
     final baseAddition = 10.0; 
     double calculatedGap = spaceAfterTitle + baseAddition;
-    
-    if (calculatedGap < minSafeGap) {
-      calculatedGap = minSafeGap;
-    }
-    
+    if (calculatedGap < minSafeGap) calculatedGap = minSafeGap;
     final spaceAboveSaveButton = calculatedGap;
     
     final spaceBelowSaveButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
@@ -248,10 +203,9 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     style: TextStyles.title(fontSize: titleFontSize).copyWith(height: 1.1), 
                   ),
                   
-                  // ✅ АДАПТИВНЫЙ ОТСТУП ПОСЛЕ ЗАГОЛОВКА
                   SizedBox(height: spaceAfterTitle),
                   
-                  // ✅ ЕДИНАЯ КАРТОЧКА "УМНОЙ ЦЕЛИ"
+                  // ЕДИНАЯ КАРТОЧКА "УМНОЙ ЦЕЛИ"
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -263,7 +217,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ✅ ВЫСОТА БЛОКА СТАКАНОВ 90 (для безопасности от overflow)
                         SizedBox(
                           height: 90,
                           child: ListView.separated(
@@ -365,14 +318,12 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                           ],
                         ),
                         
-                        // ✅ КОМПАКТНЫЙ ОТСТУП НАД ПОДПИСЬЮ
                         Padding(
                           padding: const EdgeInsets.only(top: 4), 
                           child: Text('$glassesForm в день', 
                             style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(color: Colors.white54)),
                         ),
 
-                        // ✅ ЦЕЛЬ ИДЕТ СРАЗУ ПОСЛЕ ПОДПИСИ (без лишнего SizedBox)
                         Text(
                           'Ваша цель: ${_dailyGoalGlasses * _cupVolume} мл',
                           style: TextStyles.goal(fontSize: goalFontSize).copyWith(color: Colors.white),
@@ -382,7 +333,6 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                     ),
                   ),
 
-                  // ✅ БЕЗОПАСНЫЙ ОТСТУП ПЕРЕД КНОПКОЙ "СОХРАНИТЬ"
                   SizedBox(height: spaceAboveSaveButton),
                   
                   Center(
@@ -398,6 +348,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                   Divider(color: AppColors.divider, thickness: 1),
                   const SizedBox(height: 12), 
                   
+                  // БЛОК ПОДДЕРЖКИ
                   Column(
                     children: [
                       Padding(
@@ -460,56 +411,7 @@ class _SettingsPageState extends State<SettingsPage> with WidgetsBindingObserver
                           ),
                         ),
                       ),
-
                       SizedBox(height: spaceAfterDonateButton), 
-                      Divider(color: AppColors.divider, thickness: 1),
-                      const SizedBox(height: 12), 
-                      
-                      GestureDetector(
-                        onTap: () async {
-                          final deviceInfo = '''
-Устройство: ${Platform.operatingSystem}
-Версия ОС: ${Platform.operatingSystemVersion}
-Версия приложения: 1.0.0
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
-
-''';
-                          final encodedBody = deviceInfo.replaceAll(' ', '%20').replaceAll('\n', '%0D%0A');
-                          final subject = '"Трекер воды": обратная связь';
-                          final encodedSubject = subject.replaceAll(' ', '%20');
-                          final mailtoUri = 'mailto:hello.tiana.apps@gmail.com?subject=$encodedSubject&body=$encodedBody';
-                          final uri = Uri.parse(mailtoUri);
-                          
-                          if (!mounted) return;
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri);
-                            _shouldShowThanksMessage = true;
-                          } else {
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Не удалось открыть почтовый клиент'), duration: Duration(seconds: 2)),
-                            );
-                          }
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Написать в службу поддержки',
-                              style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(height: 1.0), 
-                              textAlign: TextAlign.center),
-                            const SizedBox(height: 2), 
-                            Row(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
-                              Icon(Icons.email, color: AppColors.accent,
-                                size: isTablet ? 22.0 : (isTinyScreen ? 15.0 : (isSmallScreen ? 16.0 : 18.0))),
-                              const SizedBox(width: 4),
-                              Text('hello.tiana.apps@gmail.com',
-                                style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(height: 1.0)),
-                            ]),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ],
