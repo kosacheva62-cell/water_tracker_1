@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'package:url_launcher/url_launcher.dart'; // ✅ ВЕРНУЛ ЭТОТ ИМПОРТ!
+import 'package:url_launcher/url_launcher.dart';
 import '../app_state.dart';
 import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
@@ -36,6 +36,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _saveSettings() async {
     try {
+      // ✅ ДОБАВЛЕНО: Тактильная обратная связь перед сохранением
+      await Vibration.vibrate(duration: 50);
+      HapticFeedback.mediumImpact();
+      
       await context.read<FFAppState>().setDailyGoal(_dailyGoalGlasses);
       await context.read<FFAppState>().setCupVolume(_cupVolume); 
       
@@ -45,7 +49,6 @@ class _SettingsPageState extends State<SettingsPage> {
       );
     } catch (e) {
       if (!mounted) return;
-      // ✅ ОБНОВЛЕНО: Добавлена рекомендация и увеличена длительность
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Не удалось сохранить настройки. Перезапустите приложение.'), 
