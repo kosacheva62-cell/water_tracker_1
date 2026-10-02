@@ -7,7 +7,6 @@ import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
 
-// ✅ StatefulWidget для отслеживания возврата из почтового приложения
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
 
@@ -30,7 +29,6 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  // Отслеживаем возврат пользователя в приложение после отправки письма
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -54,14 +52,12 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final appState = context.watch<FFAppState>();
     
-    // ЧЕТЫРЁХУРОВНЕВАЯ АДАПТАЦИЯ
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
-    // АДАПТИВНЫЕ РАЗМЕРЫ
     final titleFontSize = isTablet ? 30.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 22.0 : 24.0));
     final topPadding = isTablet ? 16.0 : (isTinyScreen ? 4.0 : 6.0); 
     final spaceAfterTitle = isTablet ? 20.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
@@ -71,14 +67,12 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
     final glassesCountFontSize = isTablet ? 26.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 20.0));
     final mlTextFontSize = isTablet ? 18.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 13.0 : 14.0));
     
-    // Единый ритмичный отступ
     final spaceBetweenDays = isTablet ? 8.0 : (isTinyScreen ? 5.0 : (isSmallScreen ? 6.0 : 7.0));
     
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     final spaceBeforeIcon = isTablet ? 12.0 : (isTinyScreen ? 8.0 : (isSmallScreen ? 10.0 : 12.0));
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
 
-    // Безопасная зона снизу для навигации
     final bottomPadding = isTinyScreen ? 80.0 : (isSmallScreen ? 60.0 : 16.0);
 
     const List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -117,12 +111,32 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                           ? appState.waterGlassesToday 
                           : appState.weeklyWaterGlasses[index]);
                   
-                  final cupVolume = appState.cupVolume;
-                  final mlConsumed = glasses * cupVolume;
+                  // ✅ ИСПРАВЛЕНИЕ 1: Убран лишний ?? appState.cupVolume
+                  // Метод getCupVolumeForDate сам возвращает fallback, если даты нет в истории
+                  int cupVolumeForThisDay;
+                  
+                  if (isToday || isFutureDay) {
+                    cupVolumeForThisDay = appState.cupVolume;
+                  } else {
+                    final dateKey = _getDateKeyForWeekDay(index);
+                    cupVolumeForThisDay = appState.getCupVolumeForDate(dateKey);
+                  }
+
+                  final mlConsumed = glasses * cupVolumeForThisDay;
                   final day = weekDays[index];
                   
                   final dayGoalGlasses = appState.getGoalForWeekDay(index);
-                  final dayGoalMl = dayGoalGlasses * cupVolume;
+                  
+                  // ✅ ИСПРАВЛЕНИЕ 2: То же самое для цели
+                  int dayGoalCupVolume;
+                  if (isToday || isFutureDay) {
+                    dayGoalCupVolume = appState.cupVolume;
+                  } else {
+                    final dateKey = _getDateKeyForWeekDay(index);
+                    dayGoalCupVolume = appState.getCupVolumeForDate(dateKey);
+                  }
+                      
+                  final dayGoalMl = dayGoalGlasses * dayGoalCupVolume;
                   
                   final dayNameColor = isToday 
                       ? AppColors.accent 
@@ -182,7 +196,6 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                   );
                 }),
 
-                // Идеальная симметрия отступов вокруг разделителя
                 SizedBox(height: spaceBetweenDays), 
                 Divider(color: AppColors.divider, thickness: 1),
                 SizedBox(height: spaceBetweenDays), 
@@ -191,13 +204,16 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                   alignment: Alignment.center,
                   child: GestureDetector(
                     onTap: () async {
+                      // ✅ ИСПРАВЛЕНИЕ 3: Сохраняем messenger ДО await, чтобы избежать warning
+                      final messenger = ScaffoldMessenger.of(context);
+                      
                       final deviceInfo = '''
 Устройство: ${Platform.operatingSystem}
 Версия ОС: ${Platform.operatingSystemVersion}
 Версия приложения: 1.0.0
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📝 НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
+ НАПИШИТЕ ЗДЕСЬ ВАШЕ СООБЩЕНИЕ:
 
 ''';
                       
@@ -211,8 +227,8 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                         await launchUrl(uri);
                         _shouldShowThanksMessage = true;
                       } else {
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
+                        // Используем сохраненный messenger
+                        messenger.showSnackBar(
                           const SnackBar(
                             content: Text('Не удалось открыть почтовый клиент'),
                             duration: Duration(seconds: 2),
@@ -223,7 +239,6 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ✅ ПЕРЕИМЕНОВАНО: "Написать разработчику приложения"
                         Text(
                           'Написать разработчику приложения',
                           style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(height: 1.0), 
@@ -251,5 +266,13 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
         );
       },
     );
+  }
+
+  String _getDateKeyForWeekDay(int index) {
+    final today = DateTime.now();
+    final todayIndex = (today.weekday - 1) % 7;
+    final daysDiff = index - todayIndex;
+    final targetDate = today.add(Duration(days: daysDiff));
+    return '${targetDate.year}-${targetDate.month.toString().padLeft(2, '0')}-${targetDate.day.toString().padLeft(2, '0')}';
   }
 }
