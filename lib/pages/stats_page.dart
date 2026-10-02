@@ -7,8 +7,52 @@ import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
 import '../utils/app_colors.dart';
 
-class StatsPage extends StatelessWidget {
+// ✅ ИЗМЕНЕНО: Теперь это StatefulWidget, чтобы отслеживать возврат из почты
+class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
+
+  @override
+  State<StatsPage> createState() => _StatsPageState();
+}
+
+class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
+  // Переменная для отложенного показа сообщения об успехе
+  bool _shouldShowThanksMessage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Подписываемся на события жизненного цикла приложения
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    // Отписываемся при уничтожении виджета
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // ✅ МЕТОД ЖИЗНЕННОГО ЦИКЛА: Срабатывает, когда пользователь возвращается в приложение
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed && _shouldShowThanksMessage) {
+      _showThanksMessage();
+      _shouldShowThanksMessage = false;
+    }
+  }
+
+  // Метод показа уведомления об успешной отправке
+  void _showThanksMessage() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Если вы отправили нам письмо, мы ответим в течение 3 дней.'),
+        duration: Duration(seconds: 4),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +75,14 @@ class StatsPage extends StatelessWidget {
     final glassesCountFontSize = isTablet ? 26.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 20.0));
     final mlTextFontSize = isTablet ? 18.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 13.0 : 14.0));
     
-    // ✅ ЭТОТ ОТСТУП ТЕПЕРЬ ИСПОЛЬЗУЕТСЯ ВЕЗДЕ ДЛЯ СОХРАНЕНИЯ РИТМА
+    // ЭТОТ ОТСТУП ИСПОЛЬЗУЕТСЯ ВЕЗДЕ ДЛЯ СОХРАНЕНИЯ РИТМА
     final spaceBetweenDays = isTablet ? 8.0 : (isTinyScreen ? 5.0 : (isSmallScreen ? 6.0 : 7.0));
     
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     final spaceBeforeIcon = isTablet ? 12.0 : (isTinyScreen ? 8.0 : (isSmallScreen ? 10.0 : 12.0));
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
 
-    // ✅ АДАПТИВНЫЙ НИЖНИЙ ОТСТУП (БЕЗОПАСНАЯ ЗОНА ДЛЯ НАВИГАЦИИ)
+    // АДАПТИВНЫЙ НИЖНИЙ ОТСТУП (БЕЗОПАСНАЯ ЗОНА ДЛЯ НАВИГАЦИИ)
     final bottomPadding = isTinyScreen ? 80.0 : (isSmallScreen ? 60.0 : 16.0);
 
     const List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -142,12 +186,9 @@ class StatsPage extends StatelessWidget {
                   );
                 }),
 
-                // ✅ ИДЕАЛЬНАЯ СИММЕТРИЯ: Используем тот же spaceBetweenDays
+                // ИДЕАЛЬНАЯ СИММЕТРИЯ
                 SizedBox(height: spaceBetweenDays), 
-                
                 Divider(color: AppColors.divider, thickness: 1),
-                
-                // ✅ ИДЕАЛЬНАЯ СИММЕТРИЯ: Тот же отступ, что и сверху от черты
                 SizedBox(height: spaceBetweenDays), 
                 
                 Align(
@@ -170,12 +211,19 @@ class StatsPage extends StatelessWidget {
                       final mailtoUri = 'mailto:hello.tiana.apps@gmail.com?subject=$encodedSubject&body=$encodedBody';
                       final uri = Uri.parse(mailtoUri);
                       
+                      // ✅ ДОБАВЛЕНА ЛОГИКА ПОКАЗА СИСТЕМНЫХ СООБЩЕНИЙ
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri);
+                        // Устанавливаем флаг, что письмо "отправлено" (почта открыта)
+                        _shouldShowThanksMessage = true;
                       } else {
-                        if (!context.mounted) return;
+                        if (!mounted) return;
+                        // Показываем ошибку, если почтовый клиент не найден
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Не удалось открыть почтовый клиент'), duration: Duration(seconds: 2)),
+                          const SnackBar(
+                            content: Text('Не удалось открыть почтовый клиент'),
+                            duration: Duration(seconds: 2),
+                          ),
                         );
                       }
                     },
