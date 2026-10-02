@@ -101,8 +101,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final isDone = appState.waterGlassesToday >= appState.dailyGoalGlasses;
     final percent = (progress * 100).floor();
     final glassesGenitive = pluralizeGlassesGenitive(appState.dailyGoalGlasses);
-    final currentMl = appState.waterGlassesToday * 250;
-    final goalMlValue = appState.dailyGoalGlasses * 250;
+    
+    // ✅ ИСПРАВЛЕНО: Используем динамический объем стакана из AppState
+    final currentMl = appState.waterGlassesToday * appState.cupVolume;
+    final goalMlValue = appState.dailyGoalGlasses * appState.cupVolume;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -218,13 +220,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   );
                                 }
                               },
-                              // ✅ ЗАМЕНЕНО НА СТАКАН С СОЛОМИНКОЙ БЕЗ ПРОБЕЛА
                               text: '+1 стакан🥤',
                             ),
                           ),
                           SizedBox(height: spaceAfterButton),
                           
-                          // ✅ РАЗДЕЛЬНОЕ СТИЛИЗОВАНИЕ: ТЕКСТ С НЕОНОМ, ЭМОДЗИ БЕЗ ТЕНЕЙ
                           Center(
                             child: RichText(
                               textAlign: TextAlign.center,
@@ -251,12 +251,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   if (isDone)
                                     TextSpan(
                                       text: '🎉🎉🎉',
-                                      // ✅ ЯВНЫЙ СТИЛЬ БЕЗ НАСЛЕДОВАНИЯ ТЕНЕЙ
                                       style: TextStyle(
                                         fontSize: congratsFontSize,
                                         height: 1.0,
                                         color: isDone ? AppColors.accent : AppColors.textSecondary,
-                                        shadows: [], // Пустой список вместо null
+                                        shadows: [], 
                                       ),
                                     ),
                                 ],
@@ -271,7 +270,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               ),
             ),
             
-            // 🔑 УПРОЩЕННЫЙ ДОЖДЬ БЕЗ CLIPRECT (БЕЗОПАСНО ДЛЯ РЕАЛЬНЫХ УСТРОЙСТВ)
             if (_showRain)
               Positioned.fill(
                 child: IgnorePointer(
@@ -283,11 +281,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         children: _particles.map((particle) {
                           final animProgress = (_rainController.value - particle.delay).clamp(0.0, 1.0);
                           
-                          // Падение с увеличенной дистанцией
                           final fallDistance = constraints.maxHeight * 1.8;
                           final top = animProgress * particle.speed * fallDistance;
                           
-                          // Покачивание с замедленной частотой
                           final sway = sin(animProgress * 3.14) * particle.swayAmplitude;
                           
                           final emojiWidth = 24 * particle.scale;
