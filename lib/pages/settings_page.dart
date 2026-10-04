@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // ✅ Не забудьте этот импорт!
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../app_state.dart';
 import '../utils/pluralize.dart';
@@ -23,7 +23,6 @@ class _SettingsPageState extends State<SettingsPage> {
   int _cupVolume = 250;
   bool _initialized = false;
 
-  // Список объемов для отображения
   final List<int> _standardVolumes = [150, 200, 250, 300, 500];
 
   @override
@@ -152,32 +151,51 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ Вспомогательный метод для отрисовки одного стакана из SVG
-  Widget _buildGlassIcon(int volume, double height) {
+  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: Убраны лишние отступы, увеличен запас высоты
+  Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = _cupVolume == volume;
+    
+    // Базовый стиль из TextStyles.subtitle (как у текста "Это приложение...")
+    // height: 0.9 делает строки плотнее, чтобы избежать переполнения
+    final baseStyle = TextStyles.subtitle(fontSize: fontSize).copyWith(
+      height: 0.9, 
+    );
+
     return GestureDetector(
       onTap: () => setState(() => _cupVolume = volume),
-      behavior: HitTestBehavior.opaque, // Увеличивает область клика
+      behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end, // Прижимает контент к низу для лесенки
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           SvgPicture.asset(
             'assets/icons/glass_$volume.svg',
             height: height,
-            // width: 48,  <-- УДАЛЕНО: убираем фиксированную ширину, чтобы избежать искажений
             colorFilter: ColorFilter.mode(
               isSelected ? AppColors.accent : Colors.white30,
-              BlendMode.srcIn, // Перекрашивает SVG в нужный цвет
+              BlendMode.srcIn,
             ),
           ),
-          const SizedBox(height: 8),
-          Text('$volume мл',
-            style: TextStyle(
-              fontSize: 10,
-              color: isSelected ? AppColors.accent : Colors.white54,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            ),
+          const SizedBox(height: 4), // Минимальный отступ между стаканом и текстом
+          // ✅ Две строки через Column
+          Column(
+            children: [
+              Text(
+                '$volume',
+                style: baseStyle.copyWith(
+                  color: isSelected ? AppColors.accent : Colors.white54,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+              Text(
+                'мл',
+                style: baseStyle.copyWith(
+                  color: isSelected ? AppColors.accent : Colors.white54,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: fontSize - 1,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -241,7 +259,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   
                   SizedBox(height: spaceAfterTitle),
                   
-                  // ЕДИНАЯ КАРТОЧКА "УМНОЙ ЦЕЛИ"
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -253,19 +270,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ✅ НОВЫЙ БЛОК ВЫБОРА ОБЪЕМА С SVG И ЛЕСЕНКОЙ
+                        // ✅ УВЕЛИЧЕНА ВЫСОТА ДО 140 ДЛЯ ГАРАНТИРОВАННОГО ОТСУТСТВИЯ ПЕРЕПОЛНЕНИЯ
                         SizedBox(
-                          height: 120, // ✅ Уменьшено с 140 до 120 под новую макс. высоту 100px
+                          height: 140, 
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.end, // ⬅️ ГЛАВНЫЙ СЕКРЕТ ЛЕСЕНКИ
+                            crossAxisAlignment: CrossAxisAlignment.end, // ️ ГЛАВНЫЙ СЕКРЕТ ЛЕСЕНКИ
                             children: [
-                              // ✅ Установлены точные значения высот: 52, 64, 76, 88, 100
-                              _buildGlassIcon(150, 52),
-                              _buildGlassIcon(200, 64),
-                              _buildGlassIcon(250, 76),
-                              _buildGlassIcon(300, 88),
-                              _buildGlassIcon(500, 100),
+                              _buildGlassIcon(150, 52, subtitleFontSize),
+                              _buildGlassIcon(200, 64, subtitleFontSize),
+                              _buildGlassIcon(250, 76, subtitleFontSize),
+                              _buildGlassIcon(300, 88, subtitleFontSize),
+                              _buildGlassIcon(500, 100, subtitleFontSize),
                               
                               // Кнопка "Ваш объем"
                               GestureDetector(
@@ -277,7 +293,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   children: [
                                     Container(
                                       width: 48, 
-                                      height: 100, // ✅ Уменьшено с 124 до 100 для гармонии
+                                      height: 100,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: AppColors.accent.withValues(alpha: 0.4), width: 1.5),
                                         borderRadius: BorderRadius.circular(24),
@@ -285,10 +301,26 @@ class _SettingsPageState extends State<SettingsPage> {
                                       ),
                                       child: const Icon(Icons.edit_outlined, color: AppColors.accent, size: 24),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text('Ваш\nобъем', 
-                                      style: TextStyle(fontSize: 10, color: AppColors.accent, height: 1.1),
-                                      textAlign: TextAlign.center),
+                                    const SizedBox(height: 4),
+                                    // ✅ Подпись кнопки тоже в две строки с тем же стилем
+                                    Column(
+                                      children: [
+                                        Text('Ваш', 
+                                          style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
+                                            color: AppColors.accent, 
+                                            fontWeight: FontWeight.w600,
+                                            height: 0.9
+                                          )
+                                        ),
+                                        Text('объём', 
+                                          style: TextStyles.subtitle(fontSize: subtitleFontSize - 1).copyWith(
+                                            color: AppColors.accent, 
+                                            fontWeight: FontWeight.w600,
+                                            height: 0.9
+                                          )
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -348,7 +380,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   Divider(color: AppColors.divider, thickness: 1),
                   const SizedBox(height: 12), 
                   
-                  // БЛОК ПОДДЕРЖКИ
                   Column(
                     children: [
                       Padding(
