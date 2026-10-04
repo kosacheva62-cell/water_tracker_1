@@ -278,27 +278,34 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
-                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С ПРАВИЛЬНОЙ ШИРИНОЙ 48PX
+                              // ✅ КНОПКА "ВАШ ОБЪЁМ": ИКОНКА ПО ЦЕНТРУ СТАКАНА 500МЛ, ПОДПИСЬ НА ОБЩЕЙ ЛИНИИ
                               GestureDetector(
                                 onTap: () => _showCustomVolumeSheet(context),
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end, // Прижимаем весь столбец к низу ряда
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4.0),
-                                      child: SvgPicture.asset(
-                                        'assets/icons/pen_2.svg',
-                                        width: 48,  // ✅ Строго 48px, как у стаканов
-                                        height: 48, // ✅ Высота тоже 48px (так как исходник квадратный)
-                                        colorFilter: ColorFilter.mode(
-                                          AppColors.accent, 
-                                          BlendMode.srcIn,
-                                        ),
+                                    // ✅ ТРЮК: Бокс высотой 100px (как стакан 500мл) с центрированием внутри
+                                    SizedBox(
+                                      height: 100, 
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center, // Центрируем иконку внутри этих 100px
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icons/pen_2.svg',
+                                            width: 48,
+                                            height: 48,
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.accent, 
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: 4), // Отступ до подписи (такой же, как у стаканов)
+                                    // ✅ Подпись стоит на общей нижней линии благодаря parent Row alignment
                                     Column(
                                       children: [
                                         Text('Ваш', 
