@@ -23,7 +23,8 @@ class _SettingsPageState extends State<SettingsPage> {
   int _cupVolume = 250;
   bool _initialized = false;
 
-  final List<int> _standardVolumes = [150, 200, 250, 300, 500];
+  // ✅ УДАЛЕНО: final List<int> _standardVolumes = [150, 200, 250, 300, 500]; 
+  // Так как оно больше не используется, чтобы убрать предупреждение в VS Code.
 
   @override
   void didChangeDependencies() {
@@ -151,13 +152,10 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: Наследует fontWeight из TextStyles.subtitle
+  // ✅ Метод для стаканов: наследует вес шрифта из TextStyles.subtitle
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = _cupVolume == volume;
     
-    // Базовый стиль из TextStyles.subtitle
-    // height: 0.9 делает строки компактнее
-    // fontWeight НЕ указан явно -> берется из TextStyles.subtitle (будет одинаковым с текстом "Это...")
     final baseStyle = TextStyles.subtitle(fontSize: fontSize).copyWith(
       height: 0.9, 
     );
@@ -178,22 +176,19 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           const SizedBox(height: 4),
-          // ✅ Две строки через Column
           Column(
             children: [
               Text(
                 '$volume',
                 style: baseStyle.copyWith(
                   color: isSelected ? AppColors.accent : Colors.white54,
-                  // fontWeight убран! Теперь он такой же, как у "Это приложение..."
                 ),
               ),
               Text(
                 'мл',
                 style: baseStyle.copyWith(
                   color: isSelected ? AppColors.accent : Colors.white54,
-                  fontSize: fontSize - 1, // "мл" чуть мельче
-                  // fontWeight тоже убран
+                  fontSize: fontSize - 1,
                 ),
               ),
             ],
@@ -271,7 +266,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Высота 140 оставлена, так как она работает без переполнения
                         SizedBox(
                           height: 140, 
                           child: Row(
@@ -284,7 +278,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
-                              // Кнопка "Ваш объем"
+                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С ПРАВИЛЬНОЙ ШИРИНОЙ 48PX
                               GestureDetector(
                                 onTap: () => _showCustomVolumeSheet(context),
                                 behavior: HitTestBehavior.opaque,
@@ -292,31 +286,30 @@ class _SettingsPageState extends State<SettingsPage> {
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Container(
-                                      width: 48, 
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: AppColors.accent.withValues(alpha: 0.4), width: 1.5),
-                                        borderRadius: BorderRadius.circular(24),
-                                        color: AppColors.accent.withValues(alpha: 0.05),
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4.0),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/pen_2.svg',
+                                        width: 48,  // ✅ Строго 48px, как у стаканов
+                                        height: 48, // ✅ Высота тоже 48px (так как исходник квадратный)
+                                        colorFilter: ColorFilter.mode(
+                                          AppColors.accent, 
+                                          BlendMode.srcIn,
+                                        ),
                                       ),
-                                      child: const Icon(Icons.edit_outlined, color: AppColors.accent, size: 24),
                                     ),
                                     const SizedBox(height: 4),
-                                    // ✅ Подпись кнопки с тем же стилем (без явного fontWeight)
                                     Column(
                                       children: [
                                         Text('Ваш', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
                                             color: AppColors.accent, 
-                                            // fontWeight убран -> наследуется из TextStyles.subtitle
                                             height: 0.9
                                           )
                                         ),
                                         Text('объём', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize - 1).copyWith(
                                             color: AppColors.accent, 
-                                            // fontWeight убран -> наследуется из TextStyles.subtitle
                                             height: 0.9
                                           )
                                         ),
