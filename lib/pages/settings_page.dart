@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // ✅ Не забудьте этот импорт!
+
 import '../app_state.dart';
 import '../utils/pluralize.dart';
 import '../utils/text_styles.dart';
@@ -21,6 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   int _cupVolume = 250;
   bool _initialized = false;
 
+  // Список объемов для отображения
   final List<int> _standardVolumes = [150, 200, 250, 300, 500];
 
   @override
@@ -36,7 +39,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _saveSettings() async {
     try {
-      // ✅ ДОБАВЛЕНО: Тактильная обратная связь перед сохранением
       await Vibration.vibrate(duration: 50);
       HapticFeedback.mediumImpact();
       
@@ -150,6 +152,38 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  // ✅ Вспомогательный метод для отрисовки одного стакана из SVG
+  Widget _buildGlassIcon(int volume, double height) {
+    final isSelected = _cupVolume == volume;
+    return GestureDetector(
+      onTap: () => setState(() => _cupVolume = volume),
+      behavior: HitTestBehavior.opaque, // Увеличивает область клика
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end, // Прижимает контент к низу для лесенки
+        children: [
+          SvgPicture.asset(
+            'assets/icons/glass_$volume.svg',
+            height: height,
+            // width: 48,  <-- УДАЛЕНО: убираем фиксированную ширину, чтобы избежать искажений
+            colorFilter: ColorFilter.mode(
+              isSelected ? AppColors.accent : Colors.white30,
+              BlendMode.srcIn, // Перекрашивает SVG в нужный цвет
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text('$volume мл',
+            style: TextStyle(
+              fontSize: 10,
+              color: isSelected ? AppColors.accent : Colors.white54,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -159,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
-    // Адаптивные размеры шрифтов и контролов
+    // Адаптивные размеры
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     final topPadding = isTablet ? 16.0 : (isTinyScreen ? 4.0 : 6.0); 
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
@@ -169,7 +203,6 @@ class _SettingsPageState extends State<SettingsPage> {
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
-    // УМНЫЕ АДАПТИВНЫЕ ОТСТУПЫ С ЗАЩИТОЙ ОТ СЛИЯНИЯ СВЕЧЕНИЙ
     final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0)); 
     
     final minSafeGap = 32.0;
@@ -211,7 +244,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   // ЕДИНАЯ КАРТОЧКА "УМНОЙ ЦЕЛИ"
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                     decoration: BoxDecoration(
                       color: AppColors.card,
                       borderRadius: BorderRadius.circular(24),
@@ -220,82 +253,46 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // ✅ НОВЫЙ БЛОК ВЫБОРА ОБЪЕМА С SVG И ЛЕСЕНКОЙ
                         SizedBox(
-                          height: 90,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: _standardVolumes.length + 1,
-                            separatorBuilder: (_, __) => const SizedBox(width: 8),
-                            itemBuilder: (context, index) {
-                              if (index == _standardVolumes.length) {
-                                return GestureDetector(
-                                  onTap: () => _showCustomVolumeSheet(context),
-                                  child: Container(
-                                    width: 60, height: 90,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: AppColors.accent.withValues(alpha: 0.3), width: 1.5),
-                                      borderRadius: BorderRadius.circular(16),
-                                      color: AppColors.accent.withValues(alpha: 0.05),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.edit_outlined, color: AppColors.accent, size: 20),
-                                        const SizedBox(height: 4),
-                                        Text('Ваш\nобъем', 
-                                          style: TextStyle(fontSize: 9, color: AppColors.accent, height: 1.1),
-                                          textAlign: TextAlign.center),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              final volume = _standardVolumes[index];
-                              final isSelected = _cupVolume == volume;
-                              final glassHeight = 30.0 + (volume / 500) * 30; 
-
-                              return GestureDetector(
-                                onTap: () => setState(() => _cupVolume = volume),
+                          height: 120, // ✅ Уменьшено с 140 до 120 под новую макс. высоту 100px
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.end, // ⬅️ ГЛАВНЫЙ СЕКРЕТ ЛЕСЕНКИ
+                            children: [
+                              // ✅ Установлены точные значения высот: 52, 64, 76, 88, 100
+                              _buildGlassIcon(150, 52),
+                              _buildGlassIcon(200, 64),
+                              _buildGlassIcon(250, 76),
+                              _buildGlassIcon(300, 88),
+                              _buildGlassIcon(500, 100),
+                              
+                              // Кнопка "Ваш объем"
+                              GestureDetector(
+                                onTap: () => _showCustomVolumeSheet(context),
+                                behavior: HitTestBehavior.opaque,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Container(
-                                      width: 36, height: glassHeight,
+                                      width: 48, 
+                                      height: 100, // ✅ Уменьшено с 124 до 100 для гармонии
                                       decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.bottomCenter, end: Alignment.topCenter,
-                                          colors: [
-                                            AppColors.accent.withValues(alpha: isSelected ? 1.0 : 0.4),
-                                            AppColors.accent.withValues(alpha: isSelected ? 0.8 : 0.2),
-                                          ],
-                                        ),
-                                        border: Border.all(
-                                          color: isSelected ? AppColors.accent : Colors.white24,
-                                          width: isSelected ? 2 : 1.5,
-                                        ),
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(8), bottomRight: Radius.circular(8),
-                                          topLeft: Radius.circular(4), topRight: Radius.circular(4),
-                                        ),
-                                        boxShadow: isSelected ? [
-                                          BoxShadow(color: AppColors.accent.withValues(alpha: 0.5), blurRadius: 8)
-                                        ] : null,
+                                        border: Border.all(color: AppColors.accent.withValues(alpha: 0.4), width: 1.5),
+                                        borderRadius: BorderRadius.circular(24),
+                                        color: AppColors.accent.withValues(alpha: 0.05),
                                       ),
+                                      child: const Icon(Icons.edit_outlined, color: AppColors.accent, size: 24),
                                     ),
-                                    const SizedBox(height: 6),
-                                    Text('$volume мл', 
-                                      style: TextStyle(
-                                        fontSize: 11, 
-                                        color: isSelected ? AppColors.accent : Colors.white54,
-                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                      ),
-                                    ),
+                                    const SizedBox(height: 8),
+                                    Text('Ваш\nобъем', 
+                                      style: TextStyle(fontSize: 10, color: AppColors.accent, height: 1.1),
+                                      textAlign: TextAlign.center),
                                   ],
                                 ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ),
 
