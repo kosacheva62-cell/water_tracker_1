@@ -151,12 +151,13 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: Убраны лишние отступы, увеличен запас высоты
+  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: Наследует fontWeight из TextStyles.subtitle
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = _cupVolume == volume;
     
-    // Базовый стиль из TextStyles.subtitle (как у текста "Это приложение...")
-    // height: 0.9 делает строки плотнее, чтобы избежать переполнения
+    // Базовый стиль из TextStyles.subtitle
+    // height: 0.9 делает строки компактнее
+    // fontWeight НЕ указан явно -> берется из TextStyles.subtitle (будет одинаковым с текстом "Это...")
     final baseStyle = TextStyles.subtitle(fontSize: fontSize).copyWith(
       height: 0.9, 
     );
@@ -176,7 +177,7 @@ class _SettingsPageState extends State<SettingsPage> {
               BlendMode.srcIn,
             ),
           ),
-          const SizedBox(height: 4), // Минимальный отступ между стаканом и текстом
+          const SizedBox(height: 4),
           // ✅ Две строки через Column
           Column(
             children: [
@@ -184,15 +185,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 '$volume',
                 style: baseStyle.copyWith(
                   color: isSelected ? AppColors.accent : Colors.white54,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  // fontWeight убран! Теперь он такой же, как у "Это приложение..."
                 ),
               ),
               Text(
                 'мл',
                 style: baseStyle.copyWith(
                   color: isSelected ? AppColors.accent : Colors.white54,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  fontSize: fontSize - 1,
+                  fontSize: fontSize - 1, // "мл" чуть мельче
+                  // fontWeight тоже убран
                 ),
               ),
             ],
@@ -270,12 +271,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ✅ УВЕЛИЧЕНА ВЫСОТА ДО 140 ДЛЯ ГАРАНТИРОВАННОГО ОТСУТСТВИЯ ПЕРЕПОЛНЕНИЯ
+                        // Высота 140 оставлена, так как она работает без переполнения
                         SizedBox(
                           height: 140, 
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.end, // ️ ГЛАВНЫЙ СЕКРЕТ ЛЕСЕНКИ
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               _buildGlassIcon(150, 52, subtitleFontSize),
                               _buildGlassIcon(200, 64, subtitleFontSize),
@@ -302,20 +303,20 @@ class _SettingsPageState extends State<SettingsPage> {
                                       child: const Icon(Icons.edit_outlined, color: AppColors.accent, size: 24),
                                     ),
                                     const SizedBox(height: 4),
-                                    // ✅ Подпись кнопки тоже в две строки с тем же стилем
+                                    // ✅ Подпись кнопки с тем же стилем (без явного fontWeight)
                                     Column(
                                       children: [
                                         Text('Ваш', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
                                             color: AppColors.accent, 
-                                            fontWeight: FontWeight.w600,
+                                            // fontWeight убран -> наследуется из TextStyles.subtitle
                                             height: 0.9
                                           )
                                         ),
                                         Text('объём', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize - 1).copyWith(
                                             color: AppColors.accent, 
-                                            fontWeight: FontWeight.w600,
+                                            // fontWeight убран -> наследуется из TextStyles.subtitle
                                             height: 0.9
                                           )
                                         ),
