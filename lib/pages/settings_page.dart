@@ -23,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   int _cupVolume = 250;
   bool _initialized = false;
 
-  // Список стандартных объемов нужен теперь для проверки активности кнопки
+  // Список стандартных объемов для проверки активности кнопки "Ваш объём"
   final List<int> _standardVolumes = [150, 200, 250, 300, 500];
 
   @override
@@ -152,7 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ Метод для стаканов
+  // ✅ Метод для отрисовки иконок стаканов
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = _cupVolume == volume;
     
@@ -232,9 +232,7 @@ class _SettingsPageState extends State<SettingsPage> {
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
     // ✅ ЛОГИКА АКТИВНОСТИ КНОПКИ "ВАШ ОБЪЁМ"
-    // Активна, если текущий объем НЕ входит в список стандартных
     final bool isCustomActive = !_standardVolumes.contains(_cupVolume);
-    // Цвет для активной/неактивной кнопки
     final Color customIconColor = isCustomActive ? AppColors.accent : Colors.white30;
     final Color customTextColor = isCustomActive ? AppColors.accent : Colors.white54;
 
@@ -262,6 +260,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   
                   SizedBox(height: spaceAfterTitle),
                   
+                  // ✅ ОБНОВЛЕННАЯ КАРТОЧКА С ЦЕНТРИРОВАННЫМИ ЗАГОЛОВКАМИ И ПРАВИЛЬНЫМ ЦВЕТОМ
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -273,6 +272,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // ✅ ЗАГОЛОВОК 1: Центрирован, цвет наследуется из TextStyles.subtitle
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            'Выберите объём стакана',
+                            style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
+                              height: 1.0
+                              // ⬅️ Убран .copyWith(color: ...)! Цвет берется напрямую из стиля
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        
+                        // Ряд со стаканами и карандашом
                         SizedBox(
                           height: 140, 
                           child: Row(
@@ -285,7 +298,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
-                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С ДИНАМИЧЕСКИМ ЦВЕТОМ
                               GestureDetector(
                                 onTap: () => _showCustomVolumeSheet(context),
                                 behavior: HitTestBehavior.opaque,
@@ -302,7 +314,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                             'assets/icons/pen_2.svg',
                                             width: 48,
                                             height: 48,
-                                            // ✅ Цвет иконки зависит от активности
                                             colorFilter: ColorFilter.mode(
                                               customIconColor, 
                                               BlendMode.srcIn,
@@ -316,14 +327,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                       children: [
                                         Text('Ваш', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
-                                            // ✅ Цвет текста зависит от активности
                                             color: customTextColor, 
                                             height: 0.9
                                           )
                                         ),
                                         Text('объём', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize - 1).copyWith(
-                                            // ✅ Цвет текста зависит от активности
                                             color: customTextColor, 
                                             height: 0.9
                                           )
@@ -338,7 +347,21 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
 
                         const SizedBox(height: 24),
+                        
+                        // ✅ ЗАГОЛОВОК 2: Центрирован, цвет наследуется из TextStyles.subtitle
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            'Выберите количество стаканов',
+                            style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
+                              height: 1.0
+                              // ⬅️ Также убран .copyWith(color: ...)
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
 
+                        // Ряд с кнопками -, число, +
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
