@@ -286,12 +286,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                         
-                        // Ряд со стаканами и карандашом
+                        // Ряд со стаканами и КАПЛЕЙ
                         SizedBox(
                           height: 140, 
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end, // ⬅️ ВСЕ ЭЛЕМЕНТЫ ВЫРОВНЕНЫ ПО НИЗУ
                             children: [
                               _buildGlassIcon(150, 52, subtitleFontSize),
                               _buildGlassIcon(200, 64, subtitleFontSize),
@@ -299,31 +299,25 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
+                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С КАПЛЕЙ, ВЫРОВНЕННОЙ ПО НИЖНЕМУ КРАЮ
                               GestureDetector(
                                 onTap: () => _showCustomVolumeSheet(context),
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end, // ⬅️ ИКОНКА ПРИЖАТА К НИЗУ
                                   children: [
-                                    SizedBox(
-                                      height: 100, 
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/icons/pen_2.svg',
-                                            width: 48,
-                                            height: 48,
-                                            colorFilter: ColorFilter.mode(
-                                              customIconColor, 
-                                              BlendMode.srcIn,
-                                            ),
-                                          ),
-                                        ],
+                                    SvgPicture.asset(
+                                      'assets/icons/drop_for_stat_2.svg',
+                                      width: 48,       // ✅ Фиксированная ширина как у стаканов
+                                      // height не задаем, чтобы сохранить пропорции 48x75
+                                      fit: BoxFit.contain, // ✅ Сохраняет естественную форму капли
+                                      colorFilter: ColorFilter.mode(
+                                        customIconColor, 
+                                        BlendMode.srcIn,
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: 4), // Отступ до подписи
                                     Column(
                                       children: [
                                         Text('Ваш', 
