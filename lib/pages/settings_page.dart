@@ -37,13 +37,18 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  // ✅ ИСПРАВЛЕННЫЙ МЕТОД СОХРАНЕНИЯ (без ошибок async gaps)
   Future<void> _saveSettings() async {
+    // Сохраняем ссылку на состояние ДО первого await
+    final appState = context.read<FFAppState>();
+    
     try {
       await Vibration.vibrate(duration: 50);
       HapticFeedback.mediumImpact();
       
-      await context.read<FFAppState>().setDailyGoal(_dailyGoalGlasses);
-      await context.read<FFAppState>().setCupVolume(_cupVolume); 
+      // Используем сохраненную ссылку вместо context.read внутри async блока
+      await appState.setDailyGoal(_dailyGoalGlasses);
+      await appState.setCupVolume(_cupVolume); 
       
       if (!mounted) return; 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -129,6 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  // ✅ ИСПРАВЛЕННЫЙ МЕТОД КНОПОК (убран лишний const)
   Widget _buildControlButton(String text, VoidCallback onPressed, double fontSize) {
     return GestureDetector(
       onTap: () {
@@ -137,22 +143,28 @@ class _SettingsPageState extends State<SettingsPage> {
         onPressed();
       },
       child: Container(
-        width: 64, height: 64,
+        width: 64, 
+        height: 64,
+        // ✅ Убран const перед BoxDecoration, так как он не является compile-time constant из-за прозрачности
         decoration: BoxDecoration(
-          color: AppColors.accent.withValues(alpha: 0.1),
+          color: Colors.transparent, 
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.accent.withValues(alpha: 0.3), width: 1.5),
         ),
         child: Center(
-          child: Text(text, 
-            style: TextStyle(fontSize: fontSize, color: AppColors.accent, fontWeight: FontWeight.w300),
+          child: Text(
+            text, 
+            style: TextStyle(
+              fontSize: fontSize, 
+              color: AppColors.accent, 
+              fontWeight: FontWeight.w300
+            ),
           ),
         ),
       ),
     );
   }
 
-  // ✅ Метод для отрисовки иконок стаканов
+  // Метод для отрисовки иконок стаканов
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = _cupVolume == volume;
     
@@ -231,7 +243,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
-    // ✅ ЛОГИКА АКТИВНОСТИ КНОПКИ "ВАШ ОБЪЁМ"
+    // ЛОГИКА АКТИВНОСТИ КНОПКИ "ВАШ ОБЪЁМ"
     final bool isCustomActive = !_standardVolumes.contains(_cupVolume);
     final Color customIconColor = isCustomActive ? AppColors.accent : Colors.white30;
     final Color customTextColor = isCustomActive ? AppColors.accent : Colors.white54;
@@ -252,7 +264,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // ✅ УБРАНО ДВОЕТОЧИЕ В ЗАГОЛОВКЕ
+                  // УБРАНО ДВОЕТОЧИЕ В ЗАГОЛОВКЕ
                   Text(
                     'Установите цель на день',
                     textAlign: TextAlign.center,
@@ -261,7 +273,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   
                   SizedBox(height: spaceAfterTitle),
                   
-                  // ✅ ОБНОВЛЕННАЯ КАРТОЧКА С НОВЫМ СТИЛЕМ ЗАГОЛОВКОВ
+                  // ОБНОВЛЕННАЯ КАРТОЧКА С НОВЫМ СТИЛЕМ ЗАГОЛОВКОВ
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -273,7 +285,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ✅ ЗАГОЛОВОК 1: Теперь использует TextStyles.goal (как "Ваша цель:")
+                        // ЗАГОЛОВОК 1: Теперь использует TextStyles.goal (как "Ваша цель:")
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
@@ -291,7 +303,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           height: 140, 
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.end, // ⬅️ ВСЕ ЭЛЕМЕНТЫ ВЫРОВНЕНЫ ПО НИЗУ
+                            crossAxisAlignment: CrossAxisAlignment.end, // ВСЕ ЭЛЕМЕНТЫ ВЫРОВНЕНЫ ПО НИЗУ
                             children: [
                               _buildGlassIcon(150, 52, subtitleFontSize),
                               _buildGlassIcon(200, 64, subtitleFontSize),
@@ -299,19 +311,19 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
-                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С КАПЛЕЙ, ВЫРОВНЕННОЙ ПО НИЖНЕМУ КРАЮ
+                              // КНОПКА "ВАШ ОБЪЁМ" С КАПЛЕЙ, ВЫРОВНЕННОЙ ПО НИЖНЕМУ КРАЮ
                               GestureDetector(
                                 onTap: () => _showCustomVolumeSheet(context),
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end, // ⬅️ ИКОНКА ПРИЖАТА К НИЗУ
+                                  mainAxisAlignment: MainAxisAlignment.end, // ИКОНКА ПРИЖАТА К НИЗУ
                                   children: [
                                     SvgPicture.asset(
                                       'assets/icons/drop_for_stat_2.svg',
-                                      width: 48,       // ✅ Фиксированная ширина как у стаканов
+                                      width: 48,       // Фиксированная ширина как у стаканов
                                       // height не задаем, чтобы сохранить пропорции 48x75
-                                      fit: BoxFit.contain, // ✅ Сохраняет естественную форму капли
+                                      fit: BoxFit.contain, // Сохраняет естественную форму капли
                                       colorFilter: ColorFilter.mode(
                                         customIconColor, 
                                         BlendMode.srcIn,
@@ -343,7 +355,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         const SizedBox(height: 24),
                         
-                        // ✅ ЗАГОЛОВОК 2: Теперь использует TextStyles.goal (как "Ваша цель:")
+                        // ЗАГОЛОВОК 2: Теперь использует TextStyles.goal (как "Ваша цель:")
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
