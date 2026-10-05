@@ -23,8 +23,8 @@ class _SettingsPageState extends State<SettingsPage> {
   int _cupVolume = 250;
   bool _initialized = false;
 
-  // ✅ УДАЛЕНО: final List<int> _standardVolumes = [150, 200, 250, 300, 500]; 
-  // Так как оно больше не используется, чтобы убрать предупреждение в VS Code.
+  // Список стандартных объемов нужен теперь для проверки активности кнопки
+  final List<int> _standardVolumes = [150, 200, 250, 300, 500];
 
   @override
   void didChangeDependencies() {
@@ -152,7 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ Метод для стаканов: наследует вес шрифта из TextStyles.subtitle
+  // ✅ Метод для стаканов
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = _cupVolume == volume;
     
@@ -231,6 +231,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
+    // ✅ ЛОГИКА АКТИВНОСТИ КНОПКИ "ВАШ ОБЪЁМ"
+    // Активна, если текущий объем НЕ входит в список стандартных
+    final bool isCustomActive = !_standardVolumes.contains(_cupVolume);
+    // Цвет для активной/неактивной кнопки
+    final Color customIconColor = isCustomActive ? AppColors.accent : Colors.white30;
+    final Color customTextColor = isCustomActive ? AppColors.accent : Colors.white54;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -278,45 +285,46 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
-                              // ✅ КНОПКА "ВАШ ОБЪЁМ": ИКОНКА ПО ЦЕНТРУ СТАКАНА 500МЛ, ПОДПИСЬ НА ОБЩЕЙ ЛИНИИ
+                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С ДИНАМИЧЕСКИМ ЦВЕТОМ
                               GestureDetector(
                                 onTap: () => _showCustomVolumeSheet(context),
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end, // Прижимаем весь столбец к низу ряда
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    // ✅ ТРЮК: Бокс высотой 100px (как стакан 500мл) с центрированием внутри
                                     SizedBox(
                                       height: 100, 
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center, // Центрируем иконку внутри этих 100px
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           SvgPicture.asset(
                                             'assets/icons/pen_2.svg',
                                             width: 48,
                                             height: 48,
+                                            // ✅ Цвет иконки зависит от активности
                                             colorFilter: ColorFilter.mode(
-                                              AppColors.accent, 
+                                              customIconColor, 
                                               BlendMode.srcIn,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 4), // Отступ до подписи (такой же, как у стаканов)
-                                    // ✅ Подпись стоит на общей нижней линии благодаря parent Row alignment
+                                    const SizedBox(height: 4),
                                     Column(
                                       children: [
                                         Text('Ваш', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
-                                            color: AppColors.accent, 
+                                            // ✅ Цвет текста зависит от активности
+                                            color: customTextColor, 
                                             height: 0.9
                                           )
                                         ),
                                         Text('объём', 
                                           style: TextStyles.subtitle(fontSize: subtitleFontSize - 1).copyWith(
-                                            color: AppColors.accent, 
+                                            // ✅ Цвет текста зависит от активности
+                                            color: customTextColor, 
                                             height: 0.9
                                           )
                                         ),
