@@ -252,15 +252,16 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // ✅ УБРАНО ДВОЕТОЧИЕ В ЗАГОЛОВКЕ
                   Text(
-                    'Установите цель на день:',
+                    'Установите цель на день',
                     textAlign: TextAlign.center,
                     style: TextStyles.title(fontSize: titleFontSize).copyWith(height: 1.1), 
                   ),
                   
                   SizedBox(height: spaceAfterTitle),
                   
-                  // ✅ ОБНОВЛЕННАЯ КАРТОЧКА С ЦЕНТРИРОВАННЫМИ ЗАГОЛОВКАМИ И ПРАВИЛЬНЫМ ЦВЕТОМ
+                  // ✅ ОБНОВЛЕННАЯ КАРТОЧКА С НОВЫМ СТИЛЕМ ЗАГОЛОВКОВ
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -272,14 +273,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ✅ ЗАГОЛОВОК 1: Центрирован, цвет наследуется из TextStyles.subtitle
+                        // ✅ ЗАГОЛОВОК 1: Теперь использует TextStyles.goal (как "Ваша цель:")
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             'Выберите объём стакана',
-                            style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
+                            style: TextStyles.goal(fontSize: goalFontSize).copyWith(
+                              color: Colors.white, // Белый цвет как у "Ваша цель:"
                               height: 1.0
-                              // ⬅️ Убран .copyWith(color: ...)! Цвет берется напрямую из стиля
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -348,14 +349,14 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         const SizedBox(height: 24),
                         
-                        // ✅ ЗАГОЛОВОК 2: Центрирован, цвет наследуется из TextStyles.subtitle
+                        // ✅ ЗАГОЛОВОК 2: Теперь использует TextStyles.goal (как "Ваша цель:")
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             'Выберите количество стаканов',
-                            style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(
+                            style: TextStyles.goal(fontSize: goalFontSize).copyWith(
+                              color: Colors.white, // Белый цвет как у "Ваша цель:"
                               height: 1.0
-                              // ⬅️ Также убран .copyWith(color: ...)
                             ),
                             textAlign: TextAlign.center,
                           ),
