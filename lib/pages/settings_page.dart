@@ -23,30 +23,26 @@ class _SettingsPageState extends State<SettingsPage> {
   int _cupVolume = 250;
   bool _initialized = false;
 
-  // Список стандартных объемов для проверки активности кнопки "Ваш объём"
   final List<int> _standardVolumes = [150, 200, 250, 300, 500];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      final appState = context.read<FFAppState>();
+      final appState = Provider.of<FFAppState>(context, listen: false);
       _dailyGoalGlasses = appState.dailyGoalGlasses;
       _cupVolume = appState.cupVolume;
       _initialized = true;
     }
   }
 
-  // ✅ ИСПРАВЛЕННЫЙ МЕТОД СОХРАНЕНИЯ (без ошибок async gaps)
   Future<void> _saveSettings() async {
-    // Сохраняем ссылку на состояние ДО первого await
-    final appState = context.read<FFAppState>();
+    final appState = Provider.of<FFAppState>(context, listen: false);
     
     try {
       await Vibration.vibrate(duration: 50);
       HapticFeedback.mediumImpact();
       
-      // Используем сохраненную ссылку вместо context.read внутри async блока
       await appState.setDailyGoal(_dailyGoalGlasses);
       await appState.setCupVolume(_cupVolume); 
       
@@ -65,6 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: controller.dispose() НЕ вызываем вообще
   void _showCustomVolumeSheet(BuildContext context) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
@@ -116,9 +113,11 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
+                // ✅ Только обновляем состояние и закрываем окно
+                // controller.dispose() НЕ вызываем — сборщик мусора сам освободит память,
+                // когда окно полностью исчезнет из дерева виджетов
                 setState(() => _cupVolume = tempVolume);
                 Navigator.pop(ctx);
-                controller.dispose();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accent,
@@ -134,7 +133,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ ОБНОВЛЕННЫЙ МЕТОД КНОПОК С НЕОНОВЫМИ ТЕНЯМИ И ПРОЗРАЧНЫМ ФОНОМ
   Widget _buildControlButton(String text, VoidCallback onPressed, double fontSize) {
     return GestureDetector(
       onTap: () {
@@ -152,7 +150,6 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Center(
           child: Text(
             text, 
-            // ✅ Теперь используется TextStyles.plusMinus с неоновыми тенями
             style: TextStyles.plusMinus(fontSize: fontSize),
           ),
         ),
@@ -160,7 +157,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // Метод для отрисовки иконок стаканов
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = _cupVolume == volume;
     
@@ -208,14 +204,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<FFAppState>();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
-    // Адаптивные размеры
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     final topPadding = isTablet ? 16.0 : (isTinyScreen ? 4.0 : 6.0); 
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
@@ -239,7 +233,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
-    // ЛОГИКА АКТИВНОСТИ КНОПКИ "ВАШ ОБЪЁМ"
     final bool isCustomActive = !_standardVolumes.contains(_cupVolume);
     final Color customIconColor = isCustomActive ? AppColors.accent : Colors.white30;
     final Color customTextColor = isCustomActive ? AppColors.accent : Colors.white54;
@@ -260,7 +253,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // УБРАНО ДВОЕТОЧИЕ В ЗАГОЛОВКЕ
                   Text(
                     'Установите цель на день',
                     textAlign: TextAlign.center,
@@ -269,7 +261,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   
                   SizedBox(height: spaceAfterTitle),
                   
-                  // ОБНОВЛЕННАЯ КАРТОЧКА С НОВЫМ СТИЛЕМ ЗАГОЛОВКОВ
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -281,25 +272,23 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // ЗАГОЛОВОК 1: Теперь использует TextStyles.goal (как "Ваша цель:")
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             'Выберите объём стакана',
                             style: TextStyles.goal(fontSize: goalFontSize).copyWith(
-                              color: Colors.white, // Белый цвет как у "Ваша цель:"
+                              color: Colors.white,
                               height: 1.0
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
                         
-                        // Ряд со стаканами и КАПЛЕЙ
                         SizedBox(
                           height: 140, 
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.end, // ВСЕ ЭЛЕМЕНТЫ ВЫРОВНЕНЫ ПО НИЗУ
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               _buildGlassIcon(150, 52, subtitleFontSize),
                               _buildGlassIcon(200, 64, subtitleFontSize),
@@ -307,25 +296,23 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
-                              // КНОПКА "ВАШ ОБЪЁМ" С КАПЛЕЙ, ВЫРОВНЕННОЙ ПО НИЖНЕМУ КРАЮ
                               GestureDetector(
                                 onTap: () => _showCustomVolumeSheet(context),
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end, // ИКОНКА ПРИЖАТА К НИЗУ
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     SvgPicture.asset(
                                       'assets/icons/drop_for_stat_2.svg',
-                                      width: 48,       // Фиксированная ширина как у стаканов
-                                      // height не задаем, чтобы сохранить пропорции 48x75
-                                      fit: BoxFit.contain, // Сохраняет естественную форму капли
+                                      width: 48,
+                                      fit: BoxFit.contain,
                                       colorFilter: ColorFilter.mode(
                                         customIconColor, 
                                         BlendMode.srcIn,
                                       ),
                                     ),
-                                    const SizedBox(height: 4), // Отступ до подписи
+                                    const SizedBox(height: 4),
                                     Column(
                                       children: [
                                         Text('Ваш', 
@@ -351,20 +338,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         const SizedBox(height: 24),
                         
-                        // ✅ ЗАГОЛОВОК 2: ОТСТУП УМЕНЬШЕН ДО 8px
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: Text(
                             'Выберите количество стаканов',
                             style: TextStyles.goal(fontSize: goalFontSize).copyWith(
-                              color: Colors.white, // Белый цвет как у "Ваша цель:"
+                              color: Colors.white,
                               height: 1.0
                             ),
                             textAlign: TextAlign.center,
                           ),
                         ),
 
-                        // Ряд с кнопками -, число, +
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -374,7 +359,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               }
                             }, minusPlusFontSize),
                             const SizedBox(width: 20),
-                            // ✅ ЦЕНТРАЛЬНАЯ ЦИФРА ТЕПЕРЬ С НЕОНОВЫМИ ТЕНЯМИ
                             Text('$_dailyGoalGlasses', 
                               style: TextStyles.number(fontSize: numberFontSize)),
                             const SizedBox(width: 20),
@@ -386,7 +370,6 @@ class _SettingsPageState extends State<SettingsPage> {
                           ],
                         ),
                         
-                        // ✅ ИЗМЕНЕНО: Было top: 4, стало top: 0. Отступ УМЕНЬШЕН до минимума.
                         Padding(
                           padding: const EdgeInsets.only(top: 0), 
                           child: Text('$glassesForm в день', 
