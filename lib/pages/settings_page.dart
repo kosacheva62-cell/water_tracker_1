@@ -351,9 +351,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         const SizedBox(height: 24),
                         
-                        // ЗАГОЛОВОК 2: Теперь использует TextStyles.goal (как "Ваша цель:")
+                        // ✅ ЗАГОЛОВОК 2: ОТСТУП УМЕНЬШЕН ДО 8px
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: Text(
                             'Выберите количество стаканов',
                             style: TextStyles.goal(fontSize: goalFontSize).copyWith(
