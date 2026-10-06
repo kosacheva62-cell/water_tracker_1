@@ -134,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ ОБНОВЛЕННЫЙ МЕТОД КНОПОК С НЕОНОВЫМИ ТЕНЯМИ
+  // ✅ ОБНОВЛЕННЫЙ МЕТОД КНОПОК С НЕОНОВЫМИ ТЕНЯМИ И ПРОЗРАЧНЫМ ФОНОМ
   Widget _buildControlButton(String text, VoidCallback onPressed, double fontSize) {
     return GestureDetector(
       onTap: () {
@@ -386,8 +386,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           ],
                         ),
                         
+                        // ✅ ИЗМЕНЕНО: Было top: 4, стало top: 0. Отступ УМЕНЬШЕН до минимума.
                         Padding(
-                          padding: const EdgeInsets.only(top: 4), 
+                          padding: const EdgeInsets.only(top: 0), 
                           child: Text('$glassesForm в день', 
                             style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(color: Colors.white54)),
                         ),
