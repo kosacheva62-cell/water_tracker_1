@@ -22,6 +22,9 @@ class _SettingsPageState extends State<SettingsPage> {
   late int _dailyGoalGlasses;
   int _cupVolume = 250;
   bool _initialized = false;
+  
+  // ✅ ВРЕМЕННЫЙ ФЛАГ ДЛЯ МГНОВЕННОЙ ПОДСВЕТКИ ИКОНКИ "ВАШ ОБЪЁМ" ПРИ НАЖАТИИ
+  bool _customPressed = false;
 
   final List<int> _standardVolumes = [150, 200, 250, 300, 500];
 
@@ -61,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: controller.dispose() НЕ вызываем вообще
+  // ✅ МЕТОД БЕЗ РУЧНОГО dispose КОНТРОЛЛЕРА (красные экраны устранены)
   void _showCustomVolumeSheet(BuildContext context) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
@@ -113,9 +116,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                // ✅ Только обновляем состояние и закрываем окно
-                // controller.dispose() НЕ вызываем — сборщик мусора сам освободит память,
-                // когда окно полностью исчезнет из дерева виджетов
+                // ✅ Обновляем состояние и закрываем окно. controller.dispose() НЕ вызываем!
                 setState(() => _cupVolume = tempVolume);
                 Navigator.pop(ctx);
               },
@@ -130,7 +131,13 @@ class _SettingsPageState extends State<SettingsPage> {
           ],
         ),
       ),
-    );
+    ).then((_) {
+      // ✅ СБРАСЫВАЕМ ВРЕМЕННЫЙ ФЛАГ ПОСЛЕ ЗАКРЫТИЯ ОКНА
+      // (безопасно: только setState, контроллер не трогаем)
+      if (mounted) {
+        setState(() => _customPressed = false);
+      }
+    });
   }
 
   Widget _buildControlButton(String text, VoidCallback onPressed, double fontSize) {
@@ -157,8 +164,11 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: ПОКА АКТИВЕН РЕЖИМ "ВАШ ОБЪЁМ", СТАКАНЫ НЕ ПОДСВЕЧИВАЮТСЯ
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
-    final isSelected = _cupVolume == volume;
+    // ✅ Пока активен режим "Ваш объём" (_customPressed = true),
+    // стандартные стаканы НЕ подсвечиваются — голубой остаётся только капля
+    final isSelected = !_customPressed && _cupVolume == volume;
     
     final baseStyle = TextStyles.subtitle(fontSize: fontSize).copyWith(
       height: 0.9, 
@@ -233,7 +243,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
-    final bool isCustomActive = !_standardVolumes.contains(_cupVolume);
+    // ✅ АКТИВНОСТЬ ИКОНКИ: временный флаг ИЛИ реальный кастомный объём
+    final bool isCustomActive = _customPressed || !_standardVolumes.contains(_cupVolume);
     final Color customIconColor = isCustomActive ? AppColors.accent : Colors.white30;
     final Color customTextColor = isCustomActive ? AppColors.accent : Colors.white54;
 
@@ -296,8 +307,14 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
+                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С МГНОВЕННОЙ ПОДСВЕТКОЙ
                               GestureDetector(
-                                onTap: () => _showCustomVolumeSheet(context),
+                                onTap: () {
+                                  // 1. Мгновенно подсвечиваем иконку и подпись
+                                  setState(() => _customPressed = true);
+                                  // 2. Затем открываем окно ввода
+                                  _showCustomVolumeSheet(context);
+                                },
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
