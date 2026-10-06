@@ -134,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ ИСПРАВЛЕННЫЙ МЕТОД КНОПОК (убран лишний const)
+  // ✅ ОБНОВЛЕННЫЙ МЕТОД КНОПОК С НЕОНОВЫМИ ТЕНЯМИ
   Widget _buildControlButton(String text, VoidCallback onPressed, double fontSize) {
     return GestureDetector(
       onTap: () {
@@ -145,7 +145,6 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Container(
         width: 64, 
         height: 64,
-        // ✅ Убран const перед BoxDecoration, так как он не является compile-time constant из-за прозрачности
         decoration: BoxDecoration(
           color: Colors.transparent, 
           borderRadius: BorderRadius.circular(16),
@@ -153,11 +152,8 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Center(
           child: Text(
             text, 
-            style: TextStyle(
-              fontSize: fontSize, 
-              color: AppColors.accent, 
-              fontWeight: FontWeight.w300
-            ),
+            // ✅ Теперь используется TextStyles.plusMinus с неоновыми тенями
+            style: TextStyles.plusMinus(fontSize: fontSize),
           ),
         ),
       ),
@@ -378,8 +374,9 @@ class _SettingsPageState extends State<SettingsPage> {
                               }
                             }, minusPlusFontSize),
                             const SizedBox(width: 20),
+                            // ✅ ЦЕНТРАЛЬНАЯ ЦИФРА ТЕПЕРЬ С НЕОНОВЫМИ ТЕНЯМИ
                             Text('$_dailyGoalGlasses', 
-                              style: TextStyles.goal(fontSize: numberFontSize).copyWith(color: AppColors.accent)),
+                              style: TextStyles.number(fontSize: numberFontSize)),
                             const SizedBox(width: 20),
                             _buildControlButton('+', () {
                               if (_dailyGoalGlasses < FFAppState.maxDailyGoalGlasses) {
