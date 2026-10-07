@@ -23,7 +23,6 @@ class _SettingsPageState extends State<SettingsPage> {
   int _cupVolume = 250;
   bool _initialized = false;
   
-  // ✅ ВРЕМЕННЫЙ ФЛАГ ДЛЯ МГНОВЕННОЙ ПОДСВЕТКИ ИКОНКИ "ВАШ ОБЪЁМ" ПРИ НАЖАТИИ
   bool _customPressed = false;
 
   final List<int> _standardVolumes = [150, 200, 250, 300, 500];
@@ -64,7 +63,6 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  // ✅ МЕТОД ТЕПЕРЬ ПРИНИМАЕТ buttonWidth ДЛЯ ЕДИНОЙ ШИРИНЫ КНОПОК
   void _showCustomVolumeSheet(BuildContext context, double buttonWidth) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
@@ -86,7 +84,6 @@ class _SettingsPageState extends State<SettingsPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ✅ СОВРЕМЕННАЯ "ПИЛЮЛЯ", КОТОРАЯ ТЕПЕРЬ ЗАКРЫВАЕТ ОКНО ПРИ НАЖАТИИ
             Center(
               child: GestureDetector(
                 onTap: () => Navigator.pop(ctx),
@@ -107,30 +104,47 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextStyles.title(fontSize: 20), textAlign: TextAlign.center),
             const SizedBox(height: 24),
             
-            TextField(
-              controller: controller,
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                hintText: 'мл',
-                hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 24),
-                filled: true,
-                fillColor: Colors.white.withValues(alpha: 0.05),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                suffixText: 'мл',
-                suffixStyle: TextStyle(color: AppColors.accent, fontSize: 24),
+            // ✅ ПОЛЕ ВВОДА ТЕПЕРЬ ИМЕЕТ ТАКУЮ ЖЕ НЕОНОВУЮ ПОДСВЕТКУ, КАК БЛОК КАРТОЧКИ
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.accentShadow,
+                    blurRadius: 16,
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
-              onChanged: (val) {
-                final parsed = int.tryParse(val);
-                if (parsed != null && parsed > 0 && parsed < 2000) tempVolume = parsed;
-              },
+              child: TextField(
+                controller: controller,
+                autofocus: true,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  hintText: 'мл',
+                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 24),
+                  filled: true,
+                  fillColor: Colors.transparent, // ✅ Фон задаётся через Container
+                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixText: 'мл',
+                  suffixStyle: TextStyle(color: AppColors.accent, fontSize: 24),
+                ),
+                onChanged: (val) {
+                  final parsed = int.tryParse(val);
+                  if (parsed != null && parsed > 0 && parsed < 2000) tempVolume = parsed;
+                },
+              ),
             ),
             
             const SizedBox(height: 24),
             
-            // ✅ КНОПКА "ПРИМЕНИТЬ" ТЕПЕРЬ ИМЕЕТ ТОЧНО ТАКУЮ ЖЕ ШИРИНУ, КАК "СОХРАНИТЬ"
             Center(
               child: AnimatedButton(
                 width: buttonWidth,
@@ -317,7 +331,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() => _customPressed = true);
-                                  // ✅ ПЕРЕДАЕМ buttonWidth В МЕТОД
                                   _showCustomVolumeSheet(context, buttonWidth);
                                 },
                                 behavior: HitTestBehavior.opaque,
