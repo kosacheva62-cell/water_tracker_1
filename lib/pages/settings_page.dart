@@ -129,19 +129,16 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             
             const SizedBox(height: 24),
-            ElevatedButton(
+            
+            // ✅ КНОПКА "ПРИМЕНИТЬ" ТЕПЕРЬ ИСПОЛЬЗУЕТ ТОТ ЖЕ ДИЗАЙН, ЧТО И "СОХРАНИТЬ"
+            AnimatedButton(
+              width: double.infinity, // Растягиваем на всю ширину модального окна для лучшего вида
               onPressed: () {
                 // ✅ Обновляем состояние и закрываем окно. controller.dispose() НЕ вызываем!
                 setState(() => _cupVolume = tempVolume);
                 Navigator.pop(ctx);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accent,
-                foregroundColor: Colors.black,
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              ),
-              child: const Text('Применить', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              text: 'Применить',
             ),
           ],
         ),
