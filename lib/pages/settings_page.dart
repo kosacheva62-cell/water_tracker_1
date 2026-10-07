@@ -86,7 +86,22 @@ class _SettingsPageState extends State<SettingsPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Center(child: Icon(Icons.drag_handle, color: Colors.white38, size: 32)),
+            // ✅ СОВРЕМЕННАЯ "ПИЛЮЛЯ", КОТОРАЯ ТЕПЕРЬ ЗАКРЫВАЕТ ОКНО ПРИ НАЖАТИИ
+            Center(
+              child: GestureDetector(
+                onTap: () => Navigator.pop(ctx), // Закрываем окно по тапу
+                behavior: HitTestBehavior.opaque, // Гарантируем распознавание нажатия
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             Text('Укажите свой объём стакана', 
               style: TextStyles.title(fontSize: 20), textAlign: TextAlign.center),
@@ -133,7 +148,6 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     ).then((_) {
       // ✅ СБРАСЫВАЕМ ВРЕМЕННЫЙ ФЛАГ ПОСЛЕ ЗАКРЫТИЯ ОКНА
-      // (безопасно: только setState, контроллер не трогаем)
       if (mounted) {
         setState(() => _customPressed = false);
       }
@@ -164,10 +178,8 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ ИСПРАВЛЕННЫЙ МЕТОД: ПОКА АКТИВЕН РЕЖИМ "ВАШ ОБЪЁМ", СТАКАНЫ НЕ ПОДСВЕЧИВАЮТСЯ
+  // ✅ МЕТОД: ПОКА АКТИВЕН РЕЖИМ "ВАШ ОБЪЁМ", СТАКАНЫ НЕ ПОДСВЕЧИВАЮТСЯ
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
-    // ✅ Пока активен режим "Ваш объём" (_customPressed = true),
-    // стандартные стаканы НЕ подсвечиваются — голубой остаётся только капля
     final isSelected = !_customPressed && _cupVolume == volume;
     
     final baseStyle = TextStyles.subtitle(fontSize: fontSize).copyWith(
