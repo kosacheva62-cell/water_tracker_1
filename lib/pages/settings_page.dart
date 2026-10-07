@@ -63,7 +63,8 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  void _showCustomVolumeSheet(BuildContext context, double buttonWidth) {
+  // ✅ МЕТОД ТЕПЕРЬ ПРИНИМАЕТ spaceAboveSaveButton ДЛЯ ЕДИНОГО РАССТОЯНИЯ
+  void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
     
@@ -104,7 +105,6 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextStyles.title(fontSize: 20), textAlign: TextAlign.center),
             const SizedBox(height: 24),
             
-            // ✅ ПОЛЕ ВВОДА ТЕПЕРЬ ИМЕЕТ ТАКУЮ ЖЕ НЕОНОВУЮ ПОДСВЕТКУ, КАК БЛОК КАРТОЧКИ
             Container(
               decoration: BoxDecoration(
                 color: AppColors.card,
@@ -127,7 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   hintText: 'мл',
                   hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 24),
                   filled: true,
-                  fillColor: Colors.transparent, // ✅ Фон задаётся через Container
+                  fillColor: Colors.transparent,
                   contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -143,7 +143,8 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             
-            const SizedBox(height: 24),
+            // ✅ РАССТОЯНИЕ ТЕПЕРЬ ТАКОЕ ЖЕ, КАК МЕЖДУ БЛОКОМ И КНОПКОЙ "СОХРАНИТЬ"
+            SizedBox(height: spaceAboveSaveButton),
             
             Center(
               child: AnimatedButton(
@@ -331,7 +332,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() => _customPressed = true);
-                                  _showCustomVolumeSheet(context, buttonWidth);
+                                  // ✅ ПЕРЕДАЕМ spaceAboveSaveButton В МЕТОД
+                                  _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton);
                                 },
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
