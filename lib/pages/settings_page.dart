@@ -101,7 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const SizedBox(height: 16),
             // ✅ ИЗМЕНЕНО: новый текст заголовка
-            Text('Укажите объём вашего стакана🥤', 
+            Text('Укажите ваш объём стакана🥤', 
               style: TextStyles.goal(fontSize: goalFontSize).copyWith(
                 color: Colors.white,
                 height: 1.0,
