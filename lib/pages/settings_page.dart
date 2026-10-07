@@ -63,8 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  // ✅ МЕТОД ТЕПЕРЬ ПРИНИМАЕТ spaceAboveSaveButton ДЛЯ ЕДИНОГО РАССТОЯНИЯ
-  void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton) {
+  void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton, double goalFontSize) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
     
@@ -101,8 +100,13 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             const SizedBox(height: 16),
-            Text('Укажите свой объём стакана', 
-              style: TextStyles.title(fontSize: 20), textAlign: TextAlign.center),
+            // ✅ ИЗМЕНЕНО: новый текст заголовка
+            Text('Укажите объём вашего стакана🥤', 
+              style: TextStyles.goal(fontSize: goalFontSize).copyWith(
+                color: Colors.white,
+                height: 1.0,
+              ),
+              textAlign: TextAlign.center),
             const SizedBox(height: 24),
             
             Container(
@@ -143,7 +147,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             
-            // ✅ РАССТОЯНИЕ ТЕПЕРЬ ТАКОЕ ЖЕ, КАК МЕЖДУ БЛОКОМ И КНОПКОЙ "СОХРАНИТЬ"
             SizedBox(height: spaceAboveSaveButton),
             
             Center(
@@ -332,8 +335,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() => _customPressed = true);
-                                  // ✅ ПЕРЕДАЕМ spaceAboveSaveButton В МЕТОД
-                                  _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton);
+                                  _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton, goalFontSize);
                                 },
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
