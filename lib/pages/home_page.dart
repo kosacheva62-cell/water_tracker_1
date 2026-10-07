@@ -220,7 +220,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                   );
                                 }
                               },
-                              text: '+1 стакан🥤',
+                              // ✅ ИЗМЕНЕНО: Пробел после "+", убран пробел между "мл" и эмодзи
+                              text: '+ ${appState.cupVolume} мл🥤',
                             ),
                           ),
                           SizedBox(height: spaceAfterButton),
