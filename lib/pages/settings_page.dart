@@ -63,7 +63,8 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton, double goalFontSize) {
+  // ✅ ДОБАВЛЕН ПАРАМЕТР numberFontSize
+  void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton, double goalFontSize, double numberFontSize) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
     
@@ -100,7 +101,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             const SizedBox(height: 16),
-            // ✅ ИЗМЕНЕНО: новый текст заголовка
             Text('Укажите ваш объём стакана🥤', 
               style: TextStyles.goal(fontSize: goalFontSize).copyWith(
                 color: Colors.white,
@@ -126,7 +126,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 autofocus: true,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
+                // ✅ ИЗМЕНЕНО: теперь используется тот же стиль, что и у цифр выбора стаканов
+                style: TextStyles.number(fontSize: numberFontSize),
                 decoration: InputDecoration(
                   hintText: 'мл',
                   hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 24),
@@ -335,7 +336,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() => _customPressed = true);
-                                  _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton, goalFontSize);
+                                  // ✅ ПЕРЕДАЕМ numberFontSize В МЕТОД
+                                  _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton, goalFontSize, numberFontSize);
                                 },
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
