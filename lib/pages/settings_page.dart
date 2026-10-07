@@ -64,8 +64,8 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  // ✅ МЕТОД БЕЗ РУЧНОГО dispose КОНТРОЛЛЕРА (красные экраны устранены)
-  void _showCustomVolumeSheet(BuildContext context) {
+  // ✅ МЕТОД ТЕПЕРЬ ПРИНИМАЕТ buttonWidth ДЛЯ ЕДИНОЙ ШИРИНЫ КНОПОК
+  void _showCustomVolumeSheet(BuildContext context, double buttonWidth) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
     
@@ -89,8 +89,8 @@ class _SettingsPageState extends State<SettingsPage> {
             // ✅ СОВРЕМЕННАЯ "ПИЛЮЛЯ", КОТОРАЯ ТЕПЕРЬ ЗАКРЫВАЕТ ОКНО ПРИ НАЖАТИИ
             Center(
               child: GestureDetector(
-                onTap: () => Navigator.pop(ctx), // Закрываем окно по тапу
-                behavior: HitTestBehavior.opaque, // Гарантируем распознавание нажатия
+                onTap: () => Navigator.pop(ctx),
+                behavior: HitTestBehavior.opaque,
                 child: Container(
                   width: 40,
                   height: 4,
@@ -130,21 +130,21 @@ class _SettingsPageState extends State<SettingsPage> {
             
             const SizedBox(height: 24),
             
-            // ✅ КНОПКА "ПРИМЕНИТЬ" ТЕПЕРЬ ИСПОЛЬЗУЕТ ТОТ ЖЕ ДИЗАЙН, ЧТО И "СОХРАНИТЬ"
-            AnimatedButton(
-              width: double.infinity, // Растягиваем на всю ширину модального окна для лучшего вида
-              onPressed: () {
-                // ✅ Обновляем состояние и закрываем окно. controller.dispose() НЕ вызываем!
-                setState(() => _cupVolume = tempVolume);
-                Navigator.pop(ctx);
-              },
-              text: 'Применить',
+            // ✅ КНОПКА "ПРИМЕНИТЬ" ТЕПЕРЬ ИМЕЕТ ТОЧНО ТАКУЮ ЖЕ ШИРИНУ, КАК "СОХРАНИТЬ"
+            Center(
+              child: AnimatedButton(
+                width: buttonWidth,
+                onPressed: () {
+                  setState(() => _cupVolume = tempVolume);
+                  Navigator.pop(ctx);
+                },
+                text: 'Применить',
+              ),
             ),
           ],
         ),
       ),
     ).then((_) {
-      // ✅ СБРАСЫВАЕМ ВРЕМЕННЫЙ ФЛАГ ПОСЛЕ ЗАКРЫТИЯ ОКНА
       if (mounted) {
         setState(() => _customPressed = false);
       }
@@ -175,7 +175,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // ✅ МЕТОД: ПОКА АКТИВЕН РЕЖИМ "ВАШ ОБЪЁМ", СТАКАНЫ НЕ ПОДСВЕЧИВАЮТСЯ
   Widget _buildGlassIcon(int volume, double height, double fontSize) {
     final isSelected = !_customPressed && _cupVolume == volume;
     
@@ -252,7 +251,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
-    // ✅ АКТИВНОСТЬ ИКОНКИ: временный флаг ИЛИ реальный кастомный объём
     final bool isCustomActive = _customPressed || !_standardVolumes.contains(_cupVolume);
     final Color customIconColor = isCustomActive ? AppColors.accent : Colors.white30;
     final Color customTextColor = isCustomActive ? AppColors.accent : Colors.white54;
@@ -316,13 +314,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               _buildGlassIcon(300, 88, subtitleFontSize),
                               _buildGlassIcon(500, 100, subtitleFontSize),
                               
-                              // ✅ КНОПКА "ВАШ ОБЪЁМ" С МГНОВЕННОЙ ПОДСВЕТКОЙ
                               GestureDetector(
                                 onTap: () {
-                                  // 1. Мгновенно подсвечиваем иконку и подпись
                                   setState(() => _customPressed = true);
-                                  // 2. Затем открываем окно ввода
-                                  _showCustomVolumeSheet(context);
+                                  // ✅ ПЕРЕДАЕМ buttonWidth В МЕТОД
+                                  _showCustomVolumeSheet(context, buttonWidth);
                                 },
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
