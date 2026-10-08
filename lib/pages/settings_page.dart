@@ -65,108 +65,123 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton, double goalFontSize, double numberFontSize, double titleFontSize) {
     final controller = TextEditingController(text: _cupVolume.toString());
-    int tempVolume = _cupVolume;
     
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-          left: 24, right: 24, top: 24,
-        ),
-        decoration: const BoxDecoration(
-          color: Color(0xFF1A1F2E),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: GestureDetector(
-                onTap: () => Navigator.pop(ctx),
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text('Укажите ваш объём стакана🥤', 
-              style: TextStyles.goal(fontSize: goalFontSize).copyWith(
-                color: Colors.white,
-                height: 1.0,
-              ),
-              textAlign: TextAlign.center),
-            const SizedBox(height: 24),
-            
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.card,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.accentShadow,
-                    blurRadius: 16,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: controller,
-                autofocus: true,
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                style: TextStyles.number(fontSize: numberFontSize),
-                decoration: InputDecoration(
-                  hintText: 'мл',
-                  hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 24),
-                  filled: true,
-                  fillColor: Colors.transparent,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  // ✅ ИЗМЕНЕНО: увеличен сдвиг "мл" влево с -12 до -24
-                  suffix: Transform.translate(
-                    offset: const Offset(-58, 0),
-                    child: Text(
-                      'мл',
-                      style: TextStyles.title(fontSize: titleFontSize).copyWith(
-                        color: AppColors.accent,
-                      ),
+      // ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: StatefulBuilder позволяет обновлять UI внутри модального окна
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+            left: 24, right: 24, top: 24,
+          ),
+          decoration: const BoxDecoration(
+            color: Color(0xFF1A1F2E),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(ctx),
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
-                onChanged: (val) {
-                  final parsed = int.tryParse(val);
-                  if (parsed != null && parsed > 0 && parsed < 2000) tempVolume = parsed;
-                },
               ),
-            ),
-            
-            SizedBox(height: spaceAboveSaveButton),
-            
-            Center(
-              child: AnimatedButton(
-                width: buttonWidth,
-                onPressed: () {
-                  setState(() => _cupVolume = tempVolume);
-                  Navigator.pop(ctx);
-                },
-                text: 'Применить',
+              const SizedBox(height: 16),
+              Text('Укажите ваш объём стакана🥤', 
+                style: TextStyles.goal(fontSize: goalFontSize).copyWith(
+                  color: Colors.white,
+                  height: 1.0,
+                ),
+                textAlign: TextAlign.center),
+              const SizedBox(height: 24),
+              
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.accentShadow,
+                      blurRadius: 16,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: controller,
+                  autofocus: true,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  style: TextStyles.number(fontSize: numberFontSize),
+                  decoration: InputDecoration(
+                    hintText: '0',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.38),
+                      fontSize: numberFontSize,
+                    ),
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    suffix: Transform.translate(
+                      offset: const Offset(-58, 0),
+                      child: Text(
+                        'мл',
+                        style: TextStyles.title(fontSize: titleFontSize).copyWith(
+                          color: AppColors.accent,
+                        ),
+                      ),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    // ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: принудительно перерисовываем модальное окно при каждом изменении текста
+                    setModalState(() {});
+                  },
+                ),
               ),
-            ),
-          ],
+              
+              SizedBox(height: spaceAboveSaveButton),
+              
+              Center(
+                child: Opacity(
+                  // ✅ Кнопка тускнеет, если поле пустое
+                  opacity: controller.text.isEmpty ? 0.4 : 1.0,
+                  child: IgnorePointer(
+                    // ✅ Кнопка блокируется, если поле пустое
+                    ignoring: controller.text.isEmpty,
+                    child: AnimatedButton(
+                      width: buttonWidth,
+                      onPressed: () {
+                        final parsed = int.tryParse(controller.text);
+                        if (parsed != null && parsed > 0 && parsed < 2000) {
+                          setState(() => _cupVolume = parsed);
+                        }
+                        Navigator.pop(ctx);
+                      },
+                      text: 'Применить',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ).then((_) {
