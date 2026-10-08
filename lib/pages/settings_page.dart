@@ -63,7 +63,6 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  // ✅ ДОБАВЛЕН ПАРАМЕТР titleFontSize
   void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton, double goalFontSize, double numberFontSize, double titleFontSize) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
@@ -137,10 +136,15 @@ class _SettingsPageState extends State<SettingsPage> {
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
-                  suffixText: 'мл',
-                  // ✅ ИЗМЕНЕНО: стиль "мл" теперь как у заголовка "Установите цель на день"
-                  suffixStyle: TextStyles.title(fontSize: titleFontSize).copyWith(
-                    color: AppColors.accent,
+                  // ✅ ИЗМЕНЕНО: увеличен сдвиг "мл" влево с -12 до -24
+                  suffix: Transform.translate(
+                    offset: const Offset(-58, 0),
+                    child: Text(
+                      'мл',
+                      style: TextStyles.title(fontSize: titleFontSize).copyWith(
+                        color: AppColors.accent,
+                      ),
+                    ),
                   ),
                 ),
                 onChanged: (val) {
@@ -338,7 +342,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() => _customPressed = true);
-                                  // ✅ ПЕРЕДАЕМ titleFontSize В МЕТОД
                                   _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton, goalFontSize, numberFontSize, titleFontSize);
                                 },
                                 behavior: HitTestBehavior.opaque,
