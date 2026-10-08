@@ -63,8 +63,8 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  // ✅ ДОБАВЛЕН ПАРАМЕТР numberFontSize
-  void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton, double goalFontSize, double numberFontSize) {
+  // ✅ ДОБАВЛЕН ПАРАМЕТР titleFontSize
+  void _showCustomVolumeSheet(BuildContext context, double buttonWidth, double spaceAboveSaveButton, double goalFontSize, double numberFontSize, double titleFontSize) {
     final controller = TextEditingController(text: _cupVolume.toString());
     int tempVolume = _cupVolume;
     
@@ -126,7 +126,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 autofocus: true,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                // ✅ ИЗМЕНЕНО: теперь используется тот же стиль, что и у цифр выбора стаканов
                 style: TextStyles.number(fontSize: numberFontSize),
                 decoration: InputDecoration(
                   hintText: 'мл',
@@ -139,7 +138,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     borderSide: BorderSide.none,
                   ),
                   suffixText: 'мл',
-                  suffixStyle: TextStyle(color: AppColors.accent, fontSize: 24),
+                  // ✅ ИЗМЕНЕНО: стиль "мл" теперь как у заголовка "Установите цель на день"
+                  suffixStyle: TextStyles.title(fontSize: titleFontSize).copyWith(
+                    color: AppColors.accent,
+                  ),
                 ),
                 onChanged: (val) {
                   final parsed = int.tryParse(val);
@@ -336,8 +338,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               GestureDetector(
                                 onTap: () {
                                   setState(() => _customPressed = true);
-                                  // ✅ ПЕРЕДАЕМ numberFontSize В МЕТОД
-                                  _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton, goalFontSize, numberFontSize);
+                                  // ✅ ПЕРЕДАЕМ titleFontSize В МЕТОД
+                                  _showCustomVolumeSheet(context, buttonWidth, spaceAboveSaveButton, goalFontSize, numberFontSize, titleFontSize);
                                 },
                                 behavior: HitTestBehavior.opaque,
                                 child: Column(
