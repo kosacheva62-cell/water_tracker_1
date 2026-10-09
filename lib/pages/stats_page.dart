@@ -75,6 +75,11 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
 
     final bottomPadding = isTinyScreen ? 80.0 : (isSmallScreen ? 60.0 : 16.0);
 
+    // Переменные для блока поддержки
+    final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
+    final spaceAfterDonateButton = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
+    final spaceAfterSupportText = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
+
     const List<String> weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
     final todayIndex = (DateTime.now().weekday - 1) % 7;
 
@@ -111,10 +116,7 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                           ? appState.waterGlassesToday 
                           : appState.weeklyWaterGlasses[index]);
                   
-                  // ✅ ИСПРАВЛЕНИЕ 1: Убран лишний ?? appState.cupVolume
-                  // Метод getCupVolumeForDate сам возвращает fallback, если даты нет в истории
                   int cupVolumeForThisDay;
-                  
                   if (isToday || isFutureDay) {
                     cupVolumeForThisDay = appState.cupVolume;
                   } else {
@@ -127,7 +129,6 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                   
                   final dayGoalGlasses = appState.getGoalForWeekDay(index);
                   
-                  // ✅ ИСПРАВЛЕНИЕ 2: То же самое для цели
                   int dayGoalCupVolume;
                   if (isToday || isFutureDay) {
                     dayGoalCupVolume = appState.cupVolume;
@@ -198,13 +199,95 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
 
                 SizedBox(height: spaceBetweenDays), 
                 Divider(color: AppColors.divider, thickness: 1),
-                SizedBox(height: spaceBetweenDays), 
+                SizedBox(height: spaceAfterSupportText), 
                 
+                // Блок поддержки
+                Column(
+                  children: [
+                    // Кнопка "Поддержать"
+                    Container(
+                      width: buttonWidth, height: 72, 
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30), color: AppColors.card,
+                        boxShadow: [BoxShadow(color: AppColors.accentShadow, blurRadius: 16, spreadRadius: 3)],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final messenger = ScaffoldMessenger.of(context);
+                          
+                          final url = Uri.parse('https://pay.cloudtips.ru/p/ee11f14f');
+                          if (!mounted) return;
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url, mode: LaunchMode.externalApplication);
+                          } else {
+                            if (!mounted) return;
+                            messenger.showSnackBar(
+                              const SnackBar(content: Text('Не удалось открыть ссылку'), duration: Duration(seconds: 2)),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, foregroundColor: AppColors.accent,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          elevation: 0, padding: EdgeInsets.zero,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Поддержать',
+                              style: TextStyle(
+                                fontSize: isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 20.0 : 22.0)),
+                                fontWeight: FontWeight.w600, color: AppColors.accent, height: 1.0,
+                                shadows: [Shadow(color: AppColors.accent.withValues(alpha: 0.7), blurRadius: 12, offset: Offset.zero)],
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Row(mainAxisSize: MainAxisSize.min, children: [
+                              Text('приложение ',
+                                style: TextStyle(
+                                  fontSize: isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 20.0 : 22.0)),
+                                  fontWeight: FontWeight.w600, color: AppColors.accent, height: 1.0,
+                                  shadows: [Shadow(color: AppColors.accent.withValues(alpha: 0.7), blurRadius: 12, offset: Offset.zero)],
+                                ),
+                              ),
+                              Text('❤️', style: TextStyle(fontSize: 28, color: Colors.redAccent, height: 1.0)),
+                            ]),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // Отступ между кнопкой и текстом
+                    SizedBox(height: spaceAfterDonateButton), 
+                    
+                    // Текст под кнопкой
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.8),
+                      child: Text(
+                        'Это приложение бесплатное и без рекламы. Ваша поддержка поможет ему развиваться',
+                        style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(height: 1.0), 
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    
+                    // ✅ ИЗМЕНЕНО: отступ между текстом "Это..." и Divider под ним = spaceBetweenDays
+                    // (как между текстом "... из ...мл" и разделительной линией под ним)
+                    SizedBox(height: spaceBetweenDays), 
+                    
+                    // Разделительная линия между текстом и "Написать разработчику"
+                    Divider(color: AppColors.divider, thickness: 1),
+                    
+                    // Отступ между Divider и текстом "Написать разработчику..."
+                    SizedBox(height: spaceBetweenDays), 
+                  ],
+                ),
+
+                // Блок "Написать разработчику"
                 Align(
                   alignment: Alignment.center,
                   child: GestureDetector(
                     onTap: () async {
-                      // ✅ ИСПРАВЛЕНИЕ 3: Сохраняем messenger ДО await, чтобы избежать warning
                       final messenger = ScaffoldMessenger.of(context);
                       
                       final deviceInfo = '''
@@ -227,7 +310,6 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                         await launchUrl(uri);
                         _shouldShowThanksMessage = true;
                       } else {
-                        // Используем сохраненный messenger
                         messenger.showSnackBar(
                           const SnackBar(
                             content: Text('Не удалось открыть почтовый клиент'),
