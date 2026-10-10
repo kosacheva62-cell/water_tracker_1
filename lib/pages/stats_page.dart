@@ -55,11 +55,12 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
+    // ✅ ИЗМЕНЕНО: упрощенная логика отступа (2px для телефонов, 16px для планшетов)
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
     final titleFontSize = isTablet ? 30.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 22.0 : 24.0));
-    final topPadding = isTablet ? 16.0 : (isTinyScreen ? 4.0 : 6.0); 
+    final topPadding = isTablet ? 16.0 : 2.0; 
     final spaceAfterTitle = isTablet ? 20.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
     final iconSize = isTablet ? 24.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 16.0 : 18.0));
     final spaceAfterIcon = isTablet ? 12.0 : (isTinyScreen ? 8.0 : (isSmallScreen ? 9.0 : 10.0));
@@ -271,8 +272,7 @@ class _StatsPageState extends State<StatsPage> with WidgetsBindingObserver {
                       ),
                     ),
                     
-                    // ✅ ИЗМЕНЕНО: отступ между текстом "Это..." и Divider под ним = spaceBetweenDays
-                    // (как между текстом "... из ...мл" и разделительной линией под ним)
+                    // Отступ между текстом "Это..." и Divider под ним
                     SizedBox(height: spaceBetweenDays), 
                     
                     // Разделительная линия между текстом и "Написать разработчику"

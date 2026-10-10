@@ -70,7 +70,6 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      // ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: StatefulBuilder позволяет обновлять UI внутри модального окна
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModalState) => Container(
           padding: EdgeInsets.only(
@@ -151,7 +150,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                   onChanged: (val) {
-                    // ✅ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: принудительно перерисовываем модальное окно при каждом изменении текста
                     setModalState(() {});
                   },
                 ),
@@ -161,10 +159,8 @@ class _SettingsPageState extends State<SettingsPage> {
               
               Center(
                 child: Opacity(
-                  // ✅ Кнопка тускнеет, если поле пустое
                   opacity: controller.text.isEmpty ? 0.4 : 1.0,
                   child: IgnorePointer(
-                    // ✅ Кнопка блокируется, если поле пустое
                     ignoring: controller.text.isEmpty,
                     child: AnimatedButton(
                       width: buttonWidth,
@@ -265,11 +261,12 @@ class _SettingsPageState extends State<SettingsPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
+    // ✅ ИЗМЕНЕНО: упрощенная логика отступа (2px для телефонов, 16px для планшетов)
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
-    final topPadding = isTablet ? 16.0 : (isTinyScreen ? 4.0 : 6.0); 
+    final topPadding = isTablet ? 16.0 : 2.0; 
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     final minusPlusFontSize = isTablet ? 50.0 : (isTinyScreen ? 34.0 : (isSmallScreen ? 37.0 : 40.0));
     final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 52.0 : (isSmallScreen ? 58.0 : 64.0));

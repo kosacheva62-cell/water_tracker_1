@@ -88,28 +88,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
-    final isTinyScreen = screenHeight < 600 && !isTablet;
-    final isSmallScreen = screenHeight < 700 && !isTablet;
-
-    final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
-    final topPadding = isTablet ? 24.0 : (isTinyScreen ? 12.0 : (isSmallScreen ? 14.0 : 16.0));
-    final spaceAfterTitle = isTablet ? 36.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 24.0 : 28.0));
+    // ✅ ИЗМЕНЕНО: отступ синхронизирован с экранами "Настройки" и "Статистика"
+    final topPadding = isTablet ? 16.0 : 2.0; 
+    final spaceAfterTitle = isTablet ? 36.0 : (screenHeight < 600 ? 20.0 : (screenHeight < 700 ? 24.0 : 28.0));
     
-    final controlWidth = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
-    final controlHeight = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
-    final minusPlusFontSize = isTablet ? 50.0 : (isTinyScreen ? 36.0 : (isSmallScreen ? 38.0 : 40.0));
-    final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 60.0 : 64.0));
-    final numberContainerWidth = isTablet ? 100.0 : (isTinyScreen ? 72.0 : (isSmallScreen ? 76.0 : 80.0));
-    final spaceBetweenControls = isTinyScreen ? 1.0 : 2.0;
-    final hintFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
+    final controlWidth = isTablet ? 80.0 : (screenHeight < 600 ? 56.0 : (screenHeight < 700 ? 60.0 : 64.0));
+    final controlHeight = isTablet ? 80.0 : (screenHeight < 600 ? 56.0 : (screenHeight < 700 ? 60.0 : 64.0));
+    final minusPlusFontSize = isTablet ? 50.0 : (screenHeight < 600 ? 36.0 : (screenHeight < 700 ? 38.0 : 40.0));
+    final numberFontSize = isTablet ? 80.0 : (screenHeight < 600 ? 56.0 : (screenHeight < 700 ? 60.0 : 64.0));
+    final numberContainerWidth = isTablet ? 100.0 : (screenHeight < 600 ? 72.0 : (screenHeight < 700 ? 76.0 : 80.0));
+    final spaceBetweenControls = screenHeight < 600 ? 1.0 : 2.0;
+    final hintFontSize = isTablet ? 20.0 : (screenHeight < 600 ? 14.0 : (screenHeight < 700 ? 15.0 : 16.0));
     
-    final spaceAfterInput = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
-    final goalFontSize = isTablet ? 28.0 : (isTinyScreen ? 20.0 : (isSmallScreen ? 21.0 : 22.0));
-    final spaceAfterGoal = isTablet ? 36.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 26.0 : 28.0));
+    final spaceAfterInput = isTablet ? 36.0 : (screenHeight < 600 ? 24.0 : (screenHeight < 700 ? 26.0 : 28.0));
+    final goalFontSize = isTablet ? 28.0 : (screenHeight < 600 ? 20.0 : (screenHeight < 700 ? 21.0 : 22.0));
+    final spaceAfterGoal = isTablet ? 36.0 : (screenHeight < 600 ? 24.0 : (screenHeight < 700 ? 26.0 : 28.0));
     
-    final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
-    final buttonHeight = isTablet ? 72.0 : (isTinyScreen ? 56.0 : (isSmallScreen ? 58.0 : 60.0));
-    final buttonFontSize = isTablet ? 32.0 : (isTinyScreen ? 24.0 : (isSmallScreen ? 25.0 : 26.0));
+    final buttonWidth = isTablet ? 320.0 : (screenHeight < 600 ? 240.0 : (screenHeight < 700 ? 250.0 : 260.0));
+    final buttonHeight = isTablet ? 72.0 : (screenHeight < 600 ? 56.0 : (screenHeight < 700 ? 58.0 : 60.0));
+    final buttonFontSize = isTablet ? 32.0 : (screenHeight < 600 ? 24.0 : (screenHeight < 700 ? 25.0 : 26.0));
 
     final previewMl = _inputValue * 250;
     final glassesForm = _getGlassesForm(_inputValue);
@@ -132,11 +129,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     children: [
                       SizedBox(height: topPadding),
                       
-                      // ✅ ИЗМЕНЕНО: новый текст заголовка
                       Text(
                         'Привет! Установите вашу дневную цель по воде!',
                         textAlign: TextAlign.center,
-                        style: TextStyles.title(fontSize: titleFontSize),
+                        style: TextStyles.title(fontSize: isTablet ? 32.0 : (screenHeight < 600 ? 22.0 : (screenHeight < 700 ? 24.0 : 26.0))),
                       ),
                       SizedBox(height: spaceAfterTitle),
 
