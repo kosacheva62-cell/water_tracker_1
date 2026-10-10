@@ -132,8 +132,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     children: [
                       SizedBox(height: topPadding),
                       
+                      // ✅ ИЗМЕНЕНО: новый текст заголовка
                       Text(
-                        'Привет! Какая ваша цель по воде на день?',
+                        'Привет! Установите вашу дневную цель по воде!',
                         textAlign: TextAlign.center,
                         style: TextStyles.title(fontSize: titleFontSize),
                       ),
