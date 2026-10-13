@@ -304,10 +304,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // ✅ ИЗМЕНЕНО: height изменен с 1.1 на 1.0
                   Text(
                     'Установите цель на день',
                     textAlign: TextAlign.center,
-                    style: TextStyles.title(fontSize: titleFontSize).copyWith(height: 1.1), 
+                    style: TextStyles.title(fontSize: titleFontSize).copyWith(height: 1.0), 
                   ),
                   
                   SizedBox(height: spaceAfterTitle),
@@ -392,7 +393,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         const SizedBox(height: 24),
                         
-                        // ✅ ИЗМЕНЕНО: отступ уменьшен с 8 до 4 пикселей
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(

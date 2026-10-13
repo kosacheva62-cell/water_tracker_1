@@ -219,10 +219,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     children: [
                       SizedBox(height: topPadding),
                       
+                      // ✅ ИЗМЕНЕНО: добавлен .copyWith(height: 1.0)
                       Text(
-                        'Привет! Установите вашу дневную цель по воде',
+                        'Привет! Установите вашу дневную цель по воде!',
                         textAlign: TextAlign.center,
-                        style: TextStyles.title(fontSize: titleFontSize),
+                        style: TextStyles.title(fontSize: titleFontSize).copyWith(height: 1.0),
                       ),
                       SizedBox(height: spaceAfterTitle),
 
@@ -253,6 +254,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             
                             SizedBox(
                               height: 140, 
+                              // ⚠️ ПРЕДЫДУЩАЯ ВЕРСИЯ: вызывала переполнение на узких экранах
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -302,7 +304,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               ],
                             ),
                             
-                            // ✅ ИЗМЕНЕНО: top уменьшен с 8 до 4
                             Padding(
                               padding: const EdgeInsets.only(top: 4), 
                               child: Text('$glassesForm по $_selectedCupVolume мл', 
