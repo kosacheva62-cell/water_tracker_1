@@ -271,7 +271,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                             // Нижняя часть: Выбор количества
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.only(bottom: 4),
                               child: Text(
                                 'Выберите количество стаканов',
                                 style: TextStyles.goal(fontSize: goalFontSize).copyWith(
@@ -302,15 +302,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               ],
                             ),
                             
+                            // ✅ ИЗМЕНЕНО: top уменьшен с 8 до 4
                             Padding(
-                              padding: const EdgeInsets.only(top: 8), 
+                              padding: const EdgeInsets.only(top: 4), 
                               child: Text('$glassesForm по $_selectedCupVolume мл', 
                                 style: TextStyles.subtitle(fontSize: subtitleFontSize).copyWith(color: Colors.white54)),
                             ),
 
-                            // ✅ УБРАНО: SizedBox(height: 16), чтобы было как в Настройках
-                            // Теперь тексты идут вплотную друг к другу
-                            
+                            // Тексты идут вплотную друг к другу, как в Настройках
                             Text(
                               'Ваша цель: $previewMl мл',
                               style: TextStyles.goal(fontSize: goalFontSize).copyWith(color: Colors.white),
