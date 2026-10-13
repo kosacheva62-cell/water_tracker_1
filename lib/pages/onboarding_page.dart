@@ -220,7 +220,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       SizedBox(height: topPadding),
                       
                       Text(
-                        'Привет! Установите вашу дневную цель по воде!',
+                        'Привет! Установите вашу дневную цель по воде',
                         textAlign: TextAlign.center,
                         style: TextStyles.title(fontSize: titleFontSize),
                       ),

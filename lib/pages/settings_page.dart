@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vibration/vibration.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../app_state.dart';
@@ -261,7 +260,6 @@ class _SettingsPageState extends State<SettingsPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 700;
-    // ✅ ИЗМЕНЕНО: упрощенная логика отступа (2px для телефонов, 16px для планшетов)
     final isTinyScreen = screenHeight < 600 && !isTablet;
     final isSmallScreen = screenHeight < 700 && !isTablet;
 
@@ -283,8 +281,6 @@ class _SettingsPageState extends State<SettingsPage> {
     final spaceAboveSaveButton = calculatedGap;
     
     final spaceBelowSaveButton = isTablet ? 16.0 : (isTinyScreen ? 10.0 : (isSmallScreen ? 10.0 : 14.0));
-    final spaceAfterSupportText = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
-    final spaceAfterDonateButton = isTablet ? 24.0 : (isTinyScreen ? 18.0 : (isSmallScreen ? 18.0 : 20.0));
 
     String glassesForm = pluralizeGlasses(_dailyGoalGlasses).split(' ').last;
 
@@ -396,8 +392,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         const SizedBox(height: 24),
                         
+                        // ✅ ИЗМЕНЕНО: отступ уменьшен с 8 до 4 пикселей
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
                             'Выберите количество стаканов',
                             style: TextStyles.goal(fontSize: goalFontSize).copyWith(
@@ -455,6 +452,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   
                   SizedBox(height: spaceBelowSaveButton), 
                   
+                  // ✅ TODO: Вернуть блок "Поддержать приложение" вместе с разделительной линией, если донаты не покроют расходы
+                  /*
                   Divider(color: AppColors.divider, thickness: 1),
                   const SizedBox(height: 12), 
                   
@@ -523,6 +522,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       SizedBox(height: spaceAfterDonateButton), 
                     ],
                   ),
+                  */
                 ],
               ),
             ),
