@@ -221,7 +221,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       
                       // ✅ ИЗМЕНЕНО: добавлен .copyWith(height: 1.0)
                       Text(
-                        'Привет! Установите вашу дневную цель по воде!',
+                        'Привет! Установите вашу дневную цель по воде',
                         textAlign: TextAlign.center,
                         style: TextStyles.title(fontSize: titleFontSize).copyWith(height: 1.0),
                       ),

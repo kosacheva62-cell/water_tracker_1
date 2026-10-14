@@ -99,7 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text('Укажите ваш объём стакана🥤', 
+              Text('Укажите ваш объём стакана', 
                 style: TextStyles.goal(fontSize: goalFontSize).copyWith(
                   color: Colors.white,
                   height: 1.0,
@@ -304,7 +304,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // ✅ ИЗМЕНЕНО: height изменен с 1.1 на 1.0
                   Text(
                     'Установите цель на день',
                     textAlign: TextAlign.center,
@@ -313,9 +312,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   
                   SizedBox(height: spaceAfterTitle),
                   
+                  // ✅ ИЗМЕНЕНО: horizontal padding уменьшен с 16 до 8
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
                     decoration: BoxDecoration(
                       color: AppColors.card,
                       borderRadius: BorderRadius.circular(24),
@@ -339,7 +339,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         SizedBox(
                           height: 140, 
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               _buildGlassIcon(150, 52, subtitleFontSize),
