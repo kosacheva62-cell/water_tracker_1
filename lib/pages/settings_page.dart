@@ -265,6 +265,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     final topPadding = isTablet ? 16.0 : 2.0; 
+    
+    // ✅ ИЗМЕНЕНО: новые значения отступа после заголовка
+    final spaceAfterTitle = isTablet ? 20.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 16.0 : 18.0));
+    
     final horizontalPadding = isTablet ? 40.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 20.0 : 24.0));
     final minusPlusFontSize = isTablet ? 50.0 : (isTinyScreen ? 34.0 : (isSmallScreen ? 37.0 : 40.0));
     final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 52.0 : (isSmallScreen ? 58.0 : 64.0));
@@ -272,8 +276,6 @@ class _SettingsPageState extends State<SettingsPage> {
     final subtitleFontSize = isTablet ? 20.0 : (isTinyScreen ? 14.0 : (isSmallScreen ? 15.0 : 16.0));
     final buttonWidth = isTablet ? 320.0 : (isTinyScreen ? 240.0 : (isSmallScreen ? 250.0 : 260.0));
 
-    final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0)); 
-    
     final minSafeGap = 32.0;
     final baseAddition = 10.0; 
     double calculatedGap = spaceAfterTitle + baseAddition;
@@ -312,7 +314,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   
                   SizedBox(height: spaceAfterTitle),
                   
-                  // ✅ ИЗМЕНЕНО: horizontal padding уменьшен с 16 до 8
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
