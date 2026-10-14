@@ -178,8 +178,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     // Шрифты и размеры для единого блока
     final titleFontSize = isTablet ? 32.0 : (isTinyScreen ? 22.0 : (isSmallScreen ? 24.0 : 26.0));
     
-    // ✅ СИНХРОНИЗИРОВАНО: spaceAfterTitle теперь как в настройках
-    final spaceAfterTitle = isTablet ? 30.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 18.0 : 24.0));
+    // ✅ ИЗМЕНЕНО: новые значения отступа после заголовка
+    final spaceAfterTitle = isTablet ? 20.0 : (isTinyScreen ? 16.0 : (isSmallScreen ? 16.0 : 18.0));
     
     final minusPlusFontSize = isTablet ? 50.0 : (isTinyScreen ? 34.0 : (isSmallScreen ? 37.0 : 40.0));
     final numberFontSize = isTablet ? 80.0 : (isTinyScreen ? 52.0 : (isSmallScreen ? 58.0 : 64.0));
@@ -221,7 +221,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       
                       // ✅ ИЗМЕНЕНО: добавлен .copyWith(height: 1.0)
                       Text(
-                        'Привет! Установите вашу дневную цель по воде',
+                        'Привет! Установите дневную цель по воде',
                         textAlign: TextAlign.center,
                         style: TextStyles.title(fontSize: titleFontSize).copyWith(height: 1.0),
                       ),
@@ -254,9 +254,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             
                             SizedBox(
                               height: 140, 
-                              // ⚠️ ПРЕДЫДУЩАЯ ВЕРСИЯ: вызывала переполнение на узких экранах
+                              // ✅ ИСПРАВЛЕНИЕ: center вместо spaceEvenly для предотвращения переполнения
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   _buildGlassIcon(150, 52, subtitleFontSize),
